@@ -1,0 +1,23 @@
+<svg width="42" height="42" viewBox="0 0 42 42" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <!-- Fond carre arrondi -->
+  <rect width="42" height="42" rx="11"
+    fill="url(#logoGrad)"/>
+  <!-- Lettre E stylisee -->
+  <path d="M10 13h10M10 13v16M10 21h8M10 29h10"
+    stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+  <!-- Lettre C stylisee -->
+  <path d="M24 16a7 7 0 1 0 0 10"
+    stroke="#f0d080" strokeWidth="2.5"
+    strokeLinecap="round" fill="none"/>
+  <!-- Etoile rouge chinoise (petite, coin haut droit) -->
+  <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 
+    36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6"
+    fill="#e53935" opacity=".9"/>
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="42" y2="42">
+      <stop offset="0%" stopColor="#0d1117"/>
+      <stop offset="100%" stopColor="#1a2540"/>
+    </linearGradient>
+  </defs>
+</svg>
