@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(ping -n 3 127.0.0.1)"
+    ]
+  }
+}
