@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { t, useLang, changeLang, LANGS } from "./i18n";
 import {
   Ship, GraduationCap, Wrench, FileCheck, Globe, MapPin,
   Phone, Mail, ArrowRight, Send, Lock, LogOut, Plus,
@@ -884,16 +885,82 @@ const Logo = ({ onClick, size="md" }) => {
   );
 };
 
+// Language Switcher Dropdown
+function LangSwitcher() {
+  const lang = useLang();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const current = LANGS.find(l => l.code === lang) || LANGS[0];
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: "relative", userSelect: "none" }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: "flex", alignItems: "center", gap: 6,
+          background: open ? "rgba(201,48,44,0.07)" : "transparent",
+          border: `1px solid ${open ? T.gold : T.border}`,
+          borderRadius: 8, padding: "0.4rem 0.85rem",
+          fontSize: "0.78rem", fontWeight: 600, cursor: "pointer",
+          color: open ? T.gold : T.muted, transition: "all 0.25s",
+          fontFamily: "'Inter', sans-serif",
+        }}
+      >
+        <span style={{ fontSize: "1rem" }}>{current.flag}</span>
+        <span>{current.label}</span>
+        <ChevronDown size={13} style={{ transition: "transform 0.25s", transform: open ? "rotate(180deg)" : "none" }} />
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 8px)", right: 0,
+          background: "#fff", border: `1px solid ${T.border}`,
+          borderRadius: T.radius, boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          zIndex: 2000, minWidth: 150, overflow: "hidden",
+          animation: "pageEnter 0.2s ease",
+        }}>
+          {LANGS.map(l => (
+            <button
+              key={l.code}
+              onClick={() => { changeLang(l.code); setOpen(false); }}
+              style={{
+                width: "100%", textAlign: "left", display: "flex",
+                alignItems: "center", gap: 10, padding: "0.65rem 1rem",
+                background: lang === l.code ? "rgba(201,48,44,0.06)" : "transparent",
+                border: "none", cursor: "pointer",
+                fontSize: "0.82rem", fontWeight: lang === l.code ? 700 : 500,
+                color: lang === l.code ? T.gold : T.text,
+                fontFamily: "'Inter', sans-serif", transition: "background 0.2s",
+              }}
+              onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
+              onMouseLeave={e => { if (lang !== l.code) e.currentTarget.style.background = "transparent"; }}
+            >
+              <span style={{ fontSize: "1.1rem" }}>{l.flag}</span>
+              {l.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // 11. Floating Navigation
 function FloatingNav({ pages, activePage, setPage }) {
+  useLang();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const progress = useScrollProgress();
 
+  const NAV_KEYS = { accueil:"nav_accueil", catalogue:"nav_catalogue", realisations:"nav_realisations", equipe:"nav_equipe", admin:"nav_admin" };
+
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
+    const handleScroll = () => { setIsScrolled(window.scrollY > 40); };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -901,14 +968,10 @@ function FloatingNav({ pages, activePage, setPage }) {
   return (
     <>
       <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: `${progress}%`,
-        height: 3,
+        position: "fixed", top: 0, left: 0,
+        width: `${progress}%`, height: 3,
         background: `linear-gradient(to right, ${T.gold}, ${T.gold2})`,
-        zIndex: 1003,
-        transition: "width 0.1s ease",
+        zIndex: 1003, transition: "width 0.1s ease",
       }} />
 
       <nav style={{
@@ -924,7 +987,7 @@ function FloatingNav({ pages, activePage, setPage }) {
         border: isScrolled ? `1px solid ${T.border}` : `1px solid rgba(226, 232, 240, 0.6)`,
         borderRadius: isScrolled ? T.radius : 0,
         height: 68,
-        padding: "0 2.5rem",
+        padding: "0 2rem",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -934,28 +997,22 @@ function FloatingNav({ pages, activePage, setPage }) {
       }}>
         <Logo onClick={() => { setPage("accueil"); setIsOpen(false); }} />
 
-        <div className="nav-desktop-menu" style={{ display: "flex", gap: 6 }}>
-          {pages.map(([k, l]) => (
-            <NavBtn key={k} label={l} active={activePage === k} onClick={() => setPage(k)} />
+        <div className="nav-desktop-menu" style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          {pages.map(([k]) => (
+            <NavBtn key={k} label={t(NAV_KEYS[k] || k)} active={activePage === k} onClick={() => setPage(k)} />
           ))}
+          <div style={{ marginLeft: 8 }}><LangSwitcher /></div>
         </div>
 
         <button
-          aria-label="Ouvrir le menu"
+          aria-label={t("nav_open")}
           className="nav-mobile-trigger"
           onClick={() => setIsOpen(!isOpen)}
           style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            width: 30,
-            height: 30,
-            display: "none",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: 6,
-            position: "relative",
-            zIndex: 1002,
+            background: "none", border: "none", cursor: "pointer",
+            width: 30, height: 30, display: "none",
+            flexDirection: "column", justifyContent: "center",
+            gap: 6, position: "relative", zIndex: 1002,
           }}
         >
           {isOpen ? <X size={24} color={T.text}/> : <Menu size={24} color={T.text}/>}
@@ -964,37 +1021,26 @@ function FloatingNav({ pages, activePage, setPage }) {
 
       {isOpen && (
         <div style={{
-          position: "fixed",
-          inset: 0,
+          position: "fixed", inset: 0,
           background: "rgba(255, 255, 255, 0.98)",
           backdropFilter: "blur(20px)",
-          zIndex: 999,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "2rem",
-          animation: "pageEnter 0.3s ease",
+          zIndex: 999, display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          gap: "2rem", animation: "pageEnter 0.3s ease",
         }}>
-          {pages.map(([k, l]) => (
-            <button
-              key={k}
-              onClick={() => { setPage(k); setIsOpen(false); }}
+          {pages.map(([k]) => (
+            <button key={k} onClick={() => { setPage(k); setIsOpen(false); }}
               style={{
-                background: "none",
-                border: "none",
-                fontSize: "1.5rem",
-                fontWeight: 700,
-                color: activePage === k ? T.gold : T.text,
-                cursor: "pointer",
-                transition: "all 0.2s",
-                letterSpacing: "1px",
-                fontFamily: "'Syne', sans-serif"
+                background: "none", border: "none", fontSize: "1.5rem",
+                fontWeight: 700, color: activePage === k ? T.gold : T.text,
+                cursor: "pointer", transition: "all 0.2s",
+                letterSpacing: "1px", fontFamily: "'Syne', sans-serif"
               }}
             >
-              {l}
+              {t(NAV_KEYS[k] || k)}
             </button>
           ))}
+          <div style={{ marginTop: "1rem" }}><LangSwitcher /></div>
         </div>
       )}
     </>
@@ -1307,6 +1353,16 @@ function SEOHead({ page }) {
           "description": seo.desc,
           "inLanguage": "fr-FR",
           "publisher": { "@id": `${SITE}/#business` }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            { "@type": "Question", "name": "Comment importer des marchandises depuis la Chine vers le Togo ?", "acceptedAnswer": { "@type": "Answer", "text": "Easy China gère l'intégralité du processus : identification des fournisseurs certifiés, inspection qualité en usine à Guangzhou ou Yiwu, groupage maritime, dédouanement au port de Lomé." } },
+            { "@type": "Question", "name": "Quels sont les délais pour obtenir un visa Chine depuis le Togo ?", "acceptedAnswer": { "@type": "Answer", "text": "Avec notre service visa express, vous obtenez votre visa touristique ou d'affaires en 7 à 15 jours ouvrés." } },
+            { "@type": "Question", "name": "Comment s'inscrire dans une université chinoise et obtenir une bourse ?", "acceptedAnswer": { "@type": "Answer", "text": "Notre responsable académique vous accompagne de A à Z : choix de l'université, dépôt des dossiers d'admission, demande de bourse gouvernementale CSC, obtention du visa étudiant et installation en Chine." } },
+            { "@type": "Question", "name": "Quels produits puis-je importer depuis la Chine avec Easy China ?", "acceptedAnswer": { "@type": "Answer", "text": "Nous importons tous types de marchandises : machines industrielles (pressing, blanchisserie, conditionnement alimentaire), électronique LED, textile, équipements agricoles, mobilier, et bien plus." } },
+            { "@type": "Question", "name": "Easy China est-elle réellement présente en Chine ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, nos équipes sont physiquement implantées à Guangzhou (Guangdong) et à Yiwu (Zhejiang), les deux capitales mondiales du commerce de gros." } }
+          ]
         }
       ]
     });
@@ -1319,11 +1375,12 @@ function SEOHead({ page }) {
 
 // 1. Section Hero — Split Layout Light
 function HeroSection({ goTo }) {
+  useLang();
   const heroStats = [
-    { n: 500, l: "Étudiants placés", s: "+" },
-    { n: 8, l: "Années d'expérience", s: "+" },
-    { n: 2, l: "Bureaux physiques", s: "" },
-    { n: 100, l: "Accompagnement", s: "%" },
+    { n: 500, l: t("hero_stat1"), s: "+" },
+    { n: 8,   l: t("hero_stat2"), s: "+" },
+    { n: 2,   l: t("hero_stat3"), s: "" },
+    { n: 100, l: t("hero_stat4"), s: "%" },
   ];
 
   return (
@@ -1357,7 +1414,7 @@ function HeroSection({ goTo }) {
             textTransform: "uppercase",
             fontWeight: 700,
           }}>
-            <Globe size={13}/> Togo · La Réunion · Chine
+            <Globe size={13}/> {t("hero_badge")}
           </div>
         </ScrollReveal>
 
@@ -1373,7 +1430,7 @@ function HeroSection({ goTo }) {
           }}>
             EASY CHINA
             <br/>
-            <span style={{ color: T.gold }}>Votre Pont Vers la Chine</span>
+            <span style={{ color: T.gold }}>{t("hero_title2")}</span>
           </h1>
         </ScrollReveal>
 
@@ -1385,17 +1442,17 @@ function HeroSection({ goTo }) {
             lineHeight: 1.8,
             marginBottom: "2.5rem",
           }}>
-            Sécurisez vos investissements, vos études et vos déplacements en Chine. Notre agence internationale vous accompagne à chaque étape directement depuis le Togo.
+            {t("hero_desc")}
           </p>
         </ScrollReveal>
 
         <ScrollReveal direction="right" delay={0.4}>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
             <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
-              <Package size={17} style={{marginRight: 8}}/> Découvrir le Catalogue
+              <Package size={17} style={{marginRight: 8}}/> {t("hero_cta1")}
             </GoldenBtn>
             <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
-              <MessageCircle size={17} style={{marginRight: 8}}/> WhatsApp Direct
+              <MessageCircle size={17} style={{marginRight: 8}}/> {t("hero_cta2")}
             </GoldenBtn>
           </div>
         </ScrollReveal>
@@ -1476,8 +1533,8 @@ function HeroSection({ goTo }) {
             <MapPin size={20} color="#fff" />
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: "0.88rem", color: T.text, lineHeight: 1.3 }}>Bureaux Permanents</div>
-            <div style={{ fontSize: "0.75rem", color: T.muted, marginTop: 2 }}>Lomé · Guangzhou · Yiwu</div>
+            <div style={{ fontWeight: 700, fontSize: "0.88rem", color: T.text, lineHeight: 1.3 }}>{t("hero_offices")}</div>
+            <div style={{ fontSize: "0.75rem", color: T.muted, marginTop: 2 }}>{t("hero_cities")}</div>
           </div>
         </div>
         {/* Red accent ribbon */}
@@ -1497,18 +1554,12 @@ function HeroSection({ goTo }) {
 
 // 2. Page d'Accueil Principale
 function PageAccueil({ goTo }) {
-  const stats = [
-    { n: 500, l: "Étudiants placés", s: "+" },
-    { n: 8, l: "Années d'expérience", s: "+" },
-    { n: 2, l: "Bureaux physiques", s: "" },
-    { n: 100, l: "Accompagnement", s: "%" },
-  ];
-
+  useLang();
   const services = [
-    { icon: <Ship size={26}/>, cat: "Import", title: "Import & Logistique", text: "Sourcing produits, inspection qualité en usine, transport maritime et dédouanement. Accompagnement personnalisé pour sécuriser vos achats." },
-    { icon: <GraduationCap size={26}/>, cat: "Études", title: "Université & Études", text: "Inscription dans les meilleures universités chinoises, bourses d'études, accompagnement administratif complet. Plus de 500 étudiants accompagnés." },
-    { icon: <Wrench size={26}/>, cat: "Formation", title: "Formation Professionnelle", text: "Formations techniques en Chine : pressing, blanchisserie industrielle, maintenance machines. Certifications reconnues et stages pratiques." },
-    { icon: <FileCheck size={26}/>, cat: "Visa", title: "Assistance Visa", text: "Obtention de visas chinois (tourisme, affaires, études, travail). Préparation dossiers, traduction certifiée, accompagnement consulaire." },
+    { icon: <Ship size={26}/>, cat: "Import", title: t("svc1_name"), text: t("svc1_desc") },
+    { icon: <GraduationCap size={26}/>, cat: "Études", title: t("svc2_name"), text: t("svc2_desc") },
+    { icon: <Wrench size={26}/>, cat: "Formation", title: t("svc3_name"), text: t("svc3_desc") },
+    { icon: <FileCheck size={26}/>, cat: "Visa", title: t("svc4_name"), text: t("svc4_desc") },
   ];
 
   const historyItems = [
@@ -1529,7 +1580,7 @@ function PageAccueil({ goTo }) {
 
       {/* Services Grid */}
       <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <SectionTitle eyebrow="Ce que nous faisons" title="Nos Services d'Élite" subtitle="Une expertise locale et internationale sur mesure pour concrétiser tous vos projets avec la Chine." />
+        <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
         <div className="grid-3">
           {services.map((s, i) => (
             <ScrollReveal key={i} direction="up" delay={i * 0.08}>
@@ -1556,7 +1607,7 @@ function PageAccueil({ goTo }) {
                     <p style={{ fontSize: "0.88rem", color: T.muted, lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>{s.text}</p>
                   </div>
                   <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite obtenir des informations sur le service : "${s.title}".`))} style={{ width: "100%" }}>
-                    En savoir plus
+                    {t("svc_learn")}
                   </GoldenBtn>
                 </div>
               </GlassCard>
@@ -1570,19 +1621,19 @@ function PageAccueil({ goTo }) {
         <div className="grid-50-50" style={{ maxWidth: 1100, margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: "0.72rem", color: T.gold, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>Voyages & Affaires</div>
+              <div style={{ fontSize: "0.72rem", color: T.gold, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
               <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: T.text, lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
-                Tourisme & Business en Immersion
+                {t("tour_title")}
               </h2>
               <p style={{ color: T.muted, lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "0.95rem" }}>
-                Nous organisons vos voyages d'affaires de A à Z : visites d'usines exclusives à Guangzhou et Yiwu, négociations de prix accompagnées par des interprètes qualifiés, et accès aux plus grands marchés de gros du monde.
+                {t("tour_p1")}
               </p>
               <p style={{ color: T.muted, lineHeight: 1.7, marginBottom: "2rem", fontSize: "0.95rem" }}>
-                Bénéficiez également de nos circuits touristiques personnalisés pour découvrir la richesse culturelle de la Chine moderne, tout en restant connecté à vos opportunités d'affaires locales.
+                {t("tour_p2")}
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "1rem" }}>
-                {["Visites d'usines", "Marché de Yiwu", "Interprètes bilingues", "Circuits guidés", "Guangzhou", "Négociations"].map(t => (
-                  <Tag key={t}>{t}</Tag>
+                {(t("tour_tags") || []).map(tag => (
+                  <Tag key={tag}>{tag}</Tag>
                 ))}
               </div>
             </div>
@@ -1599,7 +1650,7 @@ function PageAccueil({ goTo }) {
                 ))}
               </div>
               <p style={{ color: T.muted, fontSize: "0.8rem", marginTop: "1.5rem", fontStyle: "italic" }}>
-                Bureaux physiques permanents en Afrique et en Chine pour une assistance 24/7.
+                {t("tour_note")}
               </p>
             </GlassCard>
           </ScrollReveal>
@@ -1608,19 +1659,19 @@ function PageAccueil({ goTo }) {
 
       {/* Timeline Section */}
       <div style={{ padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
-        <SectionTitle eyebrow="Notre parcours" title="Notre Histoire" subtitle="Depuis notre création, nous franchissons chaque étape avec pour unique objectif l'excellence de vos projets." />
+        <SectionTitle eyebrow={t("hist_eyebrow")} title={t("hist_title")} subtitle={t("hist_subtitle")} />
         <Timeline items={historyItems} />
       </div>
 
       {/* Testimonials Section */}
       <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
-        <SectionTitle eyebrow="Ce qu'ils disent de nous" title="Témoignages de Confiance" subtitle="Découvrez les retours d'expérience de nos clients partenaires, importateurs et étudiants." />
+        <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
 
       {/* Bureaux Section */}
       <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <SectionTitle eyebrow="Où nous trouver" title="Nos Bureaux Internationaux" />
+        <SectionTitle eyebrow={t("off_eyebrow")} title={t("off_title")} />
         <div className="grid-3" style={{justifyContent: "center"}}>
           {officesList.map((b, i) => (
             <ScrollReveal key={i} direction="up" delay={i * 0.1}>
@@ -1666,29 +1717,97 @@ function PageAccueil({ goTo }) {
         <div style={{ position: "relative", zIndex: 3, maxWidth: 650, margin: "0 auto" }}>
           <ScrollReveal direction="up" delay={0.1}>
             <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif", color: "#fff" }}>
-              Prêt à Conquérir le Marché Chinois ?
+              {t("cta_title")}
             </h2>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
             <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "3rem" }}>
-              Qu'il s'agisse d'importer des marchandises, d'obtenir une bourse d'études ou de sécuriser un visa, nos experts sont à votre entière disposition.
+              {t("cta_subtitle")}
             </p>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.3}>
             <GoldenBtn variant="white" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour, je souhaite démarrer un projet d'importation/études avec Easy China."))}>
-              <TrendingUp size={18} style={{marginRight: 8}}/> Discuter avec un Expert
+              <TrendingUp size={18} style={{marginRight: 8}}/> {t("cta_btn")}
             </GoldenBtn>
           </ScrollReveal>
         </div>
       </div>
 
+      {/* FAQ Section */}
+      <div style={{ padding: "6rem 2rem", maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <SectionTitle eyebrow={t("faq_eyebrow")} title={t("faq_title")} subtitle={t("faq_subtitle")} />
+        <FAQAccordion />
+      </div>
+
       {/* Formulaire de Contact */}
       <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 580, margin: "0 auto" }}>
-          <SectionTitle eyebrow="Formulaire direct" title="Parlons de Votre Projet" subtitle="Envoyez-nous un descriptif de votre besoin pour une étude de faisabilité gratuite sous 24h." />
+          <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />
         </div>
       </div>
+    </div>
+  );
+}
+
+// FAQ Accordion
+function FAQAccordion() {
+  useLang();
+  const faqs = [
+    { q: t("faq_q1"), a: t("faq_a1") },
+    { q: t("faq_q2"), a: t("faq_a2") },
+    { q: t("faq_q3"), a: t("faq_a3") },
+    { q: t("faq_q4"), a: t("faq_a4") },
+    { q: t("faq_q5"), a: t("faq_a5") },
+  ];
+  const [open, setOpen] = useState(null);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+      {faqs.map((faq, i) => (
+        <ScrollReveal key={i} direction="up" delay={i * 0.05}>
+          <div style={{
+            border: `1px solid ${open === i ? T.gold : T.border}`,
+            borderRadius: T.radius,
+            overflow: "hidden",
+            background: "#fff",
+            boxShadow: open === i ? "0 4px 20px rgba(201,48,44,0.08)" : "0 1px 4px rgba(0,0,0,0.04)",
+            transition: "all 0.3s ease",
+          }}>
+            <button
+              onClick={() => setOpen(open === i ? null : i)}
+              style={{
+                width: "100%", textAlign: "left", padding: "1.3rem 1.8rem",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                background: "none", border: "none", cursor: "pointer",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              <span style={{ fontWeight: 700, fontSize: "0.92rem", color: T.text, paddingRight: "1rem", lineHeight: 1.4 }}>
+                {faq.q}
+              </span>
+              <span style={{
+                width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+                background: open === i ? `linear-gradient(135deg, ${T.gold}, ${T.gold2})` : T.bgSection,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "all 0.3s ease",
+              }}>
+                <ChevronDown size={16}
+                  color={open === i ? "#fff" : T.muted}
+                  style={{ transform: open === i ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}
+                />
+              </span>
+            </button>
+            {open === i && (
+              <div style={{ padding: "0 1.8rem 1.4rem", animation: "pageEnter 0.25s ease" }}>
+                <p style={{ color: T.muted, fontSize: "0.88rem", lineHeight: 1.75, borderTop: `1px solid ${T.border}`, paddingTop: "1rem" }}>
+                  {faq.a}
+                </p>
+              </div>
+            )}
+          </div>
+        </ScrollReveal>
+      ))}
     </div>
   );
 }
@@ -1707,49 +1826,36 @@ const getBentoStyle = (index) => {
 
 // Formulaire de contact
 function ContactForm() {
+  useLang();
   const [f, setF] = useState({ nom: "", email: "", service: "Import & Logistique", msg: "" });
   const [honey, setHoney] = useState("");
   const [isSending, setIsSending] = useState(false);
-  
+
   const send = () => {
     if (isSending) return;
-    if (honey) {
-      // Silent spam block
-      return;
-    }
+    if (honey) return;
     if (!f.nom || !f.email || !f.msg) {
-      alert("Veuillez remplir tous les champs obligatoires.");
+      alert(t("form_required"));
       return;
     }
-
     setIsSending(true);
-
     const txt = `Bonjour Easy China,\n\nNom: ${sanitize(f.nom)}\nEmail: ${sanitize(f.email)}\nService concerné: ${f.service}\n\nMessage:\n${sanitize(f.msg)}`;
     window.open(waLink(WA_COMMERCIAL, txt));
-
-    setTimeout(() => {
-      setIsSending(false);
-    }, 2000);
+    setTimeout(() => setIsSending(false), 2000);
   };
 
   return (
     <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid ${T.border}` }}>
-      <input
-        type="text"
-        value={honey}
-        onChange={e => setHoney(e.target.value)}
-        style={{ display: "none" }}
-        tabIndex={-1}
-        autoComplete="off"
-      />
-      <Field label="Nom Complet *" value={f.nom} onChange={v => setF(p => ({ ...p, nom: v }))} placeholder="Votre nom et prénom" />
-      <Field label="Adresse Email *" type="email" value={f.email} onChange={v => setF(p => ({ ...p, email: v }))} placeholder="vous@entreprise.com" />
-      <Field label="Service Demandé" value={f.service} onChange={v => setF(p => ({ ...p, service: v }))}
+      <input type="text" value={honey} onChange={e => setHoney(e.target.value)}
+        style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+      <Field label={t("form_name")} value={f.nom} onChange={v => setF(p => ({ ...p, nom: v }))} placeholder={t("form_ph_name")} />
+      <Field label={t("form_email")} type="email" value={f.email} onChange={v => setF(p => ({ ...p, email: v }))} placeholder={t("form_ph_email")} />
+      <Field label={t("form_service")} value={f.service} onChange={v => setF(p => ({ ...p, service: v }))}
         options={["Import & Logistique", "Université & Études", "Formation Professionnelle", "Assistance Visa", "Tourisme & Business"]} />
-      <Field label="Message & Spécifications *" value={f.msg} onChange={v => setF(p => ({ ...p, msg: v }))} placeholder="Décrivez en détail votre besoin (quantités, budgets, délais)..." rows={4} />
+      <Field label={t("form_msg")} value={f.msg} onChange={v => setF(p => ({ ...p, msg: v }))} placeholder={t("form_ph_msg")} rows={4} />
       <GoldenBtn variant="solid" onClick={send} disabled={isSending} style={{ width: "100%", justifyContent: "center", marginTop: "1rem" }}>
         {isSending ? <Clock size={18} style={{marginRight: 8}}/> : <MessageCircle size={18} style={{marginRight: 8}}/>}
-        {isSending ? "Envoi en cours..." : "Envoyer le projet sur WhatsApp"}
+        {isSending ? t("form_sending") : t("form_btn")}
       </GoldenBtn>
     </GlassCard>
   );
@@ -1757,6 +1863,7 @@ function ContactForm() {
 
 // ─── PAGE CATALOGUE ──────────────────────────────────────────────────────────
 function PageCatalogue({ articles }) {
+  useLang();
   const [selectedCat, setSelectedCat] = useState("Tous");
 
   const categories = useMemo(() => {
@@ -1772,9 +1879,9 @@ function PageCatalogue({ articles }) {
   return (
     <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
       <SectionTitle
-        eyebrow="Notre Sourcing Direct"
-        title="Catalogue d'Importation"
-        subtitle="Découvrez notre sélection de produits industriels et matériels de haute qualité, sourcés directement auprès des meilleures usines certifiées en Chine."
+        eyebrow={t("cat_eyebrow")}
+        title={t("cat_title")}
+        subtitle={t("cat_subtitle")}
       />
 
       {/* Category Filter Pills */}
@@ -1897,12 +2004,13 @@ function PageCatalogue({ articles }) {
 
 // ─── PAGE RÉALISATIONS ────────────────────────────────────────────────────────
 function PageRealisations({ realisations }) {
+  useLang();
   return (
     <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
       <SectionTitle
-        eyebrow="Nos succès commerciaux"
-        title="Réalisations & Témoignages"
-        subtitle="Découvrez comment nous accompagnons nos clients partenaires au Togo et en Afrique dans la concrétisation de leurs projets académiques, logistiques et industriels."
+        eyebrow={t("real_eyebrow")}
+        title={t("real_title")}
+        subtitle={t("real_subtitle")}
       />
 
       {/* Bento Grid */}
@@ -2031,6 +2139,7 @@ function PageRealisations({ realisations }) {
 
 // ─── PAGE ÉQUIPE ─────────────────────────────────────────────────────────────
 function PageEquipe({ equipe }) {
+  useLang();
   const DEFAULT_IMG = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80";
 
   return (
@@ -2052,14 +2161,14 @@ function PageEquipe({ equipe }) {
         <ScrollReveal direction="up" delay={0.1}>
           <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.7)", letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
-            Notre Équipe
+            {t("eq_eyebrow")}
             <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
           </div>
           <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: "#fff", fontFamily: "'Syne', sans-serif", marginBottom: "1rem" }}>
-            Les Experts Easy China
+            {t("eq_title")}
           </h1>
           <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", maxWidth: 580, margin: "0 auto", lineHeight: 1.75 }}>
-            Une équipe pluridisciplinaire dédiée à la réussite de vos projets entre l'Afrique et la Chine — sur le terrain à Lomé, Guangzhou et Yiwu.
+            {t("eq_subtitle")}
           </p>
         </ScrollReveal>
       </div>
@@ -2130,7 +2239,7 @@ function PageEquipe({ equipe }) {
                       <GoldenBtn variant="outline"
                         onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour, je souhaite contacter ${member.nom} (${member.poste}) d'Easy China.`))}
                         style={{ width: "100%", marginTop: 4 }}>
-                        <MessageCircle size={14} style={{ marginRight: 6 }}/> Contacter via WhatsApp
+                        <MessageCircle size={14} style={{ marginRight: 6 }}/> {t("eq_contact")}
                       </GoldenBtn>
                     </div>
                   </div>
@@ -2603,6 +2712,23 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         </GoldenBtn>
       </div>
 
+      {/* Important notice about localStorage */}
+      <div style={{
+        background: "rgba(201,48,44,0.05)", border: `1.5px solid rgba(201,48,44,0.25)`,
+        borderRadius: T.radius, padding: "1.2rem 1.6rem", marginBottom: "2.5rem",
+        display: "flex", gap: 14, alignItems: "flex-start",
+      }}>
+        <AlertCircle size={20} color={T.gold} style={{ flexShrink: 0, marginTop: 2 }} />
+        <div>
+          <div style={{ fontWeight: 700, color: T.text, fontSize: "0.88rem", marginBottom: "0.3rem" }}>
+            ⚠️ Portée des modifications
+          </div>
+          <p style={{ color: T.muted, fontSize: "0.82rem", lineHeight: 1.6 }}>
+            Les modifications effectuées ici sont sauvegardées dans <strong>votre navigateur uniquement</strong> (localStorage). Pour que vos changements soient visibles par tous les visiteurs du site, il faut déployer une nouvelle version du site avec les données mises à jour. Contactez votre développeur ou utilisez le panneau de déploiement Vercel.
+          </p>
+        </div>
+      </div>
+
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* CATALOGUE CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
@@ -2902,6 +3028,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
 // ─── GLOBAL APP ROOT ─────────────────────────────────────────────────────────
 export default function App() {
+  useLang();
   const [page, setPage] = useState("accueil");
   
   const [articles, setArticlesState] = useState(() => {
@@ -3197,14 +3324,14 @@ export default function App() {
             </div>
           </div>
           <p style={{ fontSize: "0.82rem", letterSpacing: "0.3px", color: "#64748b" }}>
-            © 2025 <span style={{ color: "#fff", fontWeight: 700 }}>Easy China Services</span> — Agence de Liaison Commerciale & Académique Internationale.
+            {t("footer_copy")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-            {[["accueil","Accueil"],["catalogue","Catalogue d'Import"],["realisations","Réalisations"],["equipe","Notre Équipe"],["admin","Espace Pro"]].map(([k, l]) => (
+            {[["accueil","nav_accueil"],["catalogue","nav_catalogue"],["realisations","nav_realisations"],["equipe","nav_equipe"],["admin","nav_admin"]].map(([k, tk]) => (
               <span key={k} style={{ cursor: "pointer", color: "#94a3b8", transition: "color 0.2s", fontWeight: 500 }}
                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                 onMouseLeave={e => e.currentTarget.style.color = "#94a3b8"}
-                onClick={() => goTo(k)}>{l}</span>
+                onClick={() => goTo(k)}>{t(tk)}</span>
             ))}
           </div>
         </div>
