@@ -10,15 +10,16 @@ import {
 
 // ─── THEME & COLOR SYSTEM ───────────────────────────────────────────────────
 const T = {
-  bgDeep: "#050810",     // Fond de page ultra-sombre premium
-  bgCard: "#0d1117",     // Fond des cartes
-  bgGlass: "rgba(255, 255, 255, 0.04)",
-  gold: "#c9a84c",       // Or Luxe Signature
-  gold2: "#f0d080",      // Or Clair Hover
-  pink: "#e91e8c",       // Rose vibrant accent
-  border: "rgba(201, 168, 76, 0.15)", // Bordure fine dorée
-  text: "#f0ede8",       // Texte clair off-white
-  muted: "rgba(240, 237, 232, 0.45)",  // Texte estompé
+  bgDeep: "#ffffff",       // Fond blanc principal
+  bgCard: "#ffffff",       // Fond des cartes
+  bgSection: "#f8fafc",    // Sections alternées légères
+  bgGlass: "rgba(201, 48, 44, 0.03)",
+  gold: "#c9302c",         // Rouge Chine — accent principal
+  gold2: "#e53935",        // Rouge vif — survol
+  pink: "#1e3a8a",         // Marine — accent secondaire
+  border: "#e2e8f0",       // Bordure légère
+  text: "#0f172a",         // Texte sombre
+  muted: "#64748b",        // Texte atténué ardoise
   radius: 14,
 };
 
@@ -53,6 +54,39 @@ const DEFAULT_ARTICLES = [
   { id: "3", titre: "Textile de Lin & Soie Premium", prix: "À partir de 3 USD / m", desc: "Importation directe de rouleaux de textiles nobles depuis les meilleurs tisseurs de Zhejiang.", cat: "Textile", image: "" },
   { id: "4", titre: "Automates de Conditionnement Alimentaire", prix: "À partir de 2,400 USD", desc: "Machines de scellage, emballage et étiquetage de précision pour le secteur agroalimentaire.", cat: "Machines", image: "" },
   { id: "5", titre: "Pompes Solaires Agricoles Haute Efficacité", prix: "À partir de 800 USD", desc: "Systèmes d'irrigation alimentés par énergie solaire, idéaux pour les exploitations agricoles.", cat: "Import général", image: "" }
+];
+
+const DEFAULT_EQUIPE = [
+  {
+    id: "1",
+    nom: "Jean-Baptiste Koffi",
+    poste: "Directeur Général & Fondateur",
+    bio: "Passionné par les échanges sino-africains depuis plus de 10 ans, Jean-Baptiste a fondé Easy China en 2017 après plusieurs années passées à Guangzhou. Il supervise les opérations commerciales, les partenariats stratégiques et les négociations directes avec les usines chinoises.",
+    contact: "+228 90 12 34 56",
+    email: "direction@easychina-services.com",
+    specialites: "Import & Logistique,Partenariats Chine,Négociations B2B",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&h=600&q=80"
+  },
+  {
+    id: "2",
+    nom: "Amivi Sénamé",
+    poste: "Responsable Académique & Visas",
+    bio: "Ancienne boursière à l'Université de Wuhan, Amivi dirige depuis 2019 le pôle universitaire d'Easy China. Elle accompagne personnellement chaque étudiant dans ses démarches d'inscription, d'obtention de bourses gouvernementales et de visa d'études.",
+    contact: "+228 90 56 78 90",
+    email: "etudes@easychina-services.com",
+    specialites: "Admissions Universitaires,Bourses Gouvernementales,Visas Études",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&h=600&q=80"
+  },
+  {
+    id: "3",
+    nom: "Kwame Agbodjan",
+    poste: "Responsable Logistique & Transit",
+    bio: "Expert en transit international et dédouanement avec 8 ans d'expérience dans le fret maritime, Kwame gère l'ensemble de la chaîne logistique depuis les ports de Guangzhou et Yiwu jusqu'au port de Lomé. Il garantit la sécurité et la conformité de chaque cargaison.",
+    contact: "+228 90 34 56 78",
+    email: "logistique@easychina-services.com",
+    specialites: "Fret Maritime,Dédouanement,Inspection Qualité",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&h=600&q=80"
+  }
 ];
 
 const DEFAULT_REALISATIONS = [
@@ -220,7 +254,7 @@ const Img = ({ src, alt, style={} }) => {
       {!loaded && !err && (
         <div style={{
           position:"absolute",inset:0,
-          background:"linear-gradient(90deg, #0d1117 25%, rgba(201,168,76,0.15) 50%, #0d1117 75%)",
+          background:"linear-gradient(90deg, #f1f5f9 25%, rgba(201,48,44,0.07) 50%, #f1f5f9 75%)",
           backgroundSize:"200% 100%",
           animation:"shimmer 1.5s infinite linear",
           borderRadius:"inherit"
@@ -232,8 +266,8 @@ const Img = ({ src, alt, style={} }) => {
             onError={()=>setErr(true)}
             style={{width:"100%",height:"100%",objectFit:"cover",
               opacity:loaded?1:0,transition:"opacity .3s",borderRadius:"inherit"}}/>
-        : <div style={{width:"100%",height:"100%",background:"#0d1117",
-            border:"1px solid rgba(201,168,76,0.15)",
+        : <div style={{width:"100%",height:"100%",background:"#f8fafc",
+            border:`1px solid ${T.border}`,
             display:"flex",alignItems:"center",justifyContent:"center",
             color: T.gold,borderRadius:"inherit"}}>
             <Image size={32}/>
@@ -290,29 +324,36 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
       return {
         ...base,
         background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-        color: T.bgDeep,
-        boxShadow: isHovered && !disabled ? `0 8px 30px rgba(201, 168, 76, 0.4)` : `0 4px 15px rgba(201, 168, 76, 0.15)`,
+        color: "#fff",
+        boxShadow: isHovered && !disabled ? `0 8px 30px rgba(201, 48, 44, 0.35)` : `0 4px 15px rgba(201, 48, 44, 0.18)`,
       };
     } else if (variant === "outline") {
       return {
         ...base,
-        background: isHovered && !disabled ? "rgba(201, 168, 76, 0.08)" : "transparent",
+        background: isHovered && !disabled ? "rgba(201, 48, 44, 0.06)" : "transparent",
         color: T.gold,
         border: `1.5px solid ${T.gold}`,
-        boxShadow: isHovered && !disabled ? `0 0 20px rgba(201, 168, 76, 0.2)` : "none",
+        boxShadow: isHovered && !disabled ? `0 0 20px rgba(201, 48, 44, 0.15)` : "none",
       };
     } else if (variant === "ghost") {
       return {
         ...base,
-        background: isHovered && !disabled ? "rgba(255, 255, 255, 0.04)" : "transparent",
+        background: isHovered && !disabled ? "rgba(15, 23, 42, 0.04)" : "transparent",
         color: T.text,
       };
     } else if (variant === "glow") {
       return {
         ...base,
         background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-        color: T.bgDeep,
-        boxShadow: `0 0 25px rgba(201, 168, 76, 0.35)`,
+        color: "#fff",
+        boxShadow: `0 0 25px rgba(201, 48, 44, 0.3)`,
+      };
+    } else if (variant === "white") {
+      return {
+        ...base,
+        background: isHovered && !disabled ? "#f8fafc" : "#ffffff",
+        color: T.gold,
+        boxShadow: isHovered && !disabled ? `0 8px 30px rgba(0,0,0,0.18)` : `0 4px 15px rgba(0,0,0,0.1)`,
       };
     }
     return base;
@@ -326,8 +367,8 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
           inset: -3,
           borderRadius: 44,
           background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-          filter: "blur(12px)",
-          opacity: isHovered ? 0.8 : 0.4,
+          filter: "blur(14px)",
+          opacity: isHovered ? 0.5 : 0.25,
           animation: "pulseGlow 2.5s infinite ease-in-out",
           pointerEvents: "none",
           transition: "opacity 0.3s ease",
@@ -376,12 +417,12 @@ function GlassCard({ children, tilt = true, style = {}, lift = 5, className = ""
     const base = {
       position: "relative",
       borderRadius: T.radius,
-      background: "rgba(255, 255, 255, 0.03)",
-      backdropFilter: "blur(14px)",
-      border: `1px solid ${isHovered ? "rgba(201, 168, 76, 0.35)" : "rgba(201, 168, 76, 0.18)"}`,
+      background: "#ffffff",
+      backdropFilter: "none",
+      border: `1px solid ${isHovered ? "rgba(201, 48, 44, 0.22)" : T.border}`,
       padding: "2rem",
       overflow: "hidden",
-      boxShadow: isHovered ? "0 20px 45px rgba(0, 0, 0, 0.45)" : "0 4px 20px rgba(0, 0, 0, 0.2)",
+      boxShadow: isHovered ? "0 12px 40px rgba(0, 0, 0, 0.11)" : "0 2px 12px rgba(0, 0, 0, 0.06)",
     };
 
     if (tilt && isHovered) {
@@ -475,7 +516,7 @@ function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.6, s
 }
 
 // 6. ParticleCanvas
-function ParticleCanvas({ color = "#c9a84c", count = 50 }) {
+function ParticleCanvas({ color = "#c9302c", count = 50 }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -523,7 +564,7 @@ function ParticleCanvas({ color = "#c9a84c", count = 50 }) {
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             const opacity = (1 - dist / 120) * 0.12;
-            ctx.strokeStyle = `rgba(201, 168, 76, ${opacity})`;
+            ctx.strokeStyle = `rgba(201, 48, 44,${opacity})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -534,7 +575,7 @@ function ParticleCanvas({ color = "#c9a84c", count = 50 }) {
         const p = particles[i];
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(201, 168, 76, ${p.alpha})`;
+        ctx.fillStyle = `rgba(201, 48, 44,${p.alpha})`;
         ctx.fill();
 
         p.x += p.vx;
@@ -581,23 +622,26 @@ function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
       }}>
         {eyebrow && (
           <div style={{
-            fontSize: "0.75rem",
+            fontSize: "0.72rem",
             color: T.gold,
             letterSpacing: "3px",
             textTransform: "uppercase",
             fontWeight: 700,
-            marginBottom: "0.6rem",
+            marginBottom: "0.8rem",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
           }}>
+            <span style={{ display: "inline-block", width: 24, height: 2, background: T.gold, borderRadius: 2 }} />
             {eyebrow}
+            <span style={{ display: "inline-block", width: 24, height: 2, background: T.gold, borderRadius: 2 }} />
           </div>
         )}
         <h2 style={{
           fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
           fontWeight: 800,
-          background: `linear-gradient(90deg, ${T.gold}, ${T.gold2})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          display: "inline-block",
+          color: T.text,
+          display: "block",
           marginBottom: "0.8rem",
           lineHeight: 1.2,
           position: "relative",
@@ -605,14 +649,14 @@ function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
         }}>
           {title}
           <span style={{
-            position: "absolute",
-            bottom: -8,
-            left: centered ? "50%" : 0,
-            transform: centered ? "translateX(-50%)" : "none",
-            width: 45,
-            height: 2,
+            display: "block",
+            width: 48,
+            height: 3,
             background: T.gold,
-            borderRadius: 2,
+            borderRadius: 3,
+            marginTop: 12,
+            marginLeft: centered ? "auto" : 0,
+            marginRight: centered ? "auto" : 0,
           }} />
         </h2>
         {subtitle && (
@@ -645,8 +689,8 @@ function Timeline({ items }) {
         left: "50%",
         top: 0,
         bottom: 0,
-        width: 1,
-        background: `linear-gradient(to bottom, transparent, rgba(201, 168, 76, 0.3) 15%, rgba(201, 168, 76, 0.3) 85%, transparent)`,
+        width: 2,
+        background: `linear-gradient(to bottom, transparent, rgba(201, 48, 44, 0.25) 15%, rgba(201, 48, 44, 0.25) 85%, transparent)`,
         transform: "translateX(-50%)",
       }} />
 
@@ -668,13 +712,13 @@ function Timeline({ items }) {
               position: "absolute",
               left: "50%",
               top: 24,
-              width: 12,
-              height: 12,
+              width: 14,
+              height: 14,
               borderRadius: "50%",
-              background: T.bgDeep,
-              border: `3px solid ${T.gold}`,
+              background: T.gold,
+              border: `3px solid #fff`,
               transform: "translateX(-50%)",
-              boxShadow: `0 0 12px ${T.gold}`,
+              boxShadow: `0 0 0 3px rgba(201, 48, 44, 0.15)`,
               zIndex: 3,
             }} />
 
@@ -729,10 +773,10 @@ function Testimonial({ quote, author, role, stars }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{
           width: 44, height: 44, borderRadius: "50%",
-          background: `linear-gradient(135deg, ${T.gold}, ${T.pink})`,
-          border: `1.5px solid ${T.gold}`,
+          background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
+          border: `1.5px solid rgba(201, 48, 44, 0.2)`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 800, color: T.bgDeep, fontSize: "0.95rem"
+          fontWeight: 800, color: "#fff", fontSize: "0.95rem"
         }}>
           {author.charAt(0)}
         </div>
@@ -791,7 +835,7 @@ function TestimonialCarousel() {
               height: 8,
               borderRadius: 4,
               border: "none",
-              background: active === i ? T.gold : "rgba(255, 255, 255, 0.2)",
+              background: active === i ? T.gold : T.border,
               cursor: "pointer",
               transition: "all 0.3s ease",
             }}
@@ -813,24 +857,24 @@ const Logo = ({ onClick, size="md" }) => {
         xmlns="http://www.w3.org/2000/svg">
         <rect width="42" height="42" rx="11" fill="url(#logoGrad)"/>
         <path d="M10 13h10M10 13v16M10 21h8M10 29h10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M24 16a7 7 0 1 0 0 10" stroke="#f0d080" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-        <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6" fill="#e53935" opacity=".9"/>
+        <path d="M24 16a7 7 0 1 0 0 10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+        <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6" fill="#fff" opacity=".9"/>
         <defs>
           <linearGradient id="logoGrad" x1="0" y1="0" x2="42" y2="42">
-            <stop offset="0%" stopColor="#0d1117"/>
-            <stop offset="100%" stopColor="#1a2540"/>
+            <stop offset="0%" stopColor="#c9302c"/>
+            <stop offset="100%" stopColor="#b71c1c"/>
           </linearGradient>
         </defs>
       </svg>
       <div style={{lineHeight:1.15, textAlign: "left"}}>
         <div style={{
-          color:"#fff", fontWeight:800, fontSize:"1.05rem",
+          color: T.text, fontWeight:800, fontSize:"1.05rem",
           letterSpacing:"2.5px", fontFamily:"'Syne','Segoe UI',sans-serif"
         }}>
-          EASY <span style={{color:"#c9a84c"}}>CHINA</span>
+          EASY <span style={{color: T.gold}}>CHINA</span>
         </div>
         <div style={{
-          color:"rgba(255,255,255,.35)", fontSize:".48rem",
+          color: T.muted, fontSize:".48rem",
           letterSpacing:"3.5px", marginTop:2, textTransform:"uppercase"
         }}>
           Togo · Réunion · Chine
@@ -863,28 +907,28 @@ function FloatingNav({ pages, activePage, setPage }) {
         width: `${progress}%`,
         height: 3,
         background: `linear-gradient(to right, ${T.gold}, ${T.gold2})`,
-        zIndex: 1001,
+        zIndex: 1003,
         transition: "width 0.1s ease",
       }} />
 
       <nav style={{
         position: "fixed",
-        top: isScrolled ? 14 : 0,
-        left: isScrolled ? "5%" : 0,
-        right: isScrolled ? "5%" : 0,
-        width: isScrolled ? "90%" : "100%",
+        top: isScrolled ? 12 : 0,
+        left: isScrolled ? "4%" : 0,
+        right: isScrolled ? "4%" : 0,
+        width: isScrolled ? "92%" : "100%",
         maxWidth: 1400,
         margin: "0 auto",
-        background: isScrolled ? "rgba(5, 8, 16, 0.78)" : "transparent",
-        backdropFilter: isScrolled ? "blur(18px)" : "none",
-        border: isScrolled ? `1px solid rgba(201, 168, 76, 0.15)` : "1px solid transparent",
-        borderTop: isScrolled ? `1.5px solid rgba(201, 168, 76, 0.25)` : "1px solid transparent",
+        background: isScrolled ? "rgba(255, 255, 255, 0.96)" : "rgba(255, 255, 255, 0.9)",
+        backdropFilter: "blur(16px)",
+        border: isScrolled ? `1px solid ${T.border}` : `1px solid rgba(226, 232, 240, 0.6)`,
         borderRadius: isScrolled ? T.radius : 0,
-        height: 70,
+        height: 68,
         padding: "0 2.5rem",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        boxShadow: isScrolled ? "0 4px 20px rgba(0, 0, 0, 0.08)" : "0 1px 0 rgba(0,0,0,0.05)",
         transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         zIndex: 1000,
       }}>
@@ -914,7 +958,7 @@ function FloatingNav({ pages, activePage, setPage }) {
             zIndex: 1002,
           }}
         >
-          {isOpen ? <X size={24} color={T.gold}/> : <Menu size={24} color={T.gold}/>}
+          {isOpen ? <X size={24} color={T.text}/> : <Menu size={24} color={T.text}/>}
         </button>
       </nav>
 
@@ -922,7 +966,7 @@ function FloatingNav({ pages, activePage, setPage }) {
         <div style={{
           position: "fixed",
           inset: 0,
-          background: "rgba(5, 8, 16, 0.98)",
+          background: "rgba(255, 255, 255, 0.98)",
           backdropFilter: "blur(20px)",
           zIndex: 999,
           display: "flex",
@@ -965,9 +1009,9 @@ function NavBtn({ label, active, onClick }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: active || hov ? "rgba(201, 168, 76, 0.08)" : "none",
+        background: active ? "rgba(201, 48, 44, 0.07)" : hov ? "rgba(15, 23, 42, 0.04)" : "none",
         border: "none",
-        color: active ? T.gold : hov ? "#fff" : T.muted,
+        color: active ? T.gold : hov ? T.text : T.muted,
         cursor: "pointer",
         padding: "0.55rem 1.15rem",
         borderRadius: 8,
@@ -1001,9 +1045,9 @@ function Tag({ children }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: hov ? "rgba(201, 168, 76, 0.18)" : "rgba(201, 168, 76, 0.08)",
+        background: hov ? "rgba(201, 48, 44, 0.1)" : "rgba(201, 48, 44, 0.05)",
         color: T.gold,
-        border: `1px solid rgba(201, 168, 76, ${hov ? 0.4 : 0.2})`,
+        border: `1px solid rgba(201, 48, 44, ${hov ? 0.35 : 0.18})`,
         padding: "0.45rem 1rem",
         borderRadius: 20,
         fontSize: "0.75rem",
@@ -1025,15 +1069,15 @@ function CityPill({ children }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: hov ? "rgba(201, 168, 76, 0.1)" : "rgba(255, 255, 255, 0.03)",
-        border: `1px solid ${hov ? T.gold : "rgba(255, 255, 255, 0.08)"}`,
+        background: hov ? "rgba(201, 48, 44, 0.07)" : T.bgSection,
+        border: `1px solid ${hov ? T.gold : T.border}`,
         padding: "0.45rem 1.25rem",
         borderRadius: 30,
         fontSize: "0.8rem",
         fontWeight: 600,
-        color: hov ? T.gold2 : T.text,
+        color: hov ? T.gold : T.text,
         transform: hov ? "translateY(-2px)" : "translateY(0)",
-        boxShadow: hov ? "0 4px 15px rgba(201,168,76,0.15)" : "none",
+        boxShadow: hov ? "0 4px 15px rgba(201,48,44,0.1)" : "none",
         transition: "all 0.25s ease",
         cursor: "default"
       }}
@@ -1049,14 +1093,14 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
   const baseStyle = {
     width: "100%",
     padding: "0.85rem 1.1rem",
-    border: `1.5px solid ${foc ? T.gold : "rgba(201, 168, 76, 0.2)"}`,
+    border: `1.5px solid ${foc ? T.gold : T.border}`,
     borderRadius: 10,
     fontSize: "0.88rem",
-    background: T.bgDeep,
+    background: foc ? "#fff" : T.bgSection,
     color: T.text,
     fontFamily: "'Inter', sans-serif",
     outline: "none",
-    boxShadow: foc ? `0 0 15px rgba(201, 168, 76, 0.15)` : "none",
+    boxShadow: foc ? `0 0 0 3px rgba(201, 48, 44, 0.1)` : "none",
     transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   };
 
@@ -1083,7 +1127,7 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
           style={{ ...baseStyle, cursor: "pointer" }}
         >
           {options.map((o) => (
-            <option key={o} value={o} style={{ background: T.bgCard, color: T.text }}>
+            <option key={o} value={o} style={{ background: "#fff", color: T.text }}>
               {o}
             </option>
           ))}
@@ -1209,114 +1253,179 @@ function SEOHead({ page }) {
 
 // ─── PAGES & SECTIONS ────────────────────────────────────────────────────────
 
-// 1. Section Hero
+// 1. Section Hero — Split Layout Light
 function HeroSection({ goTo }) {
-  const { parallaxOffset, scale } = useParallaxHero();
+  const heroStats = [
+    { n: 500, l: "Étudiants placés", s: "+" },
+    { n: 8, l: "Années d'expérience", s: "+" },
+    { n: 2, l: "Bureaux physiques", s: "" },
+    { n: 100, l: "Accompagnement", s: "%" },
+  ];
 
   return (
-    <div style={{
-      position: "relative",
+    <div className="hero-split" style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
       minHeight: "100vh",
-      background: T.bgDeep,
-      color: "#fff",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      textAlign: "center",
-      padding: "8rem 2rem 4rem",
-      overflow: "hidden"
+      overflow: "hidden",
     }}>
+      {/* Left — Text Content */}
       <div style={{
-        position: "absolute",
-        inset: 0,
-        transform: `translateY(${parallaxOffset}px)`,
-        zIndex: 0,
-        pointerEvents: "none",
+        background: "#ffffff",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "7rem 4rem 4rem clamp(2rem, 8%, 6rem)",
       }}>
-        <Img 
-          src="https://images.unsplash.com/photo-1540759786422-c60d5ed57d7b?auto=format&fit=crop&w=1600&h=900&q=80" 
-          alt="Shanghai skyline" 
-          style={{ borderRadius: 0, width: "100%", height: "120%" }} 
-        />
-      </div>
-
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(5, 8, 16, 0.75)",
-        zIndex: 1,
-        pointerEvents: "none"
-      }} />
-
-      <ParticleCanvas color={T.gold} count={50} />
-
-      <div style={{
-        position: "relative",
-        zIndex: 2,
-        maxWidth: 800,
-        margin: "0 auto",
-        transform: `scale(${scale})`,
-        transition: "transform 0.1s ease-out"
-      }}>
-        <ScrollReveal direction="up" delay={0.1}>
+        <ScrollReveal direction="right" delay={0.1}>
           <div style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 6,
-            background: "rgba(201, 168, 76, 0.08)",
-            border: `1px solid rgba(201, 168, 76, 0.25)`,
+            gap: 8,
+            background: "rgba(201, 48, 44, 0.07)",
+            border: "1px solid rgba(201, 48, 44, 0.2)",
             color: T.gold,
-            fontSize: "0.75rem",
-            padding: "0.45rem 1rem",
+            fontSize: "0.72rem",
+            padding: "0.45rem 1.1rem",
             borderRadius: 30,
             marginBottom: "2rem",
-            letterSpacing: 2,
+            letterSpacing: "2.5px",
             textTransform: "uppercase",
-            fontWeight: 600
+            fontWeight: 700,
           }}>
-            <Globe size={16} style={{marginRight: 4}}/> Togo · La Réunion · Chine
+            <Globe size={13}/> Togo · La Réunion · Chine
           </div>
         </ScrollReveal>
 
-        <ScrollReveal direction="up" delay={0.2}>
+        <ScrollReveal direction="right" delay={0.2}>
           <h1 style={{
-            fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
+            fontSize: "clamp(2.2rem, 4vw, 3.8rem)",
             fontWeight: 800,
-            lineHeight: 1.15,
+            lineHeight: 1.1,
             marginBottom: "1.5rem",
             fontFamily: "'Syne', sans-serif",
-            letterSpacing: "-1px"
+            color: T.text,
+            letterSpacing: "-0.5px",
           }}>
-            EASY CHINA<br/>
-            <span style={{
-              background: `linear-gradient(90deg, ${T.gold}, ${T.gold2})`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
-            }}>Votre Pont Vers la Chine</span>
+            EASY CHINA
+            <br/>
+            <span style={{ color: T.gold }}>Votre Pont Vers la Chine</span>
           </h1>
         </ScrollReveal>
 
-        <ScrollReveal direction="up" delay={0.3}>
+        <ScrollReveal direction="right" delay={0.3}>
           <p style={{
             color: T.muted,
-            fontSize: "clamp(0.95rem, 2vw, 1.15rem)",
-            maxWidth: 600,
-            margin: "0 auto 3rem",
-            lineHeight: 1.75
+            fontSize: "1rem",
+            maxWidth: 460,
+            lineHeight: 1.8,
+            marginBottom: "2.5rem",
           }}>
             Sécurisez vos investissements, vos études et vos déplacements en Chine. Notre agence internationale vous accompagne à chaque étape directement depuis le Togo.
           </p>
         </ScrollReveal>
 
-        <ScrollReveal direction="up" delay={0.4} style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <GoldenBtn variant="glow" onClick={() => goTo("catalogue")}>
-            <Package size={18} style={{marginRight: 8}}/> Découvrir le Catalogue
-          </GoldenBtn>
-          <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
-            <MessageCircle size={18} style={{marginRight: 8}}/> WhatsApp Direct
-          </GoldenBtn>
+        <ScrollReveal direction="right" delay={0.4}>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
+            <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
+              <Package size={17} style={{marginRight: 8}}/> Découvrir le Catalogue
+            </GoldenBtn>
+            <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
+              <MessageCircle size={17} style={{marginRight: 8}}/> WhatsApp Direct
+            </GoldenBtn>
+          </div>
         </ScrollReveal>
+
+        <ScrollReveal direction="right" delay={0.5}>
+          <div style={{
+            display: "flex",
+            gap: "2.5rem",
+            paddingTop: "2rem",
+            borderTop: `1px solid ${T.border}`,
+            flexWrap: "wrap",
+          }}>
+            {heroStats.map((s, i) => (
+              <div key={i}>
+                <div style={{
+                  fontSize: "1.9rem",
+                  fontWeight: 800,
+                  color: T.gold,
+                  fontFamily: "'Syne', sans-serif",
+                  lineHeight: 1,
+                }}>
+                  <AnimatedCounter value={s.n} suffix={s.s} duration={2} />
+                </div>
+                <div style={{
+                  fontSize: "0.7rem",
+                  color: T.muted,
+                  textTransform: "uppercase",
+                  letterSpacing: "1.2px",
+                  fontWeight: 600,
+                  marginTop: 4,
+                }}>
+                  {s.l}
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
+      </div>
+
+      {/* Right — Image Panel */}
+      <div className="hero-image-panel" style={{ position: "relative", overflow: "hidden", minHeight: "60vh" }}>
+        <Img
+          src="https://images.unsplash.com/photo-1540759786422-c60d5ed57d7b?auto=format&fit=crop&w=1200&h=1400&q=80"
+          alt="Shanghai skyline"
+          style={{ borderRadius: 0, height: "100%", width: "100%" }}
+        />
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.25) 100%)",
+          zIndex: 1,
+        }} />
+        {/* Floating info card */}
+        <div style={{
+          position: "absolute",
+          bottom: 36,
+          left: 32,
+          background: "rgba(255, 255, 255, 0.97)",
+          backdropFilter: "blur(12px)",
+          borderRadius: T.radius,
+          padding: "1.1rem 1.4rem",
+          zIndex: 2,
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
+        }}>
+          <div style={{
+            width: 42,
+            height: 42,
+            background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
+            borderRadius: 11,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <MapPin size={20} color="#fff" />
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: "0.88rem", color: T.text, lineHeight: 1.3 }}>Bureaux Permanents</div>
+            <div style={{ fontSize: "0.75rem", color: T.muted, marginTop: 2 }}>Lomé · Guangzhou · Yiwu</div>
+          </div>
+        </div>
+        {/* Red accent ribbon */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 5,
+          height: "100%",
+          background: `linear-gradient(to bottom, ${T.gold}, ${T.gold2})`,
+          zIndex: 2,
+        }} />
       </div>
     </div>
   );
@@ -1354,43 +1463,6 @@ function PageAccueil({ goTo }) {
     <div>
       <HeroSection goTo={goTo} />
 
-      {/* Stats Band */}
-      <div style={{
-        background: "rgba(255, 255, 255, 0.01)",
-        borderTop: `1px solid ${T.border}`,
-        borderBottom: `1px solid ${T.border}`,
-        padding: "3rem 2rem",
-        position: "relative",
-        zIndex: 2,
-      }}>
-        <div className="grid-4" style={{ maxWidth: 1100, margin: "0 auto" }}>
-          {stats.map((s, i) => (
-            <ScrollReveal key={i} direction="up" delay={i * 0.08} style={{ textAlign: "center" }}>
-              <div style={{
-                fontSize: "clamp(2rem, 5vw, 3rem)",
-                fontWeight: 800,
-                fontFamily: "'Syne', sans-serif",
-                background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                marginBottom: "0.5rem"
-              }}>
-                <AnimatedCounter value={s.n} suffix={s.s} duration={2.2} />
-              </div>
-              <div style={{
-                fontSize: "0.75rem",
-                color: T.muted,
-                letterSpacing: "1.5px",
-                textTransform: "uppercase",
-                fontWeight: 600
-              }}>
-                {s.l}
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </div>
-
       {/* Services Grid */}
       <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow="Ce que nous faisons" title="Nos Services d'Élite" subtitle="Une expertise locale et internationale sur mesure pour concrétiser tous vos projets avec la Chine." />
@@ -1402,15 +1474,15 @@ function PageAccueil({ goTo }) {
                   <Img src={UNSPLASH_REAL[s.cat] || UNSPLASH[s.cat]} alt={s.title} style={{ borderRadius: "0px", height: "100%" }} />
                   <div style={{
                     position: "absolute", inset: 0,
-                    background: "linear-gradient(to bottom, transparent, rgba(5,8,16,0.9))",
+                    background: "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55))",
                   }} />
                   <div style={{
                     position: "absolute", bottom: -20, left: "2rem",
                     width: 50, height: 50, borderRadius: 12,
                     background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: "0 8px 20px rgba(201,168,76,0.3)",
-                    color: T.bgDeep,
+                    boxShadow: "0 8px 20px rgba(201,48,44,0.3)",
+                    color: "#fff",
                     zIndex: 3
                   }}>{s.icon}</div>
                 </div>
@@ -1430,12 +1502,12 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Tourisme & Business Section */}
-      <div style={{ background: "rgba(255, 255, 255, 0.01)", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div className="grid-50-50" style={{ maxWidth: 1100, margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: "0.75rem", color: T.gold, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>Voyages & Affaires</div>
-              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
+              <div style={{ fontSize: "0.72rem", color: T.gold, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>Voyages & Affaires</div>
+              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: T.text, lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
                 Tourisme & Business en Immersion
               </h2>
               <p style={{ color: T.muted, lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "0.95rem" }}>
@@ -1453,7 +1525,7 @@ function PageAccueil({ goTo }) {
           </ScrollReveal>
 
           <ScrollReveal direction="right" delay={0.2}>
-            <GlassCard tilt={true} style={{ padding: "2.5rem", textAlign: "center", background: "rgba(201, 168, 76, 0.02)" }}>
+            <GlassCard tilt={true} style={{ padding: "2.5rem", textAlign: "center", background: "rgba(201, 48, 44,0.02)" }}>
               <div style={{ height: 250, marginBottom: "2rem", borderRadius: T.radius, overflow: "hidden" }}>
                 <Img src="https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
               </div>
@@ -1477,7 +1549,7 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Testimonials Section */}
-      <div style={{ background: "rgba(255, 255, 255, 0.01)", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow="Ce qu'ils disent de nous" title="Témoignages de Confiance" subtitle="Découvrez les retours d'expérience de nos clients partenaires, importateurs et étudiants." />
         <TestimonialCarousel />
       </div>
@@ -1507,27 +1579,39 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* CTA Final */}
-      <div style={{ padding: "8rem 2rem", textAlign: "center", position: "relative", overflow: "hidden", zIndex: 2 }}>
+      <div style={{
+        background: `linear-gradient(135deg, ${T.gold} 0%, ${T.gold2} 60%, #b71c1c 100%)`,
+        padding: "7rem 2rem",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+        zIndex: 2,
+      }}>
+        {/* Geometric decorations */}
         <div style={{
-          position: "absolute", left: "50%", top: "50%",
-          width: 400, height: 400, borderRadius: "50%",
-          background: T.gold, opacity: 0.08, filter: "blur(80px)",
-          transform: "translate(-50%, -50%)", pointerEvents: "none"
+          position: "absolute", left: "-5%", top: "-30%",
+          width: 450, height: 450, borderRadius: "50%",
+          background: "rgba(255,255,255,0.06)", pointerEvents: "none"
         }} />
-        
+        <div style={{
+          position: "absolute", right: "-5%", bottom: "-30%",
+          width: 350, height: 350, borderRadius: "50%",
+          background: "rgba(255,255,255,0.06)", pointerEvents: "none"
+        }} />
+
         <div style={{ position: "relative", zIndex: 3, maxWidth: 650, margin: "0 auto" }}>
           <ScrollReveal direction="up" delay={0.1}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif", color: "#fff" }}>
               Prêt à Conquérir le Marché Chinois ?
             </h2>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
-            <p style={{ color: T.muted, fontSize: "1rem", lineHeight: 1.7, marginBottom: "3rem" }}>
+            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "3rem" }}>
               Qu'il s'agisse d'importer des marchandises, d'obtenir une bourse d'études ou de sécuriser un visa, nos experts sont à votre entière disposition.
             </p>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.3}>
-            <GoldenBtn variant="glow" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour, je souhaite démarrer un projet d'importation/études avec Easy China."))}>
+            <GoldenBtn variant="white" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour, je souhaite démarrer un projet d'importation/études avec Easy China."))}>
               <TrendingUp size={18} style={{marginRight: 8}}/> Discuter avec un Expert
             </GoldenBtn>
           </ScrollReveal>
@@ -1535,7 +1619,7 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Formulaire de Contact */}
-      <div style={{ background: "rgba(255,255,255,0.01)", borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 580, margin: "0 auto" }}>
           <SectionTitle eyebrow="Formulaire direct" title="Parlons de Votre Projet" subtitle="Envoyez-nous un descriptif de votre besoin pour une étude de faisabilité gratuite sous 24h." />
           <ContactForm />
@@ -1585,7 +1669,7 @@ function ContactForm() {
   };
 
   return (
-    <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid rgba(201, 168, 76, 0.25)` }}>
+    <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid ${T.border}` }}>
       <input
         type="text"
         value={honey}
@@ -1645,16 +1729,16 @@ function PageCatalogue({ articles }) {
                 key={c}
                 onClick={() => setSelectedCat(c)}
                 style={{
-                  background: isActive ? `linear-gradient(135deg, ${T.gold}, ${T.gold2})` : "rgba(255, 255, 255, 0.03)",
-                  border: `1px solid ${isActive ? T.gold2 : "rgba(201, 168, 76, 0.15)"}`,
-                  color: isActive ? T.bgDeep : T.text,
+                  background: isActive ? `linear-gradient(135deg, ${T.gold}, ${T.gold2})` : T.bgSection,
+                  border: `1px solid ${isActive ? T.gold : T.border}`,
+                  color: isActive ? "#fff" : T.muted,
                   padding: "0.6rem 1.5rem",
                   borderRadius: 30,
                   fontSize: "0.85rem",
                   fontWeight: 600,
                   cursor: "pointer",
                   transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-                  boxShadow: isActive ? "0 4px 15px rgba(201, 168, 76, 0.3)" : "none",
+                  boxShadow: isActive ? "0 4px 15px rgba(201, 48, 44, 0.25)" : "none",
                   transform: isActive ? "translateY(-2px)" : "translateY(0)"
                 }}
               >
@@ -1785,7 +1869,7 @@ function PageRealisations({ realisations }) {
                       />
                       <div style={{
                         position: "absolute", inset: 0,
-                        background: "linear-gradient(to bottom, transparent, rgba(13, 17, 23, 0.95))"
+                        background: "linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.7))"
                       }} />
                     </div>
                   )}
@@ -1794,8 +1878,8 @@ function PageRealisations({ realisations }) {
                     <div>
                       <div style={{ display: "flex", alignItems: "center", justifyContext: "space-between", marginBottom: "0.8rem", justifyContent: "space-between" }}>
                         <span style={{
-                          background: "rgba(201, 168, 76, 0.08)",
-                          border: `1px solid rgba(201, 168, 76, 0.25)`,
+                          background: "rgba(201, 48, 44,0.08)",
+                          border: `1px solid rgba(201, 48, 44,0.25)`,
                           color: T.gold,
                           fontSize: "0.68rem",
                           fontWeight: 700,
@@ -1833,7 +1917,7 @@ function PageRealisations({ realisations }) {
                     {/* Testimonial Quote inside Bento Box */}
                     {r.temoignage && (
                       <div style={{
-                        borderTop: `1px solid rgba(201, 168, 76, 0.1)`,
+                        borderTop: `1px solid ${T.border}`,
                         paddingTop: "1.2rem",
                         marginTop: "1rem"
                       }}>
@@ -1861,12 +1945,12 @@ function PageRealisations({ realisations }) {
 
       <ScrollReveal direction="up" delay={0.1}>
         <GlassCard style={{
-          background: "linear-gradient(135deg, rgba(201, 168, 76, 0.03), rgba(233, 30, 140, 0.02))",
+          background: `linear-gradient(135deg, ${T.bgSection}, #fff)`,
           border: `1.5px solid ${T.border}`,
           padding: "3.5rem",
           textAlign: "center"
         }}>
-          <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#fff", marginBottom: "1rem", fontFamily: "'Syne', sans-serif" }}>
+          <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: T.text, marginBottom: "1rem", fontFamily: "'Syne', sans-serif" }}>
             Vous aussi, concrétisez vos projets avec la Chine !
           </h3>
           <p style={{ color: T.muted, fontSize: "0.95rem", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
@@ -1877,6 +1961,128 @@ function PageRealisations({ realisations }) {
           </GoldenBtn>
         </GlassCard>
       </ScrollReveal>
+    </div>
+  );
+}
+
+// ─── PAGE ÉQUIPE ─────────────────────────────────────────────────────────────
+function PageEquipe({ equipe }) {
+  const DEFAULT_IMG = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80";
+
+  return (
+    <div style={{ padding: "8rem 2rem 6rem" }}>
+      {/* Hero Banner */}
+      <div style={{
+        background: `linear-gradient(135deg, ${T.gold} 0%, ${T.gold2} 60%, #b71c1c 100%)`,
+        borderRadius: T.radius,
+        padding: "4rem 3rem",
+        textAlign: "center",
+        marginBottom: "5rem",
+        position: "relative",
+        overflow: "hidden",
+        maxWidth: 1100,
+        margin: "0 auto 5rem",
+      }}>
+        <div style={{ position: "absolute", left: "-5%", top: "-40%", width: 400, height: 400, borderRadius: "50%", background: "rgba(255,255,255,0.07)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: "-5%", bottom: "-40%", width: 320, height: 320, borderRadius: "50%", background: "rgba(255,255,255,0.07)", pointerEvents: "none" }} />
+        <ScrollReveal direction="up" delay={0.1}>
+          <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.7)", letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
+            Notre Équipe
+            <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
+          </div>
+          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: "#fff", fontFamily: "'Syne', sans-serif", marginBottom: "1rem" }}>
+            Les Experts Easy China
+          </h1>
+          <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", maxWidth: 580, margin: "0 auto", lineHeight: 1.75 }}>
+            Une équipe pluridisciplinaire dédiée à la réussite de vos projets entre l'Afrique et la Chine — sur le terrain à Lomé, Guangzhou et Yiwu.
+          </p>
+        </ScrollReveal>
+      </div>
+
+      {/* Team Cards */}
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div className="grid-3">
+          {equipe.map((member, i) => {
+            const specs = member.specialites ? member.specialites.split(",").map(s => s.trim()).filter(Boolean) : [];
+            return (
+              <ScrollReveal key={member.id} direction="up" delay={i * 0.1}>
+                <GlassCard tilt={true} style={{ padding: 0, overflow: "hidden", height: "100%", display: "flex", flexDirection: "column" }}>
+                  {/* Photo */}
+                  <div style={{ height: 300, position: "relative", flexShrink: 0 }}>
+                    <Img src={member.image || DEFAULT_IMG} alt={member.nom} style={{ height: "100%", borderRadius: "0px" }} />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.65))" }} />
+                    {/* Name overlay on photo */}
+                    <div style={{ position: "absolute", bottom: 18, left: 22, right: 22, zIndex: 2 }}>
+                      <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#fff", marginBottom: 2, fontFamily: "'Syne', sans-serif" }}>{member.nom}</h3>
+                      <div style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.78rem", fontWeight: 600 }}>{member.poste}</div>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div style={{ padding: "1.8rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <p style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.7, marginBottom: "1.2rem" }}>{member.bio}</p>
+
+                      {specs.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
+                          {specs.map((s, j) => (
+                            <span key={j} style={{
+                              background: "rgba(201,48,44,0.06)",
+                              border: "1px solid rgba(201,48,44,0.18)",
+                              color: T.gold,
+                              padding: "0.3rem 0.75rem",
+                              borderRadius: 20,
+                              fontSize: "0.72rem",
+                              fontWeight: 600,
+                            }}>{s}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Contact */}
+                    <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: "1.2rem", display: "flex", flexDirection: "column", gap: 10 }}>
+                      {member.contact && (
+                        <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.color = T.gold}
+                          onMouseLeave={e => e.currentTarget.style.color = T.muted}>
+                          <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <Phone size={13} color={T.gold} />
+                          </span>
+                          {member.contact}
+                        </a>
+                      )}
+                      {member.email && (
+                        <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.color = T.gold}
+                          onMouseLeave={e => e.currentTarget.style.color = T.muted}>
+                          <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <Mail size={13} color={T.gold} />
+                          </span>
+                          {member.email}
+                        </a>
+                      )}
+                      <GoldenBtn variant="outline"
+                        onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour, je souhaite contacter ${member.nom} (${member.poste}) d'Easy China.`))}
+                        style={{ width: "100%", marginTop: 4 }}>
+                        <MessageCircle size={14} style={{ marginRight: 6 }}/> Contacter via WhatsApp
+                      </GoldenBtn>
+                    </div>
+                  </div>
+                </GlassCard>
+              </ScrollReveal>
+            );
+          })}
+        </div>
+
+        {equipe.length === 0 && (
+          <div style={{ textAlign: "center", padding: "4rem 2rem", color: T.muted }}>
+            <Users size={48} style={{ opacity: 0.3, marginBottom: "1rem" }} />
+            <p>L'équipe n'a pas encore été renseignée.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -1910,9 +2116,9 @@ const ImageUpload = ({ value, onChange }) => {
         onDragLeave={()=>setDrag(false)}
         onDrop={e=>{e.preventDefault();setDrag(false);handleFile(e.dataTransfer.files[0])}}
         style={{
-          border:`2px dashed ${drag?"#c9a84c":"rgba(201, 168, 76, 0.2)"}`,
+          border:`2px dashed ${drag?T.gold:T.border}`,
           borderRadius:12, padding:"1rem", textAlign:"center",
-          cursor:"pointer", background: drag?"rgba(201,168,76,0.05)":"rgba(255,255,255,0.02)",
+          cursor:"pointer", background: drag?"rgba(201,48,44,0.05)":T.bgSection,
           transition:"all .2s", position:"relative", minHeight:120,
           display:"flex", flexDirection:"column", alignItems:"center",
           justifyContent:"center", gap:8
@@ -1933,7 +2139,7 @@ const ImageUpload = ({ value, onChange }) => {
           : <>
               <Upload size={28} style={{color: T.gold, opacity: 0.6}}/>
               <p style={{fontSize:".8rem",color:"#aaa",margin:0}}>
-                Glisse une photo ici ou <span style={{color:"#c9a84c",
+                Glisse une photo ici ou <span style={{color: T.gold,
                 fontWeight:600}}>clique pour choisir</span>
               </p>
               <p style={{fontSize:".7rem",color:"#ccc",margin:0}}>PNG, JPG, WEBP · Max 5MB</p>
@@ -1946,15 +2152,15 @@ const ImageUpload = ({ value, onChange }) => {
         type="text" value={preview.startsWith("data:") ? "" : preview}
         onChange={e=>{setPreview(e.target.value);onChange(e.target.value)}}
         placeholder="Ou colle une URL d'image..."
-        style={{width:"100%",marginTop:8,padding:".6rem .9rem",border:"1.5px solid rgba(201,168,76,0.2)",
-          borderRadius:8,fontSize:".8rem",fontFamily:"inherit",outline:"none", background: T.bgDeep, color: T.text}}
+        style={{width:"100%",marginTop:8,padding:".6rem .9rem",border:`1.5px solid ${T.border}`,
+          borderRadius:8,fontSize:".8rem",fontFamily:"inherit",outline:"none", background: T.bgSection, color: T.text}}
       />
     </div>
   );
 };
 
 // ─── PAGE ADMIN ──────────────────────────────────────────────────────────────
-function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
+function PageAdmin({ articles, setArticles, realisations, setRealisations, equipe, setEquipe }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -1998,6 +2204,16 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
     }, 1000);
     return () => clearInterval(interval);
   }, [lockoutTime]);
+
+  // Équipe Form State
+  const [memNom, setMemNom] = useState("");
+  const [memPoste, setMemPoste] = useState("");
+  const [memBio, setMemBio] = useState("");
+  const [memContact, setMemContact] = useState("");
+  const [memEmail, setMemEmail] = useState("");
+  const [memSpecialites, setMemSpecialites] = useState("");
+  const [memImage, setMemImage] = useState("");
+  const [editingMemId, setEditingMemId] = useState(null);
 
   // Product Form State
   const [artNom, setArtNom] = useState("");
@@ -2200,6 +2416,59 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
     }
   };
 
+  // CRUD Équipe Actions
+  const resetMemForm = () => {
+    setEditingMemId(null);
+    setMemNom(""); setMemPoste(""); setMemBio("");
+    setMemContact(""); setMemEmail(""); setMemSpecialites(""); setMemImage("");
+  };
+
+  const handleSaveMembre = () => {
+    if (!memNom || !memPoste) {
+      alert("Le nom et le poste sont obligatoires.");
+      return;
+    }
+    if (memImage && !memImage.startsWith("https://") && !memImage.startsWith("data:")) {
+      alert("L'URL de l'image doit commencer par https:// ou être une photo importée.");
+      return;
+    }
+    const cleanNom = sanitize(memNom).slice(0, 100);
+    const cleanPoste = sanitize(memPoste).slice(0, 100);
+    const cleanBio = sanitize(memBio).slice(0, 800);
+    const cleanContact = sanitize(memContact).slice(0, 60);
+    const cleanEmail = sanitize(memEmail).slice(0, 120);
+    const cleanSpec = sanitize(memSpecialites).slice(0, 300);
+
+    if (editingMemId) {
+      setEquipe(prev => prev.map(m => m.id === editingMemId
+        ? { ...m, nom: cleanNom, poste: cleanPoste, bio: cleanBio, contact: cleanContact, email: cleanEmail, specialites: cleanSpec, image: memImage }
+        : m
+      ));
+    } else {
+      setEquipe(prev => [...prev, {
+        id: Date.now().toString(),
+        nom: cleanNom, poste: cleanPoste, bio: cleanBio,
+        contact: cleanContact, email: cleanEmail,
+        specialites: cleanSpec, image: memImage
+      }]);
+    }
+    resetMemForm();
+  };
+
+  const handleEditMembre = (m) => {
+    setMemNom(m.nom); setMemPoste(m.poste); setMemBio(m.bio || "");
+    setMemContact(m.contact || ""); setMemEmail(m.email || "");
+    setMemSpecialites(m.specialites || ""); setMemImage(m.image || "");
+    setEditingMemId(m.id);
+  };
+
+  const handleDeleteMembre = (id) => {
+    if (window.confirm("Supprimer ce membre de l'équipe ?")) {
+      setEquipe(prev => prev.filter(m => m.id !== id));
+      if (editingMemId === id) resetMemForm();
+    }
+  };
+
   if (!isAuthenticated) {
     const isLocked = lockoutTime > Date.now();
     return (
@@ -2208,7 +2477,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <div style={{
               width: 60, height: 60, borderRadius: "50%",
-              background: "rgba(201,168,76,0.1)",
+              background: "rgba(201,48,44,0.1)",
               border: `1px solid ${T.border}`,
               display: "flex", alignItems: "center", justifyContent: "center",
               margin: "0 auto 1rem", color: T.gold
@@ -2273,7 +2542,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* CATALOGUE CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: "#fff", marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
             {editingArtId ? "✏️ Modifier le Produit" : "➕ Ajouter au Catalogue"}
           </h3>
           <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
@@ -2315,7 +2584,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
 
         {/* CATALOGUE LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: "#fff", marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
             Produits du Catalogue ({articles.length})
           </h3>
           {articles.length === 0 ? (
@@ -2325,7 +2594,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
               {articles.map((art) => (
                 <div key={art.id} style={{
                   padding: "1rem",
-                  background: "rgba(255, 255, 255, 0.02)",
+                  background: T.bgSection,
                   borderRadius: 10,
                   border: `1px solid ${T.border}`,
                   display: "flex",
@@ -2344,7 +2613,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditArticle(art)}
-                      style={{ background: "rgba(201, 168, 76, 0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
@@ -2368,7 +2637,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* REALISATIONS CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: "#fff", marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
             {editingRealId ? "✏️ Modifier la Réalisation" : "➕ Ajouter une Réalisation"}
           </h3>
           <Field label="Titre de la Réalisation *" value={realNom} onChange={setRealNom} placeholder="Ex: Livraison d'un Conteneur de 40 pieds" />
@@ -2419,7 +2688,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
 
         {/* REALISATIONS LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: "#fff", marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
             Réalisations Clients ({realisations.length})
           </h3>
           {realisations.length === 0 ? (
@@ -2429,7 +2698,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
               {realisations.map((real) => (
                 <div key={real.id} style={{
                   padding: "1rem",
-                  background: "rgba(255, 255, 255, 0.02)",
+                  background: T.bgSection,
                   borderRadius: 10,
                   border: `1px solid ${T.border}`,
                   display: "flex",
@@ -2453,7 +2722,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditRealisation(real)}
-                      style={{ background: "rgba(201, 168, 76, 0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
@@ -2462,6 +2731,98 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations }) {
                       onClick={() => handleDeleteRealisation(real.id)}
                       style={{ background: "rgba(233, 30, 140, 0.15)", color: T.pink, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
+                      <Trash2 size={14}/>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </GlassCard>
+      </div>
+
+      <div style={{ height: "4rem" }} />
+
+      {/* ─── ÉQUIPE CRUD ─── */}
+      <div style={{ marginBottom: "2rem" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "0.4rem" }}>
+          👥 Gestion de l'Équipe
+        </h3>
+        <p style={{ color: T.muted, fontSize: "0.85rem" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
+      </div>
+
+      <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
+        {/* ÉQUIPE FORM */}
+        <GlassCard style={{ padding: "2.2rem" }}>
+          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+            {editingMemId ? "✏️ Modifier le Membre" : "➕ Ajouter un Membre"}
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <Field label="Nom Complet *" value={memNom} onChange={setMemNom} placeholder="Ex: Jean Koffi" />
+            <Field label="Poste / Rôle *" value={memPoste} onChange={setMemPoste} placeholder="Ex: Directeur Général" />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <Field label="Téléphone" value={memContact} onChange={setMemContact} placeholder="+228 90 00 00 00" />
+            <Field label="Email" type="email" value={memEmail} onChange={setMemEmail} placeholder="nom@easychina.com" />
+          </div>
+          <Field
+            label="Spécialités (séparées par des virgules)"
+            value={memSpecialites}
+            onChange={setMemSpecialites}
+            placeholder="Import & Logistique, Visas, Négociation"
+          />
+          <Field label="Biographie *" value={memBio} onChange={setMemBio} placeholder="Parcours, expertise, années d'expérience..." rows={4} />
+          <ImageUpload value={memImage} onChange={setMemImage} />
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <GoldenBtn variant="solid" onClick={handleSaveMembre} style={{ flex: 1 }}>
+              {editingMemId ? "Enregistrer les modifications" : "Ajouter à l'Équipe"}
+            </GoldenBtn>
+            {editingMemId && (
+              <GoldenBtn variant="ghost" onClick={resetMemForm}>Annuler</GoldenBtn>
+            )}
+          </div>
+        </GlassCard>
+
+        {/* ÉQUIPE LIST */}
+        <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
+          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+            Membres de l'Équipe ({equipe.length})
+          </h3>
+          {equipe.length === 0 ? (
+            <p style={{ color: T.muted, fontSize: "0.85rem" }}>Aucun membre enregistré.</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {equipe.map((m) => (
+                <div key={m.id} style={{
+                  padding: "1rem",
+                  background: T.bgSection,
+                  borderRadius: 10,
+                  border: `1px solid ${T.border}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem"
+                }}>
+                  {/* Mini photo */}
+                  <div style={{ width: 48, height: 48, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: T.border }}>
+                    {m.image ? (
+                      <img src={m.image} alt={m.nom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Users size={20} color={T.muted} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, textAlign: "left" }}>
+                    <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: T.text, margin: 0 }}>{m.nom}</h4>
+                    <span style={{ fontSize: "0.75rem", color: T.gold, fontWeight: 600 }}>{m.poste}</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                    <button aria-label="Modifier" onClick={() => handleEditMembre(m)}
+                      style={{ background: "rgba(201,48,44,0.1)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      <Edit2 size={14}/>
+                    </button>
+                    <button aria-label="Supprimer" onClick={() => handleDeleteMembre(m.id)}
+                      style={{ background: "rgba(180,0,0,0.1)", color: "#e53935", border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
                       <Trash2 size={14}/>
                     </button>
                   </div>
@@ -2505,6 +2866,19 @@ export default function App() {
     }
   });
 
+  const [equipe, setEquipeState] = useState(() => {
+    try {
+      const stored = localStorage.getItem("ec_equipe");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.length > 0) return parsed;
+      }
+      return DEFAULT_EQUIPE;
+    } catch {
+      return DEFAULT_EQUIPE;
+    }
+  });
+
   const setArticles = useCallback((v) => {
     setArticlesState((prev) => {
       const val = typeof v === "function" ? v(prev) : v;
@@ -2521,6 +2895,14 @@ export default function App() {
     });
   }, []);
 
+  const setEquipe = useCallback((v) => {
+    setEquipeState((prev) => {
+      const val = typeof v === "function" ? v(prev) : v;
+      try { localStorage.setItem("ec_equipe", JSON.stringify(val)); } catch {}
+      return val;
+    });
+  }, []);
+
   useEffect(() => {
     document.documentElement.lang = "fr";
   }, []);
@@ -2529,6 +2911,7 @@ export default function App() {
     ["accueil", "Accueil"],
     ["catalogue", "Catalogue"],
     ["realisations", "Réalisations"],
+    ["equipe", "Notre Équipe"],
     ["admin", "⚙ Admin"]
   ];
 
@@ -2548,19 +2931,6 @@ export default function App() {
     }}>
       <SEOHead page={page} />
 
-      {/* Dynamic Ambient Background Glows */}
-      <div style={{
-        position: "absolute", top: "-10%", left: "-10%",
-        width: "50vw", height: "50vw", borderRadius: "50%",
-        background: `radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)`,
-        zIndex: 0, pointerEvents: "none"
-      }} />
-      <div style={{
-        position: "absolute", bottom: "10%", right: "-10%",
-        width: "60vw", height: "60vw", borderRadius: "50%",
-        background: `radial-gradient(circle, rgba(233,30,140,0.04) 0%, transparent 70%)`,
-        zIndex: 0, pointerEvents: "none"
-      }} />
 
       {/* Global CSS Stylesheet Injection */}
       <style dangerouslySetInnerHTML={{ __html: `
@@ -2576,12 +2946,12 @@ export default function App() {
           font-family: 'Inter', system-ui, sans-serif;
           overflow-x: hidden;
         }
-        
+
         ::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
         }
         ::-webkit-scrollbar-track {
-          background: ${T.bgDeep};
+          background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
           background: ${T.gold};
@@ -2650,9 +3020,20 @@ export default function App() {
           overflow: hidden;
           position: relative;
         }
-        
+
         .zoom-container:hover .zoom-img {
           transform: scale(1.08) !important;
+        }
+
+        /* Hero split responsive */
+        @media (max-width: 768px) {
+          .hero-split {
+            grid-template-columns: 1fr !important;
+          }
+          .hero-image-panel {
+            min-height: 50vw !important;
+            order: -1;
+          }
         }
 
         @media (max-width: 900px) {
@@ -2715,33 +3096,52 @@ export default function App() {
           {page === "accueil" && <PageAccueil goTo={goTo} />}
           {page === "catalogue" && <PageCatalogue articles={articles} />}
           {page === "realisations" && <PageRealisations realisations={realisations} />}
-          {page === "admin" && <PageAdmin articles={articles} setArticles={setArticles} realisations={realisations} setRealisations={setRealisations} />}
+          {page === "equipe" && <PageEquipe equipe={equipe} />}
+          {page === "admin" && <PageAdmin articles={articles} setArticles={setArticles} realisations={realisations} setRealisations={setRealisations} equipe={equipe} setEquipe={setEquipe} />}
         </PageTransition>
       </main>
 
-      {/* Footer Luxe */}
+      {/* Footer */}
       <footer style={{
-        background: "#080c14",
-        color: T.muted,
+        background: "#1e293b",
+        color: "#94a3b8",
         textAlign: "center",
-        padding: "3.5rem 2rem",
+        padding: "4rem 2rem",
         fontSize: "0.85rem",
-        borderTop: `1px solid ${T.border}`,
+        borderTop: `3px solid ${T.gold}`,
         position: "relative",
-        zIndex: 2
+        zIndex: 2,
       }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.8rem" }}>
+          {/* Logo adapted for dark footer */}
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Logo onClick={() => goTo("accueil")} />
+            <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => goTo("accueil")}>
+              <svg width={38} height={38} viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="42" height="42" rx="11" fill={T.gold}/>
+                <path d="M10 13h10M10 13v16M10 21h8M10 29h10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M24 16a7 7 0 1 0 0 10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6" fill="#fff" opacity=".9"/>
+              </svg>
+              <div style={{ lineHeight: 1.15, textAlign: "left" }}>
+                <div style={{ color: "#fff", fontWeight: 800, fontSize: "1rem", letterSpacing: "2.5px", fontFamily: "'Syne','Segoe UI',sans-serif" }}>
+                  EASY <span style={{ color: T.gold }}>CHINA</span>
+                </div>
+                <div style={{ color: "#64748b", fontSize: ".46rem", letterSpacing: "3px", marginTop: 2, textTransform: "uppercase" }}>
+                  Togo · Réunion · Chine
+                </div>
+              </div>
+            </div>
           </div>
-          <p style={{ fontSize: "0.82rem", letterSpacing: "0.5px" }}>
-            Togo · La Réunion · Chine — © 2025 <span style={{ color: T.gold, fontWeight: 700 }}>Easy China Services</span> — Agence de Liaison Commerciale & Académique Internationale.
+          <p style={{ fontSize: "0.82rem", letterSpacing: "0.3px", color: "#64748b" }}>
+            © 2025 <span style={{ color: "#fff", fontWeight: 700 }}>Easy China Services</span> — Agence de Liaison Commerciale & Académique Internationale.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-            <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = T.gold} onMouseLeave={e => e.currentTarget.style.color = T.muted} onClick={() => goTo("accueil")}>Accueil</span>
-            <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = T.gold} onMouseLeave={e => e.currentTarget.style.color = T.muted} onClick={() => goTo("catalogue")}>Catalogue d'Import</span>
-            <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = T.gold} onMouseLeave={e => e.currentTarget.style.color = T.muted} onClick={() => goTo("realisations")}>Réalisations clients</span>
-            <span style={{ cursor: "pointer", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = T.gold} onMouseLeave={e => e.currentTarget.style.color = T.muted} onClick={() => goTo("admin")}>Espace Professionnel</span>
+            {[["accueil","Accueil"],["catalogue","Catalogue d'Import"],["realisations","Réalisations"],["equipe","Notre Équipe"],["admin","Espace Pro"]].map(([k, l]) => (
+              <span key={k} style={{ cursor: "pointer", color: "#94a3b8", transition: "color 0.2s", fontWeight: 500 }}
+                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+                onMouseLeave={e => e.currentTarget.style.color = "#94a3b8"}
+                onClick={() => goTo(k)}>{l}</span>
+            ))}
           </div>
         </div>
       </footer>
