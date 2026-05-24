@@ -878,7 +878,7 @@ const Logo = ({ onClick, size="md" }) => {
           color: T.muted, fontSize:".48rem",
           letterSpacing:"3.5px", marginTop:2, textTransform:"uppercase"
         }}>
-          Togo · Réunion · Chine
+          Afrique · Réunion · Chine
         </div>
       </div>
     </div>
@@ -1220,27 +1220,27 @@ function PageTransition({ children, pageKey }) {
 // 🔍 COMPOSANT SEOHEAD DYNAMIQUE ────────────────────────────────────────────────
 const SEO_PAGES = {
   accueil: {
-    title: "Easy China – Import, Université, Visa & Tourisme Chine depuis le Togo",
-    desc: "Easy China : votre agence de référence entre le Togo et la Chine. Import direct Guangzhou & Yiwu, inscription université chinoise avec bourses, visa Chine rapide, formation professionnelle, voyages tourisme & affaires. Bureau à Lomé.",
-    keywords: "import chine togo, importation guangzhou lomé, université chine inscription, bourse études chine togo, visa chine togo, tourisme voyage chine, voyage affaires chine, formation professionnelle chine, sourcing guangzhou yiwu, easy china lomé, transitaire chine togo, logistique chine afrique, dédouanement togo, marché yiwu achat, agent import chine",
+    title: "Easy China – Import, Université, Visa & Tourisme Chine | Afrique Francophone",
+    desc: "Easy China : votre agence de référence entre l'Afrique et la Chine. Import direct Guangzhou & Yiwu, inscription université chinoise avec bourses, visa Chine rapide, formation professionnelle, tourisme & affaires. Présents dans 15 pays africains.",
+    keywords: "import chine afrique, importation guangzhou afrique, université chine inscription, bourse études chine afrique, visa chine afrique, tourisme voyage chine, voyage affaires chine, formation professionnelle chine, sourcing guangzhou yiwu, easy china lomé, transitaire chine afrique, logistique chine afrique, dédouanement afrique ouest, marché yiwu achat, agent import chine, import chine togo bénin côte d'ivoire sénégal cameroun",
     url: "https://easychina-services.com/",
   },
   catalogue: {
-    title: "Catalogue Import Direct Chine – Machines, Textile, Électronique | Easy China Togo",
-    desc: "Importez directement depuis la Chine au meilleur prix : machines industrielles pressing & blanchisserie, électronique LED, textile soie & lin, équipements agroalimentaires. Sourcing Guangzhou et Yiwu avec inspection qualité garantie.",
-    keywords: "catalogue import chine, machines pressing chine, blanchisserie industrielle chine, électronique LED chine togo, textile soie lin import, machines industrielles togo, sourcing guangzhou, yiwu marché achat, importateur togo chine, fournisseur chine direct, prix usine chine",
+    title: "Catalogue Import Direct Chine – Machines, Textile, Électronique | Easy China Afrique",
+    desc: "Importez directement depuis la Chine au meilleur prix : machines industrielles pressing & blanchisserie, électronique LED, textile soie & lin, équipements solaires, agroalimentaires. Sourcing Guangzhou et Yiwu livré en Afrique.",
+    keywords: "catalogue import chine, machines pressing chine, blanchisserie industrielle chine, électronique LED chine afrique, textile soie lin import, machines industrielles afrique, sourcing guangzhou, yiwu marché achat, importateur afrique chine, fournisseur chine direct, prix usine chine",
     url: "https://easychina-services.com/#catalogue",
   },
   realisations: {
-    title: "Réalisations & Témoignages Clients – Easy China | Import, Études, Visa Togo",
-    desc: "Nos succès en images : conteneurs importés depuis Guangzhou, étudiants boursiers dans les meilleures universités chinoises, ouvertures de blanchisseries professionnelles, visas obtenus en 10 jours. Témoignages clients Easy China.",
-    keywords: "témoignages easy china, réalisations import chine togo, bourses université chine avis, blanchisserie chine formation, visa chine 10 jours, client easy china togo, importation réussie chine",
+    title: "Réalisations & Témoignages Clients – Easy China | Import, Études, Visa Afrique",
+    desc: "Nos succès en images : conteneurs importés depuis Guangzhou livrés en Afrique, étudiants boursiers dans les meilleures universités chinoises, ouvertures de blanchisseries professionnelles, visas obtenus en 10 jours. Témoignages clients Easy China.",
+    keywords: "témoignages easy china, réalisations import chine afrique, bourses université chine avis, blanchisserie chine formation, visa chine 10 jours, client easy china afrique, importation réussie chine afrique",
     url: "https://easychina-services.com/#realisations",
   },
   equipe: {
-    title: "Notre Équipe d'Experts Chine-Afrique | Easy China Lomé Togo",
-    desc: "Rencontrez l'équipe Easy China : directeur général basé à Guangzhou, responsable académique ancienne boursière Wuhan, expert logistique transit maritime. Votre pont humain entre le Togo et la Chine.",
-    keywords: "équipe easy china, expert import chine lomé, agent universitaire chine togo, transitaire maritime togo chine, contact easy china, bureau lomé guangzhou",
+    title: "Notre Équipe d'Experts Chine-Afrique | Easy China – Lomé & Guangzhou",
+    desc: "Rencontrez l'équipe Easy China : directeur général basé à Guangzhou, responsable académique ancienne boursière Wuhan, expert logistique transit maritime. Votre pont humain entre l'Afrique et la Chine.",
+    keywords: "équipe easy china, expert import chine afrique, agent universitaire chine afrique, transitaire maritime afrique chine, contact easy china, bureau lomé guangzhou",
     url: "https://easychina-services.com/#equipe",
   },
 };
@@ -1288,14 +1288,14 @@ function SEOHead({ page }) {
     setMeta("og:image", OG_IMG, true);
     setMeta("og:image:width", "1200", true);
     setMeta("og:image:height", "630", true);
-    setMeta("og:image:alt", "Easy China – Agence Chine-Togo", true);
+    setMeta("og:image:alt", "Easy China – Agence Chine-Afrique", true);
 
     // Twitter Card
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:title", seo.title);
     setMeta("twitter:description", seo.desc);
     setMeta("twitter:image", OG_IMG);
-    setMeta("twitter:image:alt", "Easy China – Agence Chine-Togo");
+    setMeta("twitter:image:alt", "Easy China – Agence Chine-Afrique");
 
     // JSON-LD Structured Data
     let script = document.getElementById("jsonld-schema");
@@ -1323,6 +1323,14 @@ function SEOHead({ page }) {
           "geo": { "@type": "GeoCoordinates", "latitude": 6.1375, "longitude": 1.2123 },
           "areaServed": [
             { "@type": "Country", "name": "Togo" },
+            { "@type": "Country", "name": "Bénin" },
+            { "@type": "Country", "name": "Côte d'Ivoire" },
+            { "@type": "Country", "name": "Sénégal" },
+            { "@type": "Country", "name": "Cameroun" },
+            { "@type": "Country", "name": "Gabon" },
+            { "@type": "Country", "name": "Congo" },
+            { "@type": "Country", "name": "Mali" },
+            { "@type": "Country", "name": "Burkina Faso" },
             { "@type": "Country", "name": "Chine" },
             { "@type": "Country", "name": "La Réunion" }
           ],
@@ -1330,11 +1338,13 @@ function SEOHead({ page }) {
             "@type": "OfferCatalog",
             "name": "Services Easy China",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Import & Logistique depuis la Chine", "description": "Sourcing produits en Chine, inspection qualité usine, transport maritime, dédouanement Togo." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Import & Logistique depuis la Chine", "description": "Sourcing produits en Chine, inspection qualité usine, transport maritime, dédouanement en Afrique de l'Ouest." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Inscription Université Chinoise & Bourses", "description": "Admission dans les universités chinoises, dossier bourse gouvernementale, accompagnement complet." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visa Chine", "description": "Obtention visa Chine touristique, affaires, études et travail depuis le Togo." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visa Chine", "description": "Obtention visa Chine touristique, affaires, études et travail depuis l'Afrique francophone." } },
               { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Formation Professionnelle en Chine", "description": "Formations techniques en Chine : pressing, blanchisserie industrielle, maintenance machines." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tourisme & Voyage d'Affaires en Chine", "description": "Organisation de voyages d'affaires à Guangzhou et Yiwu, visites d'usines, circuits touristiques." } }
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tourisme & Voyage d'Affaires en Chine", "description": "Organisation de voyages d'affaires à Guangzhou et Yiwu, visites d'usines, circuits touristiques." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Traduction & Interprétariat", "description": "Interprétariat en usine et en affaires, traduction de contrats, accompagnement culturel en Chine." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Consulting Business & Investissement", "description": "Étude de marché en Chine, création de société, mise en conformité légale, analyse d'investissement." } }
             ]
           },
           "sameAs": [],
@@ -1620,6 +1630,8 @@ function PageAccueil({ goTo }) {
 
       <ProcessusSection />
 
+      <ServicesComplementaires />
+
       {/* Tourisme & Business Section */}
       <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div className="grid-50-50" style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -1649,7 +1661,7 @@ function PageAccueil({ goTo }) {
                 <Img src="https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
-                {["🇨🇳 Guangzhou", "🇨🇳 Yiwu", "🇹🇬 Lomé"].map(c => (
+                {["🇨🇳 Guangzhou", "🇨🇳 Yiwu", "🇹🇬 Lomé", "🇨🇮 Abidjan", "🇸🇳 Dakar"].map(c => (
                   <CityPill key={c}>{c}</CityPill>
                 ))}
               </div>
@@ -1959,6 +1971,74 @@ function PremiumServices() {
   );
 }
 
+// ─── SERVICES COMPLÉMENTAIRES ─────────────────────────────────────────────────
+function ServicesComplementaires() {
+  useLang();
+  const extras = [
+    {
+      icon: <MessageCircle size={28}/>,
+      color: "#0f766e",
+      name: t("svc5_name"),
+      desc: t("svc5_desc"),
+      features: [t("svc5_f1"), t("svc5_f2"), t("svc5_f3"), t("svc5_f4")],
+    },
+    {
+      icon: <Building2 size={28}/>,
+      color: "#1e3a8a",
+      name: t("svc6_name"),
+      desc: t("svc6_desc"),
+      features: [t("svc6_f1"), t("svc6_f2"), t("svc6_f3"), t("svc6_f4")],
+    },
+    {
+      icon: <Plane size={28}/>,
+      color: "#7c3aed",
+      name: t("svc7_name"),
+      desc: t("svc7_desc"),
+      features: [t("svc7_f1"), t("svc7_f2"), t("svc7_f3"), t("svc7_f4")],
+    },
+    {
+      icon: <Globe size={28}/>,
+      color: "#c9302c",
+      name: t("svc8_name"),
+      desc: t("svc8_desc"),
+      features: [t("svc8_f1"), t("svc8_f2"), t("svc8_f3"), t("svc8_f4")],
+    },
+  ];
+
+  return (
+    <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
+      <div className="grid-4" style={{ maxWidth: 1100, margin: "0 auto" }}>
+        {extras.map((s, i) => (
+          <ScrollReveal key={i} direction="up" delay={i * 0.08}>
+            <GlassCard tilt={true} style={{ padding: "2rem", height: "100%", display: "flex", flexDirection: "column" }}>
+              <div style={{
+                width: 54, height: 54, borderRadius: 13,
+                background: `${s.color}12`, border: `1.5px solid ${s.color}28`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: s.color, marginBottom: "1.2rem",
+              }}>{s.icon}</div>
+              <h3 style={{ fontSize: "1rem", fontWeight: 800, color: T.text, marginBottom: "0.6rem", fontFamily: "'Syne',sans-serif" }}>{s.name}</h3>
+              <p style={{ fontSize: "0.82rem", color: T.muted, lineHeight: 1.65, marginBottom: "1.2rem", flex: 1 }}>{s.desc}</p>
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.5rem" }}>
+                {s.features.map((f, j) => (
+                  <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.78rem", color: T.muted, marginBottom: 7 }}>
+                    <CheckCircle size={13} color={s.color} style={{ flexShrink: 0, marginTop: 2 }} />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je suis intéressé par : "${s.name}".`))} style={{ width: "100%" }}>
+                {t("svc_learn")}
+              </GoldenBtn>
+            </GlassCard>
+          </ScrollReveal>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // FAQ Accordion
 function FAQAccordion() {
   useLang();
@@ -2192,7 +2272,7 @@ function PageCatalogue({ articles }) {
                     onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite passer commande pour le produit "${a.titre}" au prix de "${a.prix}".`))}
                     style={{ width: "100%" }}
                   >
-                    <Package size={18} style={{marginRight: 8}}/> Commander (Togo)
+                    <Package size={18} style={{marginRight: 8}}/> Commander
                   </GoldenBtn>
                   <GoldenBtn
                     variant="outline"
@@ -3527,7 +3607,7 @@ export default function App() {
                   EASY <span style={{ color: T.gold }}>CHINA</span>
                 </div>
                 <div style={{ color: "#64748b", fontSize: ".46rem", letterSpacing: "3px", marginTop: 2, textTransform: "uppercase" }}>
-                  Togo · Réunion · Chine
+                  Afrique · Réunion · Chine
                 </div>
               </div>
             </div>
