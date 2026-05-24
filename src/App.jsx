@@ -29,6 +29,40 @@ const WA_COMMERCIAL = "+22890000001";
 const WA_TRANSITAIRE = "+22890000002";
 const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
 
+const GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const GH_OWNER = "Codorah";
+const GH_REPO  = "Easy-china";
+
+function toBase64Unicode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach(b => (binary += String.fromCharCode(b)));
+  return btoa(binary);
+}
+
+async function ghCommit(filepath, data) {
+  if (!GH_TOKEN) return false;
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${filepath}`;
+  const headers = {
+    Authorization: `Bearer ${GH_TOKEN}`,
+    Accept: "application/vnd.github+json",
+    "Content-Type": "application/json",
+  };
+  const getRes = await fetch(url, { headers });
+  if (!getRes.ok) return false;
+  const { sha } = await getRes.json();
+  const putRes = await fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({
+      message: `data: update ${filepath.split("/").pop()} via admin`,
+      content: toBase64Unicode(JSON.stringify(data, null, 2)),
+      sha,
+    }),
+  });
+  return putRes.ok;
+}
+
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
 const UNSPLASH = {
@@ -2622,7 +2656,7 @@ const ImageUpload = ({ value, onChange }) => {
 };
 
 // ─── PAGE ADMIN ──────────────────────────────────────────────────────────────
-function PageAdmin({ articles, setArticles, realisations, setRealisations, equipe, setEquipe }) {
+function PageAdmin({ articles, setArticles, realisations, setRealisations, equipe, setEquipe, deployStatus }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -3001,22 +3035,25 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         </GoldenBtn>
       </div>
 
-      {/* Important notice about localStorage */}
-      <div style={{
-        background: "rgba(201,48,44,0.05)", border: `1.5px solid rgba(201,48,44,0.25)`,
-        borderRadius: T.radius, padding: "1.2rem 1.6rem", marginBottom: "2.5rem",
-        display: "flex", gap: 14, alignItems: "flex-start",
-      }}>
-        <AlertCircle size={20} color={T.gold} style={{ flexShrink: 0, marginTop: 2 }} />
-        <div>
-          <div style={{ fontWeight: 700, color: T.text, fontSize: "0.88rem", marginBottom: "0.3rem" }}>
-            ⚠️ Portée des modifications
+      {/* Deploy status banner */}
+      {(() => {
+        const cfg = {
+          saving:    { bg: "rgba(234,179,8,0.08)",  border: "rgba(234,179,8,0.4)",  icon: <Clock size={20} color="#b45309"/>,       title: "⏳ Envoi en cours…",         body: "Vos modifications sont en cours d'envoi vers GitHub. Ne fermez pas cette page." },
+          deploying: { bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.4)",  icon: <CheckCircle size={20} color="#16a34a"/>, title: "🚀 Déploiement lancé !",      body: "Les données ont été sauvegardées. Vercel redéploie le site — les visiteurs verront les changements dans ~2 minutes." },
+          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={T.gold}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
+          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={T.gold}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
+        };
+        const s = cfg[deployStatus] || cfg[null];
+        return (
+          <div style={{ background: s.bg, border: `1.5px solid ${s.border}`, borderRadius: T.radius, padding: "1.2rem 1.6rem", marginBottom: "2.5rem", display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <div style={{ flexShrink: 0, marginTop: 2 }}>{s.icon}</div>
+            <div>
+              <div style={{ fontWeight: 700, color: T.text, fontSize: "0.88rem", marginBottom: "0.3rem" }}>{s.title}</div>
+              <p style={{ color: T.muted, fontSize: "0.82rem", lineHeight: 1.6 }}>{s.body}</p>
+            </div>
           </div>
-          <p style={{ color: T.muted, fontSize: "0.82rem", lineHeight: 1.6 }}>
-            Les modifications effectuées ici sont sauvegardées dans <strong>votre navigateur uniquement</strong> (localStorage). Pour que vos changements soient visibles par tous les visiteurs du site, il faut déployer une nouvelle version du site avec les données mises à jour. Contactez votre développeur ou utilisez le panneau de déploiement Vercel.
-          </p>
-        </div>
-      </div>
+        );
+      })()}
 
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* CATALOGUE CRUD PANEL */}
@@ -3320,68 +3357,62 @@ export default function App() {
   useLang();
   const [page, setPage] = useState("accueil");
   
-  const [articles, setArticlesState] = useState(() => {
-    try {
-      const stored = localStorage.getItem("ec_articles");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.length > 0) return parsed;
-      }
-      return DEFAULT_ARTICLES;
-    } catch {
-      return DEFAULT_ARTICLES;
-    }
-  });
+  const [articles,     setArticlesState]     = useState(DEFAULT_ARTICLES);
+  const [realisations, setRealisationsState] = useState(DEFAULT_REALISATIONS);
+  const [equipe,       setEquipeState]       = useState(DEFAULT_EQUIPE);
+  const [deployStatus, setDeployStatus]      = useState(null); // null | 'saving' | 'deploying' | 'error'
 
-  const [realisations, setRealisationsState] = useState(() => {
-    try {
-      const stored = localStorage.getItem("ec_reals");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.length > 0) return parsed;
-      }
-      return DEFAULT_REALISATIONS;
-    } catch {
-      return DEFAULT_REALISATIONS;
-    }
-  });
+  // Load live data from /public/data JSON files served by Vercel
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [cr, rr, er] = await Promise.all([
+          fetch(`/data/catalogue.json?t=${Date.now()}`),
+          fetch(`/data/realisations.json?t=${Date.now()}`),
+          fetch(`/data/equipe.json?t=${Date.now()}`),
+        ]);
+        if (cr.ok) { const d = await cr.json(); if (d?.length) setArticlesState(d); }
+        if (rr.ok) { const d = await rr.json(); if (d?.length) setRealisationsState(d); }
+        if (er.ok) { const d = await er.json(); if (d?.length) setEquipeState(d); }
+      } catch {}
+    };
+    load();
+  }, []);
 
-  const [equipe, setEquipeState] = useState(() => {
-    try {
-      const stored = localStorage.getItem("ec_equipe");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.length > 0) return parsed;
-      }
-      return DEFAULT_EQUIPE;
-    } catch {
-      return DEFAULT_EQUIPE;
-    }
-  });
+  const doGhSave = useCallback(async (filepath, data) => {
+    if (!GH_TOKEN) return;
+    setDeployStatus("saving");
+    const ok = await ghCommit(filepath, data);
+    setDeployStatus(ok ? "deploying" : "error");
+    if (ok) setTimeout(() => setDeployStatus(null), 150000);
+  }, []);
 
   const setArticles = useCallback((v) => {
+    let captured;
     setArticlesState((prev) => {
-      const val = typeof v === "function" ? v(prev) : v;
-      try { localStorage.setItem("ec_articles", JSON.stringify(val)); } catch {}
-      return val;
+      captured = typeof v === "function" ? v(prev) : v;
+      return captured;
     });
-  }, []);
+    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/catalogue.json", captured); }, 0);
+  }, [doGhSave]);
 
   const setRealisations = useCallback((v) => {
+    let captured;
     setRealisationsState((prev) => {
-      const val = typeof v === "function" ? v(prev) : v;
-      try { localStorage.setItem("ec_reals", JSON.stringify(val)); } catch {}
-      return val;
+      captured = typeof v === "function" ? v(prev) : v;
+      return captured;
     });
-  }, []);
+    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/realisations.json", captured); }, 0);
+  }, [doGhSave]);
 
   const setEquipe = useCallback((v) => {
+    let captured;
     setEquipeState((prev) => {
-      const val = typeof v === "function" ? v(prev) : v;
-      try { localStorage.setItem("ec_equipe", JSON.stringify(val)); } catch {}
-      return val;
+      captured = typeof v === "function" ? v(prev) : v;
+      return captured;
     });
-  }, []);
+    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/equipe.json", captured); }, 0);
+  }, [doGhSave]);
 
   useEffect(() => {
     document.documentElement.lang = "fr";
@@ -3577,7 +3608,7 @@ export default function App() {
           {page === "catalogue" && <PageCatalogue articles={articles} />}
           {page === "realisations" && <PageRealisations realisations={realisations} />}
           {page === "equipe" && <PageEquipe equipe={equipe} />}
-          {page === "admin" && <PageAdmin articles={articles} setArticles={setArticles} realisations={realisations} setRealisations={setRealisations} equipe={equipe} setEquipe={setEquipe} />}
+          {page === "admin" && <PageAdmin articles={articles} setArticles={setArticles} realisations={realisations} setRealisations={setRealisations} equipe={equipe} setEquipe={setEquipe} deployStatus={deployStatus} />}
         </PageTransition>
       </main>
 
