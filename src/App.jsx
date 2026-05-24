@@ -26,7 +26,7 @@ const T = {
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
 const WA_COMMERCIAL = "+22890000001";
 const WA_TRANSITAIRE = "+22890000002";
-const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
+const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH;
 
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
@@ -1172,79 +1172,143 @@ function PageTransition({ children, pageKey }) {
 }
 
 // 🔍 COMPOSANT SEOHEAD DYNAMIQUE ────────────────────────────────────────────────
+const SEO_PAGES = {
+  accueil: {
+    title: "Easy China – Import, Université, Visa & Tourisme Chine depuis le Togo",
+    desc: "Easy China : votre agence de référence entre le Togo et la Chine. Import direct Guangzhou & Yiwu, inscription université chinoise avec bourses, visa Chine rapide, formation professionnelle, voyages tourisme & affaires. Bureau à Lomé.",
+    keywords: "import chine togo, importation guangzhou lomé, université chine inscription, bourse études chine togo, visa chine togo, tourisme voyage chine, voyage affaires chine, formation professionnelle chine, sourcing guangzhou yiwu, easy china lomé, transitaire chine togo, logistique chine afrique, dédouanement togo, marché yiwu achat, agent import chine",
+    url: "https://easychina-services.com/",
+  },
+  catalogue: {
+    title: "Catalogue Import Direct Chine – Machines, Textile, Électronique | Easy China Togo",
+    desc: "Importez directement depuis la Chine au meilleur prix : machines industrielles pressing & blanchisserie, électronique LED, textile soie & lin, équipements agroalimentaires. Sourcing Guangzhou et Yiwu avec inspection qualité garantie.",
+    keywords: "catalogue import chine, machines pressing chine, blanchisserie industrielle chine, électronique LED chine togo, textile soie lin import, machines industrielles togo, sourcing guangzhou, yiwu marché achat, importateur togo chine, fournisseur chine direct, prix usine chine",
+    url: "https://easychina-services.com/#catalogue",
+  },
+  realisations: {
+    title: "Réalisations & Témoignages Clients – Easy China | Import, Études, Visa Togo",
+    desc: "Nos succès en images : conteneurs importés depuis Guangzhou, étudiants boursiers dans les meilleures universités chinoises, ouvertures de blanchisseries professionnelles, visas obtenus en 10 jours. Témoignages clients Easy China.",
+    keywords: "témoignages easy china, réalisations import chine togo, bourses université chine avis, blanchisserie chine formation, visa chine 10 jours, client easy china togo, importation réussie chine",
+    url: "https://easychina-services.com/#realisations",
+  },
+  equipe: {
+    title: "Notre Équipe d'Experts Chine-Afrique | Easy China Lomé Togo",
+    desc: "Rencontrez l'équipe Easy China : directeur général basé à Guangzhou, responsable académique ancienne boursière Wuhan, expert logistique transit maritime. Votre pont humain entre le Togo et la Chine.",
+    keywords: "équipe easy china, expert import chine lomé, agent universitaire chine togo, transitaire maritime togo chine, contact easy china, bureau lomé guangzhou",
+    url: "https://easychina-services.com/#equipe",
+  },
+};
+
 function SEOHead({ page }) {
   useEffect(() => {
-    let title = "Easy China – Import, Études & Visa Chine depuis le Togo";
-    let desc = "Easy China : votre partenaire d'import depuis la Chine, inscription universités chinoises, visa, formation professionnelle. Bureau à Lomé, Togo.";
-    let keywords = "import chine togo, université chine inscription, visa chine togo, formation chine, lomé chine, easy china services, transitaire togo";
+    const seo = SEO_PAGES[page] || SEO_PAGES.accueil;
+    const SITE = "https://easychina-services.com";
+    const OG_IMG = `${SITE}/og-cover.jpg`;
 
-    if (page === "catalogue") {
-      title = "Easy China – Catalogue d'Importation Sourcing Direct";
-      desc = "Découvrez notre sélection de produits industriels et matériels de haute qualité, sourcés directement auprès des meilleures usines certifiées en Chine.";
-    } else if (page === "realisations") {
-      title = "Easy China – Nos Réalisations & Témoignages Clients";
-      desc = "Découvrez comment nous accompagnons nos clients partenaires au Togo et en Afrique dans la concrétisation de leurs projets académiques et logistiques.";
-    }
+    document.title = seo.title;
 
-    document.title = title;
-
-    const updateMeta = (name, value, isProperty = false) => {
-      const attr = isProperty ? "property" : "name";
-      let meta = document.querySelector(`meta[${attr}="${name}"]`);
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute(attr, name);
-        document.head.appendChild(meta);
-      }
-      meta.setAttribute("content", value);
+    const setMeta = (name, val, prop = false) => {
+      const attr = prop ? "property" : "name";
+      let el = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
+      el.setAttribute("content", val);
     };
 
-    updateMeta("description", desc);
-    updateMeta("keywords", keywords);
-    updateMeta("robots", "index, follow");
-    updateMeta("author", "Easy China Services");
+    const setLink = (rel, href) => {
+      let el = document.querySelector(`link[rel="${rel}"]`);
+      if (!el) { el = document.createElement("link"); el.setAttribute("rel", rel); document.head.appendChild(el); }
+      el.setAttribute("href", href);
+    };
 
-    let canonical = document.querySelector("link[rel='canonical']");
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", "https://easychina-services.com");
+    // Standard SEO
+    setMeta("description", seo.desc);
+    setMeta("keywords", seo.keywords);
+    setMeta("robots", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
+    setMeta("author", "Easy China Services");
+    setMeta("language", "French");
+    setMeta("geo.region", "TG");
+    setMeta("geo.placename", "Lomé, Togo");
 
-    updateMeta("og:type", "website", true);
-    updateMeta("og:title", title, true);
-    updateMeta("og:description", desc, true);
-    updateMeta("og:image", "https://easychina-services.com/og-image.jpg", true);
-    updateMeta("og:url", "https://easychina-services.com", true);
-    updateMeta("og:locale", "fr_FR", true);
-    updateMeta("og:site_name", "Easy China", true);
+    // Canonical
+    setLink("canonical", seo.url || SITE);
 
-    updateMeta("twitter:card", "summary_large_image");
-    updateMeta("twitter:title", title);
-    updateMeta("twitter:description", desc);
+    // Open Graph
+    setMeta("og:type", "website", true);
+    setMeta("og:site_name", "Easy China Services", true);
+    setMeta("og:locale", "fr_FR", true);
+    setMeta("og:title", seo.title, true);
+    setMeta("og:description", seo.desc, true);
+    setMeta("og:url", seo.url || SITE, true);
+    setMeta("og:image", OG_IMG, true);
+    setMeta("og:image:width", "1200", true);
+    setMeta("og:image:height", "630", true);
+    setMeta("og:image:alt", "Easy China – Agence Chine-Togo", true);
 
-    let scriptSchema = document.getElementById("jsonld-schema");
-    if (!scriptSchema) {
-      scriptSchema = document.createElement("script");
-      scriptSchema.id = "jsonld-schema";
-      scriptSchema.type = "application/ld+json";
-      document.head.appendChild(scriptSchema);
-    }
-    scriptSchema.textContent = JSON.stringify({
+    // Twitter Card
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", seo.title);
+    setMeta("twitter:description", seo.desc);
+    setMeta("twitter:image", OG_IMG);
+    setMeta("twitter:image:alt", "Easy China – Agence Chine-Togo");
+
+    // JSON-LD Structured Data
+    let script = document.getElementById("jsonld-schema");
+    if (!script) { script = document.createElement("script"); script.id = "jsonld-schema"; script.type = "application/ld+json"; document.head.appendChild(script); }
+    script.textContent = JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "name": "Easy China Services",
-      "description": desc,
-      "url": "https://easychina-services.com",
-      "telephone": "+22890000001",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Lomé",
-        "addressCountry": "TG"
-      },
-      "areaServed": ["TG", "RE", "CN"],
-      "serviceType": ["Import", "Études", "Visa", "Formation", "Tourisme"]
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": `${SITE}/#business`,
+          "name": "Easy China Services",
+          "alternateName": "Easy China",
+          "description": "Agence de liaison commerciale et académique internationale spécialisée dans l'import depuis la Chine, l'inscription dans les universités chinoises, l'obtention de visas, la formation professionnelle et le tourisme d'affaires.",
+          "url": SITE,
+          "logo": `${SITE}/favicon.svg`,
+          "image": OG_IMG,
+          "telephone": "+22890000001",
+          "email": "contact@easychina-services.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Quartier Hédzranawoé",
+            "addressLocality": "Lomé",
+            "addressCountry": "TG"
+          },
+          "geo": { "@type": "GeoCoordinates", "latitude": 6.1375, "longitude": 1.2123 },
+          "areaServed": [
+            { "@type": "Country", "name": "Togo" },
+            { "@type": "Country", "name": "Chine" },
+            { "@type": "Country", "name": "La Réunion" }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Services Easy China",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Import & Logistique depuis la Chine", "description": "Sourcing produits en Chine, inspection qualité usine, transport maritime, dédouanement Togo." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Inscription Université Chinoise & Bourses", "description": "Admission dans les universités chinoises, dossier bourse gouvernementale, accompagnement complet." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Visa Chine", "description": "Obtention visa Chine touristique, affaires, études et travail depuis le Togo." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Formation Professionnelle en Chine", "description": "Formations techniques en Chine : pressing, blanchisserie industrielle, maintenance machines." } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tourisme & Voyage d'Affaires en Chine", "description": "Organisation de voyages d'affaires à Guangzhou et Yiwu, visites d'usines, circuits touristiques." } }
+            ]
+          },
+          "sameAs": [],
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+            "opens": "08:00",
+            "closes": "18:00"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": `${SITE}/#website`,
+          "url": SITE,
+          "name": "Easy China Services",
+          "description": seo.desc,
+          "inLanguage": "fr-FR",
+          "publisher": { "@id": `${SITE}/#business` }
+        }
+      ]
     });
   }, [page]);
 
@@ -2235,6 +2299,10 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!ADMIN_HASH) {
+      setErrorMsg("Administration non configurée sur ce déploiement.");
+      return;
+    }
     if (lockoutTime > Date.now()) {
       return;
     }
