@@ -26,25 +26,25 @@ const T = {
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
 const WA_COMMERCIAL = "+22890000001";
 const WA_TRANSITAIRE = "+22890000002";
-const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "ae16d0ee679873e767fc8798e0371a3a2bb59ced7577ec1ba724c29eece73db8";
+const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
 
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
 const UNSPLASH = {
-  "Import général": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80",
-  "Électronique":   "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&h=400&q=80",
-  "Textile":        "https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&w=600&h=400&q=80",
-  "Machines":       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&h=400&q=80",
-  "Alimentaire":    "https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&w=600&h=400&q=80",
-  "Autre":          "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=400&q=80",
+  "Import général": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80",
+  "Électronique":   "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=400&q=80",
+  "Textile":        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=400&q=80",
+  "Machines":       "https://images.unsplash.com/photo-1565715101539-8cca2c24bf0f?auto=format&fit=crop&w=600&h=400&q=80",
+  "Alimentaire":    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&h=400&q=80",
+  "Autre":          "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=600&h=400&q=80",
 };
 
 const UNSPLASH_REAL = {
-  "Import":    "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80",
-  "Études":    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&h=400&q=80",
-  "Visa":      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&h=400&q=80",
-  "Formation": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&h=400&q=80",
-  "Tourisme":  "https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&w=600&h=400&q=80",
+  "Import":    "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80",
+  "Études":    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&h=400&q=80",
+  "Visa":      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&h=400&q=80",
+  "Formation": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=600&h=400&q=80",
+  "Tourisme":  "https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=600&h=400&q=80",
 };
 
 // ─── SEED DEFAULT DATA ───────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ const DEFAULT_EQUIPE = [
     contact: "+228 90 12 34 56",
     email: "direction@easychina-services.com",
     specialites: "Import & Logistique,Partenariats Chine,Négociations B2B",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&h=600&q=80"
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&h=600&q=80"
   },
   {
     id: "2",
@@ -75,7 +75,7 @@ const DEFAULT_EQUIPE = [
     contact: "+228 90 56 78 90",
     email: "etudes@easychina-services.com",
     specialites: "Admissions Universitaires,Bourses Gouvernementales,Visas Études",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=500&h=600&q=80"
+    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=500&h=600&q=80"
   },
   {
     id: "3",
@@ -85,7 +85,7 @@ const DEFAULT_EQUIPE = [
     contact: "+228 90 34 56 78",
     email: "logistique@easychina-services.com",
     specialites: "Fret Maritime,Dédouanement,Inspection Qualité",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&h=600&q=80"
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80"
   }
 ];
 
@@ -1372,9 +1372,9 @@ function HeroSection({ goTo }) {
       </div>
 
       {/* Right — Image Panel */}
-      <div className="hero-image-panel" style={{ position: "relative", overflow: "hidden", minHeight: "60vh" }}>
+      <div className="hero-image-panel" style={{ position: "relative", overflow: "hidden", minHeight: "100vh" }}>
         <Img
-          src="https://images.unsplash.com/photo-1540759786422-c60d5ed57d7b?auto=format&fit=crop&w=1200&h=1400&q=80"
+          src="https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=1200&h=1400&q=80"
           alt="Shanghai skyline"
           style={{ borderRadius: 0, height: "100%", width: "100%" }}
         />
@@ -1455,8 +1455,8 @@ function PageAccueil({ goTo }) {
   ];
 
   const officesList = [
-    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "contact@easychina-services.com", "+228 90 XX XX XX"] },
-    { flag: "🇨🇳", title: "Guangzhou Permanent", query: "https://images.unsplash.com/photo-1540759786422-c60d5ed57d7b?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
+    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "contact@easychina-services.com", "+228 90 XX XX XX"] },
+    { flag: "🇨🇳", title: "Guangzhou Permanent", query: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
   ];
 
   return (
@@ -1527,7 +1527,7 @@ function PageAccueil({ goTo }) {
           <ScrollReveal direction="right" delay={0.2}>
             <GlassCard tilt={true} style={{ padding: "2.5rem", textAlign: "center", background: "rgba(201, 48, 44,0.02)" }}>
               <div style={{ height: 250, marginBottom: "2rem", borderRadius: T.radius, overflow: "hidden" }}>
-                <Img src="https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
+                <Img src="https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
                 {["🇨🇳 Guangzhou", "🇨🇳 Yiwu", "🇹🇬 Lomé"].map(c => (
