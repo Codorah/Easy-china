@@ -1379,7 +1379,7 @@ function HeroSection({ goTo }) {
   const heroStats = [
     { n: 500, l: t("hero_stat1"), s: "+" },
     { n: 8,   l: t("hero_stat2"), s: "+" },
-    { n: 2,   l: t("hero_stat3"), s: "" },
+    { n: 15,  l: t("hero_stat3"), s: "+" },
     { n: 100, l: t("hero_stat4"), s: "%" },
   ];
 
@@ -1578,6 +1578,8 @@ function PageAccueil({ goTo }) {
     <div>
       <HeroSection goTo={goTo} />
 
+      <PaysCouverts />
+
       {/* Services Grid */}
       <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
@@ -1615,6 +1617,8 @@ function PageAccueil({ goTo }) {
           ))}
         </div>
       </div>
+
+      <ProcessusSection />
 
       {/* Tourisme & Business Section */}
       <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
@@ -1663,11 +1667,15 @@ function PageAccueil({ goTo }) {
         <Timeline items={historyItems} />
       </div>
 
+      <SecteursSection />
+
       {/* Testimonials Section */}
       <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
+
+      <PremiumServices />
 
       {/* Bureaux Section */}
       <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
@@ -1745,6 +1753,207 @@ function PageAccueil({ goTo }) {
           <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── PAYS COUVERTS ────────────────────────────────────────────────────────────
+const PAYS_AFRIQUE = [
+  { flag:"🇹🇬", name:"Togo" },        { flag:"🇧🇯", name:"Bénin" },
+  { flag:"🇨🇮", name:"Côte d'Ivoire" },{ flag:"🇸🇳", name:"Sénégal" },
+  { flag:"🇨🇲", name:"Cameroun" },    { flag:"🇬🇦", name:"Gabon" },
+  { flag:"🇨🇬", name:"Congo" },       { flag:"🇨🇩", name:"RD Congo" },
+  { flag:"🇲🇱", name:"Mali" },        { flag:"🇧🇫", name:"Burkina Faso" },
+  { flag:"🇳🇪", name:"Niger" },       { flag:"🇬🇳", name:"Guinée" },
+  { flag:"🇲🇬", name:"Madagascar" },  { flag:"🇷🇪", name:"La Réunion" },
+  { flag:"🇲🇦", name:"Maroc" },
+];
+
+function PaysCouverts() {
+  useLang();
+  return (
+    <div style={{ background: T.bgSection, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"5rem 2rem", position:"relative", zIndex:2 }}>
+      <SectionTitle eyebrow={t("pays_eyebrow")} title={t("pays_title")} subtitle={t("pays_subtitle")} />
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent:"center", maxWidth:1000, margin:"0 auto" }}>
+        {PAYS_AFRIQUE.map((p) => (
+          <div key={p.name} style={{
+            display:"flex", alignItems:"center", gap:8,
+            background:"#fff", border:`1px solid ${T.border}`,
+            borderRadius:40, padding:"0.55rem 1.2rem",
+            boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
+            fontSize:"0.82rem", fontWeight:600, color:T.text,
+            transition:"all 0.25s",
+          }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.gold; e.currentTarget.style.color=T.gold; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.color=T.text; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
+          >
+            <span style={{fontSize:"1.2rem"}}>{p.flag}</span>
+            {p.name}
+          </div>
+        ))}
+      </div>
+      <div style={{ textAlign:"center", marginTop:"2.5rem" }}>
+        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(201,48,44,0.06)", border:`1px solid rgba(201,48,44,0.2)`, color:T.gold, borderRadius:30, padding:"0.5rem 1.4rem", fontSize:"0.8rem", fontWeight:700 }}>
+          <Globe size={14}/> +15 pays · Livraison porte-à-porte
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── PROCESSUS 4 ÉTAPES ───────────────────────────────────────────────────────
+function ProcessusSection() {
+  useLang();
+  const steps = [
+    { num:"01", icon:<MessageCircle size={28}/>, title:t("proc1_title"), desc:t("proc1_desc"), color:"#c9302c" },
+    { num:"02", icon:<Search size={28}/>,  title:t("proc2_title"), desc:t("proc2_desc"), color:"#1e3a8a" },
+    { num:"03", icon:<Ship size={28}/>,    title:t("proc3_title"), desc:t("proc3_desc"), color:"#0f766e" },
+    { num:"04", icon:<Package size={28}/>, title:t("proc4_title"), desc:t("proc4_desc"), color:"#7c3aed" },
+  ];
+
+  return (
+    <div style={{ padding:"6rem 2rem", maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
+      <SectionTitle eyebrow={t("proc_eyebrow")} title={t("proc_title")} subtitle={t("proc_subtitle")} />
+      <div className="grid-4">
+        {steps.map((s, i) => (
+          <ScrollReveal key={i} direction="up" delay={i * 0.1}>
+            <div style={{
+              position:"relative", padding:"2.2rem 1.8rem",
+              background:"#fff", border:`1px solid ${T.border}`,
+              borderRadius:T.radius, height:"100%",
+              boxShadow:"0 2px 12px rgba(0,0,0,0.05)",
+              transition:"all 0.3s ease",
+            }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor=s.color; e.currentTarget.style.boxShadow=`0 8px 30px rgba(0,0,0,0.1)`; e.currentTarget.style.transform="translateY(-4px)"; }}
+              onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.05)"; e.currentTarget.style.transform="none"; }}
+            >
+              {/* Step number */}
+              <div style={{
+                position:"absolute", top:"-1px", right:20,
+                background:s.color, color:"#fff",
+                fontSize:"0.65rem", fontWeight:800,
+                padding:"0.2rem 0.7rem", borderRadius:"0 0 8px 8px",
+                letterSpacing:"1px",
+              }}>{s.num}</div>
+
+              {/* Icon */}
+              <div style={{
+                width:60, height:60, borderRadius:16,
+                background:`${s.color}15`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                marginBottom:"1.5rem", color:s.color,
+              }}>{s.icon}</div>
+
+              <h3 style={{ fontSize:"1rem", fontWeight:700, color:T.text, marginBottom:"0.7rem", lineHeight:1.3 }}>
+                {s.title}
+              </h3>
+              <p style={{ fontSize:"0.83rem", color:T.muted, lineHeight:1.7 }}>
+                {s.desc}
+              </p>
+
+              {/* Connector line between steps (desktop) */}
+              {i < 3 && (
+                <div style={{
+                  position:"absolute", top:"50%", right:-20, width:20, height:2,
+                  background:`linear-gradient(to right, ${s.color}, ${steps[i+1].color})`,
+                  zIndex:3,
+                }} className="proc-connector" />
+              )}
+            </div>
+          </ScrollReveal>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── SECTEURS D'ACTIVITÉ ──────────────────────────────────────────────────────
+const SECTEURS = [
+  { emoji:"🌱", name:"Agriculture & Irrigation",   desc:"Pompes solaires, systèmes d'irrigation, équipements agricoles de haute précision." },
+  { emoji:"⚡", name:"Énergie Solaire",             desc:"Panneaux photovoltaïques, onduleurs, batteries, systèmes off-grid pour l'Afrique." },
+  { emoji:"🏗️", name:"Construction & BTP",         desc:"Matériaux de construction, outillage professionnel, équipements de chantier." },
+  { emoji:"🏥", name:"Santé & Médical",             desc:"Équipements médicaux, matériel de laboratoire, consommables hospitaliers certifiés." },
+  { emoji:"👗", name:"Mode & Textile",              desc:"Tissus, prêt-à-porter, accessoires de mode directement des ateliers de Guangzhou." },
+  { emoji:"📱", name:"Électronique & Tech",         desc:"Téléphones, ordinateurs, LED, composants électroniques à prix usine." },
+  { emoji:"🍽️", name:"Agroalimentaire",             desc:"Machines d'emballage, de conditionnement, de transformation alimentaire industrielle." },
+  { emoji:"🧺", name:"Pressing & Blanchisserie",    desc:"Lignes complètes de lavage, séchage, repassage industriel et formation technique." },
+];
+
+function SecteursSection() {
+  useLang();
+  return (
+    <div style={{ background:T.bgSection, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"6rem 2rem", position:"relative", zIndex:2 }}>
+      <SectionTitle eyebrow={t("sec_eyebrow")} title={t("sec_title")} subtitle={t("sec_subtitle")} />
+      <div className="grid-4" style={{ maxWidth:1100, margin:"0 auto" }}>
+        {SECTEURS.map((s, i) => (
+          <ScrollReveal key={i} direction="up" delay={i * 0.05}>
+            <div style={{
+              background:"#fff", border:`1px solid ${T.border}`,
+              borderRadius:T.radius, padding:"1.8rem 1.5rem",
+              display:"flex", flexDirection:"column", gap:"0.8rem",
+              cursor:"default", transition:"all 0.3s ease",
+            }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.gold; e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.boxShadow=`0 12px 32px rgba(201,48,44,0.1)`; }}
+              onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="none"; }}
+            >
+              <div style={{ fontSize:"2.2rem", lineHeight:1 }}>{s.emoji}</div>
+              <h4 style={{ fontSize:"0.92rem", fontWeight:700, color:T.text, lineHeight:1.3 }}>{s.name}</h4>
+              <p style={{ fontSize:"0.8rem", color:T.muted, lineHeight:1.6 }}>{s.desc}</p>
+            </div>
+          </ScrollReveal>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── SERVICES PREMIUM ─────────────────────────────────────────────────────────
+function PremiumServices() {
+  useLang();
+  const items = [
+    { icon:<ShieldCheck size={28}/>, tag:t("prem1_tag"), title:t("prem1_title"), desc:t("prem1_desc"), color:"#c9302c" },
+    { icon:<Award size={28}/>,       tag:t("prem2_tag"), title:t("prem2_title"), desc:t("prem2_desc"), color:"#1e3a8a" },
+    { icon:<Globe size={28}/>,       tag:t("prem3_tag"), title:t("prem3_title"), desc:t("prem3_desc"), color:"#0f766e" },
+    { icon:<Plane size={28}/>,       tag:t("prem4_tag"), title:t("prem4_title"), desc:t("prem4_desc"), color:"#7c3aed" },
+  ];
+
+  return (
+    <div style={{ padding:"6rem 2rem", maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
+      <SectionTitle eyebrow={t("prem_eyebrow")} title={t("prem_title")} subtitle={t("prem_subtitle")} />
+      <div className="grid-4">
+        {items.map((item, i) => (
+          <ScrollReveal key={i} direction="up" delay={i * 0.09}>
+            <GlassCard tilt style={{ height:"100%", padding:"2rem", position:"relative", overflow:"visible" }}>
+              <div style={{
+                position:"absolute", top:-14, left:20,
+                background:`linear-gradient(135deg, ${item.color}, ${item.color}cc)`,
+                color:"#fff", fontSize:"0.65rem", fontWeight:800,
+                padding:"0.25rem 0.9rem", borderRadius:20,
+                letterSpacing:"0.5px", boxShadow:`0 4px 12px ${item.color}44`,
+              }}>{item.tag}</div>
+
+              <div style={{
+                width:56, height:56, borderRadius:14,
+                background:`${item.color}12`, color:item.color,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                marginBottom:"1.2rem", marginTop:"1rem",
+              }}>{item.icon}</div>
+
+              <h3 style={{ fontSize:"1rem", fontWeight:800, color:T.text, marginBottom:"0.7rem", fontFamily:"'Syne',sans-serif" }}>
+                {item.title}
+              </h3>
+              <p style={{ fontSize:"0.82rem", color:T.muted, lineHeight:1.7 }}>
+                {item.desc}
+              </p>
+            </GlassCard>
+          </ScrollReveal>
+        ))}
+      </div>
+      <div style={{ textAlign:"center", marginTop:"3rem" }}>
+        <GoldenBtn variant="solid" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je suis intéressé par vos services premium (DDP, Marque Privée, Visite d'usine)."))}>
+          <TrendingUp size={17} style={{marginRight:8}}/> Discuter de mes besoins spécifiques
+        </GoldenBtn>
       </div>
     </div>
   );
