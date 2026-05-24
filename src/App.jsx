@@ -26,7 +26,7 @@ const T = {
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
 const WA_COMMERCIAL = "+22890000001";
 const WA_TRANSITAIRE = "+22890000002";
-const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH;
+const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
 
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
@@ -2299,10 +2299,6 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!ADMIN_HASH) {
-      setErrorMsg("Administration non configurée sur ce déploiement.");
-      return;
-    }
     if (lockoutTime > Date.now()) {
       return;
     }
