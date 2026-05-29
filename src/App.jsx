@@ -6,7 +6,7 @@ import {
   Edit2, Trash2, ChevronDown, Menu, X, Star, Package,
   Building2, Plane, Users, Award, TrendingUp, Clock,
   MessageCircle, CheckCircle, AlertCircle, Upload, Image,
-  Search, Filter, ShieldCheck, Settings
+  Search, Filter, ShieldCheck, Settings, Film, FileText, Play
 } from "lucide-react";
 
 // ─── THEME & COLOR SYSTEM ───────────────────────────────────────────────────
@@ -62,6 +62,36 @@ async function ghCommit(filepath, data) {
     }),
   });
   return putRes.ok;
+}
+
+async function ghUploadMedia(file) {
+  if (!GH_TOKEN) return null;
+  const ext = file.name.split(".").pop().toLowerCase();
+  const slug = `${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+  const filename = `${slug}.${ext}`;
+  const filepath = `public/media/${filename}`;
+  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${filepath}`;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const b64 = e.target.result.split(",")[1];
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${GH_TOKEN}`,
+          Accept: "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: `media: upload ${file.name}`,
+          content: b64,
+        }),
+      });
+      resolve(res.ok ? `/media/${filename}` : null);
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
 }
 
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
@@ -280,6 +310,65 @@ function useScrollProgress() {
 }
 
 // ─── PREMIUM UTILITY COMPONENTS ──────────────────────────────────────────────
+
+// ─── MEDIA HELPERS ───────────────────────────────────────────────────────────
+const VIDEO_EXTS = ["mp4","mov","webm","avi","mkv","m4v","ogv"];
+const DOC_EXTS   = ["pdf","doc","docx","xls","xlsx","ppt","pptx"];
+
+function getMediaType(src) {
+  if (!src) return "none";
+  const ext = src.split(".").pop().toLowerCase().split("?")[0];
+  if (VIDEO_EXTS.includes(ext)) return "video";
+  if (DOC_EXTS.includes(ext))   return "doc";
+  if (src.startsWith("data:video")) return "video";
+  return "image";
+}
+
+// Affiche image, vidéo ou document selon la source
+function MediaDisplay({ src, alt = "", style = {}, fallback }) {
+  const type = getMediaType(src || fallback);
+  const effective = src || fallback;
+  if (!effective) return null;
+
+  if (type === "video") {
+    return (
+      <div style={{ position: "relative", width: "100%", height: "100%", background: "#000", ...style }}>
+        <video
+          src={effective}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          preload="metadata"
+          controls={false}
+          muted
+          loop
+          onMouseEnter={e => e.target.play()}
+          onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
+        />
+        <div style={{
+          position: "absolute", inset: 0, display: "flex",
+          alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.25)", pointerEvents: "none",
+        }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: "50%",
+            background: "rgba(255,255,255,0.92)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <Play size={18} color={T.gold} style={{ marginLeft: 3 }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (type === "doc") {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: T.bgSection, gap: 8, ...style }}>
+        <FileText size={36} color={T.gold} />
+        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: T.gold, fontWeight: 600 }}>Ouvrir le document</a>
+      </div>
+    );
+  }
+  return <Img src={effective} alt={alt} style={style} />;
+}
 
 // 1. Composant Image Sécurisé avec Skeleton Shimmer & Gestion des Erreurs
 const Img = ({ src, alt, style={} }) => {
@@ -882,50 +971,16 @@ function TestimonialCarousel() {
   );
 }
 
-// ─── LOGO SVG PROFESSIONNEL ──────────────────────────────────────────────────
+// ─── LOGO ────────────────────────────────────────────────────────────────────
 const Logo = ({ onClick, size="md" }) => {
-  const s = size==="sm" ? 36 : 46;
-  const gid = `lg_${size}`;
+  const h = size === "sm" ? 36 : 46;
   return (
-    <div onClick={onClick} style={{ display:"flex", alignItems:"center", gap:13, cursor:"pointer", userSelect:"none" }}>
-      <svg width={s} height={s} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id={gid} x1="0" y1="0" x2="44" y2="44">
-            <stop offset="0%" stopColor="#680a0a"/>
-            <stop offset="52%" stopColor="#c9302c"/>
-            <stop offset="100%" stopColor="#e04040"/>
-          </linearGradient>
-        </defs>
-        {/* Background */}
-        <rect width="44" height="44" rx="12" fill={`url(#${gid})`}/>
-        {/* Subtle inner ring */}
-        <circle cx="22" cy="22" r="18.5" stroke="rgba(255,255,255,0.08)" strokeWidth="1" fill="none"/>
-        {/* E letter */}
-        <path d="M7 12v18M7 12h9M7 21h7M7 30h9" stroke="white" strokeWidth="2.3" strokeLinecap="round"/>
-        {/* Golden bridge connector */}
-        <path d="M16 21h11" stroke="rgba(255,213,55,0.88)" strokeWidth="2" strokeLinecap="round"/>
-        {/* C letter — semicircle opening right, center (33,21) r=9 */}
-        <path d="M33 12 A9 9 0 1 0 33 30" stroke="white" strokeWidth="2.3" strokeLinecap="round" fill="none"/>
-        {/* Five-pointed star (Chinese motif) */}
-        <polygon
-          points="38.5,6 39.4,8.1 41.8,8.4 39.9,10 40.6,12.3 38.5,11 36.4,12.3 37.1,10 35.2,8.4 37.6,8.1"
-          fill="rgba(255,213,55,0.92)"
-        />
-      </svg>
-      <div style={{ lineHeight:1.18, textAlign:"left" }}>
-        <div style={{
-          color: T.text, fontWeight:800, fontSize:"1.05rem",
-          letterSpacing:"2.5px", fontFamily:"'Syne','Segoe UI',sans-serif",
-        }}>
-          EASY <span style={{ color:T.gold }}>CHINA</span>
-        </div>
-        <div style={{
-          color: T.muted, fontSize:".46rem",
-          letterSpacing:"3.5px", marginTop:3, textTransform:"uppercase",
-        }}>
-          Afrique · Réunion · Chine
-        </div>
-      </div>
+    <div onClick={onClick} style={{ cursor:"pointer", userSelect:"none", display:"flex", alignItems:"center" }}>
+      <img
+        src="/logo.png"
+        alt="Easy China"
+        style={{ height: h, width: "auto", objectFit: "contain", display: "block" }}
+      />
     </div>
   );
 };
@@ -2268,10 +2323,11 @@ function PageCatalogue({ articles }) {
           <ScrollReveal key={a.id} direction="up" delay={i * 0.05}>
             <GlassCard style={{ height: "100%", padding: 0, overflow: "hidden" }}>
               <div className="zoom-container" style={{ height: 200, position: "relative" }}>
-                <Img
-                  src={a.image || UNSPLASH[a.cat] || UNSPLASH["Autre"]}
-                  className="zoom-img"
-                  style={{ height: "100%", transition: "transform 0.5s ease", borderRadius: "0px" }}
+                <MediaDisplay
+                  src={a.image}
+                  fallback={UNSPLASH[a.cat] || UNSPLASH["Autre"]}
+                  alt={a.titre}
+                  style={{ height: "100%", borderRadius: "0px" }}
                 />
                 <div style={{
                   position: "absolute",
@@ -2377,8 +2433,10 @@ function PageRealisations({ realisations }) {
                   {/* Visual Image Banner for larger items */}
                   {isLarge && (
                     <div style={{ height: 160, position: "relative" }}>
-                      <Img
-                        src={r.image || UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"]}
+                      <MediaDisplay
+                        src={r.image}
+                        fallback={UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"]}
+                        alt={r.titre}
                         style={{ borderRadius: "0px", height: "100%" }}
                       />
                       <div style={{
@@ -2603,72 +2661,136 @@ function PageEquipe({ equipe }) {
 }
 
 // ─── COMPOSANT IMAGEUPLOAD EN BASE64 ──────────────────────────────────────────
-const ImageUpload = ({ value, onChange }) => {
+const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
   const ref = useRef();
-  const [preview, setPreview] = useState(value||"");
+  const [preview, setPreview] = useState(value || "");
+  const [objectUrl, setObjectUrl] = useState("");   // local blob URL for immediate preview
   const [drag, setDrag] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState("");
 
-  const handleFile = file => {
-    if(!file || !file.type.startsWith("image/")) return;
-    if(file.size > 5 * 1024 * 1024) { alert("Max 5MB"); return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-      setPreview(e.target.result);
-      onChange(e.target.result);
-    };
-    reader.readAsDataURL(file);
+  const type = getMediaType(objectUrl || preview);
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setUploadErr("");
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    const maxBytes = isVideo ? 50 * 1024 * 1024 : 8 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setUploadErr(`Fichier trop lourd (max ${isVideo ? "50" : "8"}MB)`);
+      return;
+    }
+
+    // Immediate local preview via object URL
+    const blob = URL.createObjectURL(file);
+    setObjectUrl(blob);
+
+    if (GH_TOKEN) {
+      setUploading(true);
+      const ghUrl = await ghUploadMedia(file);
+      setUploading(false);
+      if (ghUrl) {
+        setPreview(ghUrl);
+        onChange(ghUrl);
+      } else {
+        setUploadErr("Erreur d'upload GitHub. Vérifiez le token dans Vercel.");
+        setObjectUrl("");
+      }
+    } else if (isImage) {
+      // Fallback: base64 for images only when no token
+      const reader = new FileReader();
+      reader.onload = e => { setPreview(e.target.result); onChange(e.target.result); };
+      reader.readAsDataURL(file);
+    } else {
+      setUploadErr("Pour les vidéos et fichiers, configurez VITE_GITHUB_TOKEN dans Vercel → Settings → Environment Variables.");
+      setObjectUrl("");
+    }
   };
 
+  const clear = (e) => {
+    e.stopPropagation();
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    setObjectUrl(""); setPreview(""); onChange(""); setUploadErr("");
+  };
+
+  const displaySrc = objectUrl || preview;
+
   return (
-    <div style={{marginBottom:"1.1rem", textAlign: "left"}}>
-      <label style={{fontSize:".78rem",color:T.gold,fontWeight:600,
-        display:"block",marginBottom:6}}>
-        Photo
+    <div style={{ marginBottom: "1.1rem", textAlign: "left" }}>
+      <label style={{ fontSize: ".78rem", color: T.gold, fontWeight: 600, display: "block", marginBottom: 6 }}>
+        {label}
       </label>
       <div
-        onClick={()=>ref.current.click()}
-        onDragOver={e=>{e.preventDefault();setDrag(true)}}
-        onDragLeave={()=>setDrag(false)}
-        onDrop={e=>{e.preventDefault();setDrag(false);handleFile(e.dataTransfer.files[0])}}
+        onClick={() => !uploading && ref.current.click()}
+        onDragOver={e => { e.preventDefault(); setDrag(true); }}
+        onDragLeave={() => setDrag(false)}
+        onDrop={e => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
         style={{
-          border:`2px dashed ${drag?T.gold:T.border}`,
-          borderRadius:12, padding:"1rem", textAlign:"center",
-          cursor:"pointer", background: drag?"rgba(201,48,44,0.05)":T.bgSection,
-          transition:"all .2s", position:"relative", minHeight:120,
-          display:"flex", flexDirection:"column", alignItems:"center",
-          justifyContent:"center", gap:8
+          border: `2px dashed ${drag ? T.gold : uploadErr ? "#e53935" : T.border}`,
+          borderRadius: 12, padding: "1rem", textAlign: "center",
+          cursor: uploading ? "wait" : "pointer",
+          background: drag ? "rgba(201,48,44,0.05)" : T.bgSection,
+          transition: "all .2s", position: "relative", minHeight: 120,
+          display: "flex", flexDirection: "column", alignItems: "center",
+          justifyContent: "center", gap: 8,
         }}
       >
-        {preview
-          ? <>
-              <img src={preview} alt="preview"
-                style={{maxHeight:180,maxWidth:"100%",borderRadius:8,objectFit:"cover"}}/>
-              <button type="button"
-                onClick={e=>{e.stopPropagation();setPreview("");onChange("")}}
-                style={{position:"absolute",top:8,right:8,background:"#e53935",
-                  border:"none",borderRadius:6,color:"#fff",
-                  padding:"2px 8px",cursor:"pointer",fontSize:".75rem", display: "flex", alignItems: "center", gap: 4}}>
-                <X size={12}/> Supprimer
-              </button>
-            </>
-          : <>
-              <Upload size={28} style={{color: T.gold, opacity: 0.6}}/>
-              <p style={{fontSize:".8rem",color:"#aaa",margin:0}}>
-                Glisse une photo ici ou <span style={{color: T.gold,
-                fontWeight:600}}>clique pour choisir</span>
+        {uploading ? (
+          <>
+            <div style={{ width: 30, height: 30, border: `3px solid ${T.border}`, borderTop: `3px solid ${T.gold}`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
+            <p style={{ fontSize: ".8rem", color: T.muted, margin: 0 }}>Upload GitHub en cours…</p>
+          </>
+        ) : displaySrc ? (
+          <>
+            {type === "video" ? (
+              <video src={displaySrc} controls style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8 }} preload="metadata" />
+            ) : type === "doc" ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <FileText size={32} color={T.gold} />
+                <a href={displaySrc} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: ".78rem", color: T.gold }}>Ouvrir le fichier</a>
+              </div>
+            ) : (
+              <img src={displaySrc} alt="preview" style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8, objectFit: "cover" }} />
+            )}
+            {uploading === false && objectUrl && (
+              <p style={{ fontSize: ".65rem", color: T.amber, margin: 0 }}>
+                ✓ Déployé sur GitHub — visible après le prochain redéploiement Vercel (~2 min)
               </p>
-              <p style={{fontSize:".7rem",color:"#ccc",margin:0}}>PNG, JPG, WEBP · Max 5MB</p>
-            </>
-        }
-        <input ref={ref} type="file" accept="image/*"
-          style={{display:"none"}} onChange={e=>handleFile(e.target.files[0])}/>
+            )}
+            <button type="button" onClick={clear}
+              style={{ position: "absolute", top: 8, right: 8, background: "#e53935", border: "none", borderRadius: 6, color: "#fff", padding: "2px 8px", cursor: "pointer", fontSize: ".72rem", display: "flex", alignItems: "center", gap: 3 }}>
+              <X size={11} /> Supprimer
+            </button>
+          </>
+        ) : (
+          <>
+            <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
+              <Image size={22} color={T.gold} opacity={0.7} />
+              <Film size={22} color={T.gold} opacity={0.7} />
+              <FileText size={22} color={T.gold} opacity={0.7} />
+            </div>
+            <p style={{ fontSize: ".8rem", color: "#aaa", margin: 0 }}>
+              Glisse un fichier ici ou <span style={{ color: T.gold, fontWeight: 600 }}>clique pour choisir</span>
+            </p>
+            <p style={{ fontSize: ".7rem", color: "#bbb", margin: 0 }}>
+              Images · Vidéos MP4/MOV/WEBM · PDF · Tous formats
+            </p>
+            <p style={{ fontSize: ".65rem", color: "#ccc", margin: 0 }}>Photos max 8MB · Vidéos max 50MB</p>
+          </>
+        )}
+        {uploadErr && (
+          <p style={{ fontSize: ".72rem", color: "#e53935", margin: 0, textAlign: "center", padding: "0 8px" }}>{uploadErr}</p>
+        )}
+        <input ref={ref} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+          style={{ display: "none" }} onChange={e => handleFile(e.target.files[0])} />
       </div>
       <input
-        type="text" value={preview.startsWith("data:") ? "" : preview}
-        onChange={e=>{setPreview(e.target.value);onChange(e.target.value)}}
-        placeholder="Ou colle une URL d'image..."
-        style={{width:"100%",marginTop:8,padding:".6rem .9rem",border:`1.5px solid ${T.border}`,
-          borderRadius:8,fontSize:".8rem",fontFamily:"inherit",outline:"none", background: T.bgSection, color: T.text}}
+        type="text"
+        value={preview.startsWith("data:") ? "" : preview}
+        onChange={e => { setObjectUrl(""); setPreview(e.target.value); onChange(e.target.value); }}
+        placeholder="Ou colle une URL (image, vidéo YouTube, lien…)"
+        style={{ width: "100%", marginTop: 8, padding: ".6rem .9rem", border: `1.5px solid ${T.border}`, borderRadius: 8, fontSize: ".8rem", fontFamily: "inherit", outline: "none", background: T.bgSection, color: T.text }}
       />
     </div>
   );
@@ -3092,7 +3214,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             />
           </div>
 
-          <ImageUpload value={artImage} onChange={setArtImage} />
+          <MediaUpload value={artImage} onChange={setArtImage} label="Photo / Vidéo du produit" />
 
           <Field label="Description & Spécifications *" value={artDesc} onChange={setArtDesc} placeholder="Détails du produit, capacité..." rows={3} />
           
@@ -3194,7 +3316,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             />
           </div>
 
-          <ImageUpload value={realImage} onChange={setRealImage} />
+          <MediaUpload value={realImage} onChange={setRealImage} label="Photo / Vidéo de la réalisation" />
 
           <Field label="Descriptif / Récit de Réussite *" value={realDesc} onChange={setRealDesc} placeholder="Comment cela a été réalisé (logistique, délais, réussite)..." rows={2} />
           <Field label="Témoignage Client" value={realTemoignage} onChange={setRealTemoignage} placeholder="Citation directe du client..." rows={2} />
@@ -3307,7 +3429,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             placeholder="Import & Logistique, Visas, Négociation"
           />
           <Field label="Biographie *" value={memBio} onChange={setMemBio} placeholder="Parcours, expertise, années d'expérience..." rows={4} />
-          <ImageUpload value={memImage} onChange={setMemImage} />
+          <MediaUpload value={memImage} onChange={setMemImage} label="Photo du membre" />
           <div style={{ display: "flex", gap: "1rem" }}>
             <GoldenBtn variant="solid" onClick={handleSaveMembre} style={{ flex: 1 }}>
               {editingMemId ? "Enregistrer les modifications" : "Ajouter à l'Équipe"}
@@ -3498,6 +3620,10 @@ export default function App() {
           100% { background-position: -200% 0; }
         }
 
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
         @keyframes pulseGlow {
           0% { transform: scale(0.95); opacity: 0.45; }
           50% { transform: scale(1.05); opacity: 0.75; }
@@ -3645,24 +3771,14 @@ export default function App() {
         zIndex: 2,
       }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.8rem" }}>
-          {/* Logo adapted for dark footer */}
+          {/* Logo footer */}
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => goTo("accueil")}>
-              <svg width={38} height={38} viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="42" height="42" rx="11" fill={T.gold}/>
-                <path d="M10 13h10M10 13v16M10 21h8M10 29h10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-                <path d="M24 16a7 7 0 1 0 0 10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-                <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6" fill="#fff" opacity=".9"/>
-              </svg>
-              <div style={{ lineHeight: 1.15, textAlign: "left" }}>
-                <div style={{ color: "#fff", fontWeight: 800, fontSize: "1rem", letterSpacing: "2.5px", fontFamily: "'Syne','Segoe UI',sans-serif" }}>
-                  EASY <span style={{ color: T.gold }}>CHINA</span>
-                </div>
-                <div style={{ color: "#64748b", fontSize: ".46rem", letterSpacing: "3px", marginTop: 2, textTransform: "uppercase" }}>
-                  Afrique · Réunion · Chine
-                </div>
-              </div>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Easy China"
+              onClick={() => goTo("accueil")}
+              style={{ height: 52, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)" }}
+            />
           </div>
           <p style={{ fontSize: "0.82rem", letterSpacing: "0.3px", color: "#64748b" }}>
             {t("footer_copy")}
