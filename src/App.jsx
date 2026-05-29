@@ -11,17 +11,18 @@ import {
 
 // ─── THEME & COLOR SYSTEM ───────────────────────────────────────────────────
 const T = {
-  bgDeep: "#ffffff",       // Fond blanc principal
-  bgCard: "#ffffff",       // Fond des cartes
-  bgSection: "#f8fafc",    // Sections alternées légères
-  bgGlass: "rgba(201, 48, 44, 0.03)",
-  gold: "#c9302c",         // Rouge Chine — accent principal
-  gold2: "#e53935",        // Rouge vif — survol
-  pink: "#1e3a8a",         // Marine — accent secondaire
-  border: "#e2e8f0",       // Bordure légère
-  text: "#0f172a",         // Texte sombre
-  muted: "#64748b",        // Texte atténué ardoise
-  radius: 14,
+  bgDeep:    "#fdfcf8",              // Ivoire chaud — plus humain que le blanc pur
+  bgCard:    "#ffffff",
+  bgSection: "#f6f2ea",              // Beige doux — sections alternées
+  bgGlass:   "rgba(180,40,30,0.03)",
+  gold:      "#c9302c",              // Rouge Chine — accent principal
+  gold2:     "#e53935",              // Rouge vif — survol
+  amber:     "#b8780a",              // Or chaud — accents luxe (étoiles, tags)
+  navy:      "#1a2f5e",              // Marine profond
+  border:    "#e6dfd2",              // Bordure beige chaude
+  text:      "#1a1410",              // Brun sombre chaud
+  muted:     "#6b5e52",              // Gris-brun atténué
+  radius:    16,
 };
 
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
@@ -358,17 +359,21 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
     if (variant === "solid") {
       return {
         ...base,
-        background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
+        background: isHovered && !disabled
+          ? `linear-gradient(135deg, ${T.gold2}, #f44336)`
+          : `linear-gradient(135deg, #d63333, ${T.gold2})`,
         color: "#fff",
-        boxShadow: isHovered && !disabled ? `0 8px 30px rgba(201, 48, 44, 0.35)` : `0 4px 15px rgba(201, 48, 44, 0.18)`,
+        boxShadow: isHovered && !disabled
+          ? `0 10px 32px rgba(201,48,44,0.45), 0 2px 8px rgba(201,48,44,0.2), inset 0 1px 0 rgba(255,255,255,0.18)`
+          : `0 5px 18px rgba(201,48,44,0.32), inset 0 1px 0 rgba(255,255,255,0.15)`,
       };
     } else if (variant === "outline") {
       return {
         ...base,
-        background: isHovered && !disabled ? "rgba(201, 48, 44, 0.06)" : "transparent",
+        background: isHovered && !disabled ? "rgba(201,48,44,0.05)" : "transparent",
         color: T.gold,
-        border: `1.5px solid ${T.gold}`,
-        boxShadow: isHovered && !disabled ? `0 0 20px rgba(201, 48, 44, 0.15)` : "none",
+        border: `2px solid ${T.gold}`,
+        boxShadow: isHovered && !disabled ? `0 0 22px rgba(201,48,44,0.14)` : "none",
       };
     } else if (variant === "ghost") {
       return {
@@ -454,10 +459,12 @@ function GlassCard({ children, tilt = true, style = {}, lift = 5, className = ""
       borderRadius: T.radius,
       background: "#ffffff",
       backdropFilter: "none",
-      border: `1px solid ${isHovered ? "rgba(201, 48, 44, 0.22)" : T.border}`,
+      border: `1px solid ${isHovered ? "rgba(201,48,44,0.2)" : T.border}`,
       padding: "2rem",
       overflow: "hidden",
-      boxShadow: isHovered ? "0 12px 40px rgba(0, 0, 0, 0.11)" : "0 2px 12px rgba(0, 0, 0, 0.06)",
+      boxShadow: isHovered
+        ? "0 14px 44px rgba(180,60,30,0.13), 0 2px 8px rgba(26,20,16,0.07)"
+        : "0 2px 10px rgba(26,20,16,0.06), 0 1px 3px rgba(26,20,16,0.04)",
     };
 
     if (tilt && isHovered) {
@@ -650,57 +657,51 @@ function ParticleCanvas({ color = "#c9302c", count = 50 }) {
 function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
   return (
     <ScrollReveal direction="up" delay={0}>
-      <div style={{
-        textAlign: centered ? "center" : "left",
-        marginBottom: "3.5rem",
-        position: "relative",
-      }}>
+      <div style={{ textAlign: centered ? "center" : "left", marginBottom: "3.5rem" }}>
         {eyebrow && (
           <div style={{
-            fontSize: "0.72rem",
-            color: T.gold,
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-            fontWeight: 700,
-            marginBottom: "0.8rem",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
+            display: "inline-flex", alignItems: "center", gap: 10,
+            fontSize: "0.67rem", color: T.gold,
+            letterSpacing: "3.5px", textTransform: "uppercase",
+            fontWeight: 700, marginBottom: "1rem",
           }}>
-            <span style={{ display: "inline-block", width: 24, height: 2, background: T.gold, borderRadius: 2 }} />
+            <span style={{
+              display: "inline-block", width: 28, height: 1.5,
+              background: `linear-gradient(90deg, transparent, ${T.gold})`,
+              borderRadius: 2,
+            }}/>
             {eyebrow}
-            <span style={{ display: "inline-block", width: 24, height: 2, background: T.gold, borderRadius: 2 }} />
+            <span style={{
+              display: "inline-block", width: 28, height: 1.5,
+              background: `linear-gradient(90deg, ${T.gold}, transparent)`,
+              borderRadius: 2,
+            }}/>
           </div>
         )}
         <h2 style={{
-          fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-          fontWeight: 800,
-          color: T.text,
-          display: "block",
-          marginBottom: "0.8rem",
-          lineHeight: 1.2,
-          position: "relative",
-          fontFamily: "'Syne', sans-serif"
+          fontSize: "clamp(1.85rem, 4vw, 2.9rem)",
+          fontWeight: 800, color: T.text,
+          lineHeight: 1.15, marginBottom: "0.9rem",
+          fontFamily: "'Syne', sans-serif",
+          letterSpacing: "-0.3px",
         }}>
           {title}
-          <span style={{
-            display: "block",
-            width: 48,
-            height: 3,
-            background: T.gold,
-            borderRadius: 3,
-            marginTop: 12,
-            marginLeft: centered ? "auto" : 0,
-            marginRight: centered ? "auto" : 0,
-          }} />
         </h2>
+        {/* Decorative accent: red bar + amber dot */}
+        <div style={{
+          display: "flex",
+          justifyContent: centered ? "center" : "flex-start",
+          alignItems: "center", gap: 5, marginBottom: subtitle ? "1.2rem" : 0,
+        }}>
+          <div style={{ width: 38, height: 3.5, borderRadius: 3, background: `linear-gradient(90deg, ${T.gold}, ${T.gold2})` }}/>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, opacity: 0.85 }}/>
+          <div style={{ width: 14, height: 3.5, borderRadius: 3, background: T.border }}/>
+        </div>
         {subtitle && (
           <p style={{
-            color: T.muted,
-            fontSize: "0.95rem",
-            maxWidth: 540,
-            margin: centered ? "1.2rem auto 0" : "1.2rem 0 0",
-            lineHeight: 1.6,
+            color: T.muted, fontSize: "0.95rem",
+            maxWidth: 560, margin: centered ? "0 auto" : "0",
+            lineHeight: 1.75,
           }}>
             {subtitle}
           </p>
@@ -883,34 +884,44 @@ function TestimonialCarousel() {
 
 // ─── LOGO SVG PROFESSIONNEL ──────────────────────────────────────────────────
 const Logo = ({ onClick, size="md" }) => {
-  const s = size==="sm" ? 32 : 42;
+  const s = size==="sm" ? 36 : 46;
+  const gid = `lg_${size}`;
   return (
-    <div onClick={onClick}
-      style={{display:"flex",alignItems:"center",gap:12,
-        cursor:"pointer",userSelect:"none"}}>
-      <svg width={s} height={s} viewBox="0 0 42 42" fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <rect width="42" height="42" rx="11" fill="url(#logoGrad)"/>
-        <path d="M10 13h10M10 13v16M10 21h8M10 29h10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M24 16a7 7 0 1 0 0 10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-        <polygon points="36,6 37.2,9.6 41,9.6 38,11.8 39.2,15.4 36,13.2 32.8,15.4 34,11.8 31,9.6 34.8,9.6" fill="#fff" opacity=".9"/>
+    <div onClick={onClick} style={{ display:"flex", alignItems:"center", gap:13, cursor:"pointer", userSelect:"none" }}>
+      <svg width={s} height={s} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="logoGrad" x1="0" y1="0" x2="42" y2="42">
-            <stop offset="0%" stopColor="#c9302c"/>
-            <stop offset="100%" stopColor="#b71c1c"/>
+          <linearGradient id={gid} x1="0" y1="0" x2="44" y2="44">
+            <stop offset="0%" stopColor="#680a0a"/>
+            <stop offset="52%" stopColor="#c9302c"/>
+            <stop offset="100%" stopColor="#e04040"/>
           </linearGradient>
         </defs>
+        {/* Background */}
+        <rect width="44" height="44" rx="12" fill={`url(#${gid})`}/>
+        {/* Subtle inner ring */}
+        <circle cx="22" cy="22" r="18.5" stroke="rgba(255,255,255,0.08)" strokeWidth="1" fill="none"/>
+        {/* E letter */}
+        <path d="M7 12v18M7 12h9M7 21h7M7 30h9" stroke="white" strokeWidth="2.3" strokeLinecap="round"/>
+        {/* Golden bridge connector */}
+        <path d="M16 21h11" stroke="rgba(255,213,55,0.88)" strokeWidth="2" strokeLinecap="round"/>
+        {/* C letter — semicircle opening right, center (33,21) r=9 */}
+        <path d="M33 12 A9 9 0 1 0 33 30" stroke="white" strokeWidth="2.3" strokeLinecap="round" fill="none"/>
+        {/* Five-pointed star (Chinese motif) */}
+        <polygon
+          points="38.5,6 39.4,8.1 41.8,8.4 39.9,10 40.6,12.3 38.5,11 36.4,12.3 37.1,10 35.2,8.4 37.6,8.1"
+          fill="rgba(255,213,55,0.92)"
+        />
       </svg>
-      <div style={{lineHeight:1.15, textAlign: "left"}}>
+      <div style={{ lineHeight:1.18, textAlign:"left" }}>
         <div style={{
           color: T.text, fontWeight:800, fontSize:"1.05rem",
-          letterSpacing:"2.5px", fontFamily:"'Syne','Segoe UI',sans-serif"
+          letterSpacing:"2.5px", fontFamily:"'Syne','Segoe UI',sans-serif",
         }}>
-          EASY <span style={{color: T.gold}}>CHINA</span>
+          EASY <span style={{ color:T.gold }}>CHINA</span>
         </div>
         <div style={{
-          color: T.muted, fontSize:".48rem",
-          letterSpacing:"3.5px", marginTop:2, textTransform:"uppercase"
+          color: T.muted, fontSize:".46rem",
+          letterSpacing:"3.5px", marginTop:3, textTransform:"uppercase",
         }}>
           Afrique · Réunion · Chine
         </div>
@@ -1016,16 +1027,18 @@ function FloatingNav({ pages, activePage, setPage }) {
         width: isScrolled ? "92%" : "100%",
         maxWidth: 1400,
         margin: "0 auto",
-        background: isScrolled ? "rgba(255, 255, 255, 0.96)" : "rgba(255, 255, 255, 0.9)",
-        backdropFilter: "blur(16px)",
-        border: isScrolled ? `1px solid ${T.border}` : `1px solid rgba(226, 232, 240, 0.6)`,
-        borderRadius: isScrolled ? T.radius : 0,
+        background: isScrolled ? "rgba(253,252,248,0.97)" : "rgba(253,252,248,0.92)",
+        backdropFilter: "blur(20px)",
+        border: isScrolled ? `1px solid ${T.border}` : `1px solid rgba(230,223,210,0.5)`,
+        borderRadius: isScrolled ? T.radius + 4 : 0,
         height: 68,
         padding: "0 2rem",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        boxShadow: isScrolled ? "0 4px 20px rgba(0, 0, 0, 0.08)" : "0 1px 0 rgba(0,0,0,0.05)",
+        boxShadow: isScrolled
+          ? "0 6px 28px rgba(26,20,16,0.1), 0 1px 4px rgba(26,20,16,0.06)"
+          : "0 1px 0 rgba(26,20,16,0.06)",
         transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         zIndex: 1000,
       }}>
@@ -1436,7 +1449,7 @@ function HeroSection({ goTo }) {
     }}>
       {/* Left — Text Content */}
       <div style={{
-        background: "#ffffff",
+        background: `radial-gradient(ellipse at 90% 40%, rgba(201,48,44,0.055) 0%, transparent 60%), ${T.bgDeep}`,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -1474,7 +1487,13 @@ function HeroSection({ goTo }) {
           }}>
             EASY CHINA
             <br/>
-            <span style={{ color: T.gold }}>{t("hero_title2")}</span>
+            <span style={{
+              color: T.gold,
+              fontFamily: "'Playfair Display', 'Syne', serif",
+              fontStyle: "italic",
+              fontWeight: 700,
+              letterSpacing: "0px",
+            }}>{t("hero_title2")}</span>
           </h1>
         </ScrollReveal>
 
@@ -3456,24 +3475,26 @@ export default function App() {
           color: ${T.text};
           font-family: 'Inter', system-ui, sans-serif;
           overflow-x: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          font-feature-settings: "kern" 1, "liga" 1;
         }
 
-        ::-webkit-scrollbar {
-          width: 6px;
+        ::selection {
+          background: rgba(201,48,44,0.18);
+          color: ${T.text};
         }
-        ::-webkit-scrollbar-track {
-          background: #f1f5f9;
-        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: ${T.bgSection}; }
         ::-webkit-scrollbar-thumb {
-          background: ${T.gold};
-          border-radius: 4px;
+          background: linear-gradient(to bottom, ${T.gold}, ${T.amber});
+          border-radius: 6px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-          background: ${T.gold2};
-        }
+        ::-webkit-scrollbar-thumb:hover { background: ${T.gold2}; }
 
         @keyframes shimmer {
-          0% { background-position: 200% 0; }
+          0%   { background-position: 200% 0; }
           100% { background-position: -200% 0; }
         }
 
