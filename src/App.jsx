@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { t, useLang, changeLang, LANGS } from "./i18n";
 import {
   Ship, GraduationCap, Wrench, FileCheck, Globe, MapPin,
@@ -431,7 +432,7 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
       padding: "0.85rem 2.2rem",
       fontSize: "0.88rem",
       fontWeight: 700,
-      fontFamily: "'Inter', sans-serif",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
       letterSpacing: "0.5px",
       cursor: disabled ? "not-allowed" : "pointer",
       overflow: "hidden",
@@ -536,70 +537,33 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
   );
 }
 
-// 3. Carte Premium Glassmorphism
+// 3. Carte Premium — Framer Motion hover spring
 function GlassCard({ children, tilt = true, style = {}, lift = 5, className = "" }) {
-  const cardRef = useRef(null);
-  const { tilt: tiltState, handleMouseMove, handleMouseLeave } = useMouseTilt(cardRef, 6);
-
-  const getCardStyle = () => {
-    const isHovered = tiltState.isHovered;
-    const base = {
-      position: "relative",
-      borderRadius: T.radius,
-      background: "#ffffff",
-      backdropFilter: "none",
-      border: `1px solid ${isHovered ? "rgba(201,48,44,0.2)" : T.border}`,
-      padding: "2rem",
-      overflow: "hidden",
-      boxShadow: isHovered
-        ? "0 14px 44px rgba(180,60,30,0.13), 0 2px 8px rgba(26,20,16,0.07)"
-        : "0 2px 10px rgba(26,20,16,0.06), 0 1px 3px rgba(26,20,16,0.04)",
-    };
-
-    if (tilt && isHovered) {
-      return {
-        ...base,
-        transform: `perspective(800px) rotateX(${tiltState.rotateX}deg) rotateY(${tiltState.rotateY}deg) translateY(-${lift}px)`,
-      };
-    } else if (isHovered) {
-      return {
-        ...base,
-        transform: `translateY(-${lift}px)`,
-        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-      };
-    }
-
-    return {
-      ...base,
-      transform: "translateY(0)",
-      transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-    };
-  };
-
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={tilt ? handleMouseMove : undefined}
-      onMouseLeave={handleMouseLeave}
+    <motion.div
       className={className}
+      whileHover={{
+        y: tilt ? -lift - 2 : -lift,
+        boxShadow: "0 20px 52px rgba(180,60,30,0.15), 0 4px 12px rgba(26,20,16,0.08)",
+        borderColor: "rgba(201,48,44,0.22)",
+      }}
+      transition={{ type: "spring", stiffness: 380, damping: 24 }}
       style={{
-        ...getCardStyle(),
+        position: "relative",
+        borderRadius: T.radius,
+        background: "#ffffff",
+        border: `1px solid ${T.border}`,
+        padding: "2rem",
+        overflow: "hidden",
+        boxShadow: "0 2px 10px rgba(26,20,16,0.06), 0 1px 3px rgba(26,20,16,0.04)",
+        cursor: "default",
         ...style,
       }}
     >
-      {tilt && tiltState.isHovered && (
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(circle at ${tiltState.glareX}% ${tiltState.glareY}%, rgba(255, 255, 255, 0.06) 0%, transparent 60%)`,
-          pointerEvents: "none",
-          zIndex: 1,
-        }} />
-      )}
       <div style={{ position: "relative", zIndex: 2, height: "100%", display: "flex", flexDirection: "column" }}>
         {children}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -921,6 +885,7 @@ function Testimonial({ quote, author, role, stars }) {
 
 // 10. Carrousel Témoignages
 function TestimonialCarousel() {
+  useLang();
   const testimonials = [
     { quote: "Grâce à Easy China, j'ai importé 3 conteneurs de machines textiles sans aucun souci logistique. L'équipe à Lomé et Guangzhou est exceptionnelle.", author: "M. Yao K.", role: "CEO, Africa Textiles", stars: 5 },
     { quote: "L'assistance pour mon admission à l'Université de Wuhan a été rapide et transparente. J'ai même obtenu une bourse complète. Merci infiniment !", author: "Mlle Amivi S.", role: "Étudiante en Master", stars: 5 },
@@ -973,15 +938,17 @@ function TestimonialCarousel() {
 
 // ─── LOGO ────────────────────────────────────────────────────────────────────
 const Logo = ({ onClick, size="md" }) => {
-  const h = size === "sm" ? 36 : 46;
+  const h = size === "sm" ? 52 : 68;
   return (
-    <div onClick={onClick} style={{ cursor:"pointer", userSelect:"none", display:"flex", alignItems:"center" }}>
-      <img
-        src="/logo.png"
-        alt="Easy China"
-        style={{ height: h, width: "auto", objectFit: "contain", display: "block" }}
-      />
-    </div>
+    <motion.div
+      onClick={onClick}
+      whileHover={{ scale: 1.04 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+      style={{ cursor:"pointer", userSelect:"none", display:"flex", alignItems:"center" }}
+    >
+      <img src="/logo.png" alt="Easy China" style={{ height: h, width: "auto", objectFit: "contain", display: "block" }} />
+    </motion.div>
   );
 };
 
@@ -1009,7 +976,7 @@ function LangSwitcher() {
           borderRadius: 8, padding: "0.4rem 0.85rem",
           fontSize: "0.78rem", fontWeight: 600, cursor: "pointer",
           color: open ? T.gold : T.muted, transition: "all 0.25s",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}
       >
         <span style={{ fontSize: "1rem" }}>{current.flag}</span>
@@ -1035,7 +1002,7 @@ function LangSwitcher() {
                 border: "none", cursor: "pointer",
                 fontSize: "0.82rem", fontWeight: lang === l.code ? 700 : 500,
                 color: lang === l.code ? T.gold : T.text,
-                fontFamily: "'Inter', sans-serif", transition: "background 0.2s",
+                fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "background 0.2s",
               }}
               onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
               onMouseLeave={e => { if (lang !== l.code) e.currentTarget.style.background = "transparent"; }}
@@ -1166,7 +1133,7 @@ function NavBtn({ label, active, onClick }) {
         fontSize: "0.85rem",
         fontWeight: 600,
         letterSpacing: "0.3px",
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
         transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         position: "relative",
       }}
@@ -1246,7 +1213,7 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
     fontSize: "0.88rem",
     background: foc ? "#fff" : T.bgSection,
     color: T.text,
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
     outline: "none",
     boxShadow: foc ? `0 0 0 3px rgba(201, 48, 44, 0.1)` : "none",
     transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -1307,15 +1274,19 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
 
 // 12. Enveloppe de transition de page
 function PageTransition({ children, pageKey }) {
+  const lang = useLang();
   return (
-    <div
-      key={pageKey}
-      style={{
-        animation: "pageEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-      }}
-    >
-      {children}
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={pageKey + lang}
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -14 }}
+        transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -1530,84 +1501,69 @@ function HeroSection({ goTo }) {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal direction="right" delay={0.2}>
-          <h1 style={{
+        <motion.h1
+          initial={{ opacity: 0, y: 36 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          style={{
             fontSize: "clamp(2.2rem, 4vw, 3.8rem)",
-            fontWeight: 800,
-            lineHeight: 1.1,
-            marginBottom: "1.5rem",
-            fontFamily: "'Syne', sans-serif",
-            color: T.text,
-            letterSpacing: "-0.5px",
-          }}>
-            EASY CHINA
-            <br/>
-            <span style={{
-              color: T.gold,
-              fontFamily: "'Playfair Display', 'Syne', serif",
-              fontStyle: "italic",
-              fontWeight: 700,
-              letterSpacing: "0px",
-            }}>{t("hero_title2")}</span>
-          </h1>
-        </ScrollReveal>
+            fontWeight: 800, lineHeight: 1.1, marginBottom: "1.5rem",
+            fontFamily: "'Syne', sans-serif", color: T.text, letterSpacing: "-0.5px",
+          }}
+        >
+          EASY CHINA
+          <br/>
+          <span style={{
+            color: T.gold, fontFamily: "'Playfair Display','Syne',serif",
+            fontStyle: "italic", fontWeight: 700, letterSpacing: "0px",
+          }}>{t("hero_title2")}</span>
+        </motion.h1>
 
-        <ScrollReveal direction="right" delay={0.3}>
-          <p style={{
-            color: T.muted,
-            fontSize: "1rem",
-            maxWidth: 460,
-            lineHeight: 1.8,
-            marginBottom: "2.5rem",
-          }}>
-            {t("hero_desc")}
-          </p>
-        </ScrollReveal>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.32, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          style={{ color: T.muted, fontSize: "1rem", maxWidth: 460, lineHeight: 1.8, marginBottom: "2.5rem" }}
+        >
+          {t("hero_desc")}
+        </motion.p>
 
-        <ScrollReveal direction="right" delay={0.4}>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
-            <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
-              <Package size={17} style={{marginRight: 8}}/> {t("hero_cta1")}
-            </GoldenBtn>
-            <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
-              <MessageCircle size={17} style={{marginRight: 8}}/> {t("hero_cta2")}
-            </GoldenBtn>
-          </div>
-        </ScrollReveal>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}
+        >
+          <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
+            <Package size={17} style={{marginRight: 8}}/> {t("hero_cta1")}
+          </GoldenBtn>
+          <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
+            <MessageCircle size={17} style={{marginRight: 8}}/> {t("hero_cta2")}
+          </GoldenBtn>
+        </motion.div>
 
-        <ScrollReveal direction="right" delay={0.5}>
-          <div style={{
-            display: "flex",
-            gap: "2.5rem",
-            paddingTop: "2rem",
-            borderTop: `1px solid ${T.border}`,
-            flexWrap: "wrap",
-          }}>
-            {heroStats.map((s, i) => (
-              <div key={i}>
-                <div style={{
-                  fontSize: "1.9rem",
-                  fontWeight: 800,
-                  color: T.gold,
-                  fontFamily: "'Syne', sans-serif",
-                  lineHeight: 1,
-                }}>
-                  <AnimatedCounter value={s.n} suffix={s.s} duration={2} />
-                </div>
-                <div style={{
-                  fontSize: "0.7rem",
-                  color: T.muted,
-                  textTransform: "uppercase",
-                  letterSpacing: "1.2px",
-                  fontWeight: 600,
-                  marginTop: 4,
-                }}>
-                  {s.l}
-                </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.7 }}
+          style={{ display: "flex", gap: "2.5rem", paddingTop: "2rem", borderTop: `1px solid ${T.border}`, flexWrap: "wrap" }}
+        >
+          {heroStats.map((s, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.65 + i * 0.08, duration: 0.5 }}
+            >
+              <div style={{ fontSize: "1.9rem", fontWeight: 800, color: T.gold, fontFamily: "'Syne',sans-serif", lineHeight: 1 }}>
+                <AnimatedCounter value={s.n} suffix={s.s} duration={2} />
               </div>
-            ))}
-          </div>
-        </ScrollReveal>
+              <div style={{ fontSize: "0.7rem", color: T.muted, textTransform: "uppercase", letterSpacing: "1.2px", fontWeight: 600, marginTop: 4 }}>
+                {s.l}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
 
       {/* Right — Image Panel */}
@@ -2177,7 +2133,7 @@ function FAQAccordion() {
                 width: "100%", textAlign: "left", padding: "1.3rem 1.8rem",
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 background: "none", border: "none", cursor: "pointer",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
               <span style={{ fontWeight: 700, fontSize: "0.92rem", color: T.text, paddingRight: "1rem", lineHeight: 1.4 }}>
@@ -3574,7 +3530,7 @@ export default function App() {
 
   return (
     <div style={{
-      fontFamily: "'Inter', system-ui, sans-serif",
+      fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
       minHeight: "100vh",
       background: T.bgDeep,
       color: T.text,
@@ -3595,7 +3551,7 @@ export default function App() {
         body {
           background-color: ${T.bgDeep};
           color: ${T.text};
-          font-family: 'Inter', system-ui, sans-serif;
+          font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
           overflow-x: hidden;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
