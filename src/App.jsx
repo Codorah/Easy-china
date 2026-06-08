@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { t, useLang, changeLang, LANGS } from "./i18n";
 import {
@@ -27,8 +27,8 @@ const T = {
 };
 
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
-const WA_COMMERCIAL = "+22890000001";
-const WA_TRANSITAIRE = "+22890000002";
+const WA_COMMERCIAL = "+8619876105148";
+const WA_TRANSITAIRE = "+8619876105148";
 const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
 
 const GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
@@ -129,8 +129,8 @@ const DEFAULT_EQUIPE = [
     nom: "Jean-Baptiste Koffi",
     poste: "Directeur Général & Fondateur",
     bio: "Passionné par les échanges sino-africains depuis plus de 10 ans, Jean-Baptiste a fondé Easy China en 2017 après plusieurs années passées à Guangzhou. Il supervise les opérations commerciales, les partenariats stratégiques et les négociations directes avec les usines chinoises.",
-    contact: "+228 90 12 34 56",
-    email: "direction@easychina-services.com",
+    contact: "+86 198 7610 5148",
+    email: "services@easychina.online",
     specialites: "Import & Logistique,Partenariats Chine,Négociations B2B",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&h=600&q=80"
   },
@@ -139,8 +139,8 @@ const DEFAULT_EQUIPE = [
     nom: "Amivi Sénamé",
     poste: "Responsable Académique & Visas",
     bio: "Ancienne boursière à l'Université de Wuhan, Amivi dirige depuis 2019 le pôle universitaire d'Easy China. Elle accompagne personnellement chaque étudiant dans ses démarches d'inscription, d'obtention de bourses gouvernementales et de visa d'études.",
-    contact: "+228 90 56 78 90",
-    email: "etudes@easychina-services.com",
+    contact: "+86 198 7610 5148",
+    email: "services@easychina.online",
     specialites: "Admissions Universitaires,Bourses Gouvernementales,Visas Études",
     image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=500&h=600&q=80"
   },
@@ -149,8 +149,8 @@ const DEFAULT_EQUIPE = [
     nom: "Kwame Agbodjan",
     poste: "Responsable Logistique & Transit",
     bio: "Expert en transit international et dédouanement avec 8 ans d'expérience dans le fret maritime, Kwame gère l'ensemble de la chaîne logistique depuis les ports de Guangzhou et Yiwu jusqu'au port de Lomé. Il garantit la sécurité et la conformité de chaque cargaison.",
-    contact: "+228 90 34 56 78",
-    email: "logistique@easychina-services.com",
+    contact: "+86 198 7610 5148",
+    email: "services@easychina.online",
     specialites: "Fret Maritime,Dédouanement,Inspection Qualité",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80"
   }
@@ -1296,32 +1296,32 @@ const SEO_PAGES = {
     title: "Easy China – Import, Université, Visa & Tourisme Chine | Afrique Francophone",
     desc: "Easy China : votre agence de référence entre l'Afrique et la Chine. Import direct Guangzhou & Yiwu, inscription université chinoise avec bourses, visa Chine rapide, formation professionnelle, tourisme & affaires. Présents dans 15 pays africains.",
     keywords: "import chine afrique, importation guangzhou afrique, université chine inscription, bourse études chine afrique, visa chine afrique, tourisme voyage chine, voyage affaires chine, formation professionnelle chine, sourcing guangzhou yiwu, easy china lomé, transitaire chine afrique, logistique chine afrique, dédouanement afrique ouest, marché yiwu achat, agent import chine, import chine togo bénin côte d'ivoire sénégal cameroun",
-    url: "https://easychina-services.com/",
+    url: "https://easychina.online/",
   },
   catalogue: {
     title: "Catalogue Import Direct Chine – Machines, Textile, Électronique | Easy China Afrique",
     desc: "Importez directement depuis la Chine au meilleur prix : machines industrielles pressing & blanchisserie, électronique LED, textile soie & lin, équipements solaires, agroalimentaires. Sourcing Guangzhou et Yiwu livré en Afrique.",
     keywords: "catalogue import chine, machines pressing chine, blanchisserie industrielle chine, électronique LED chine afrique, textile soie lin import, machines industrielles afrique, sourcing guangzhou, yiwu marché achat, importateur afrique chine, fournisseur chine direct, prix usine chine",
-    url: "https://easychina-services.com/#catalogue",
+    url: "https://easychina.online/#catalogue",
   },
   realisations: {
     title: "Réalisations & Témoignages Clients – Easy China | Import, Études, Visa Afrique",
     desc: "Nos succès en images : conteneurs importés depuis Guangzhou livrés en Afrique, étudiants boursiers dans les meilleures universités chinoises, ouvertures de blanchisseries professionnelles, visas obtenus en 10 jours. Témoignages clients Easy China.",
     keywords: "témoignages easy china, réalisations import chine afrique, bourses université chine avis, blanchisserie chine formation, visa chine 10 jours, client easy china afrique, importation réussie chine afrique",
-    url: "https://easychina-services.com/#realisations",
+    url: "https://easychina.online/#realisations",
   },
   equipe: {
     title: "Notre Équipe d'Experts Chine-Afrique | Easy China – Lomé & Guangzhou",
     desc: "Rencontrez l'équipe Easy China : directeur général basé à Guangzhou, responsable académique ancienne boursière Wuhan, expert logistique transit maritime. Votre pont humain entre l'Afrique et la Chine.",
     keywords: "équipe easy china, expert import chine afrique, agent universitaire chine afrique, transitaire maritime afrique chine, contact easy china, bureau lomé guangzhou",
-    url: "https://easychina-services.com/#equipe",
+    url: "https://easychina.online/#equipe",
   },
 };
 
 function SEOHead({ page }) {
   useEffect(() => {
     const seo = SEO_PAGES[page] || SEO_PAGES.accueil;
-    const SITE = "https://easychina-services.com";
+    const SITE = "https://easychina.online";
     const OG_IMG = `${SITE}/og-cover.jpg`;
 
     document.title = seo.title;
@@ -1385,8 +1385,8 @@ function SEOHead({ page }) {
           "url": SITE,
           "logo": `${SITE}/favicon.svg`,
           "image": OG_IMG,
-          "telephone": "+22890000001",
-          "email": "contact@easychina-services.com",
+          "telephone": "+8619876105148",
+          "email": "services@easychina.online",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Quartier Hédzranawoé",
@@ -1644,7 +1644,7 @@ function PageAccueil({ goTo }) {
   ];
 
   const officesList = [
-    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "contact@easychina-services.com", "+228 90 XX XX XX"] },
+    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "services@easychina.online", "+86 198 7610 5148"] },
     { flag: "🇨🇳", title: "Guangzhou Permanent", query: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
   ];
 
@@ -3752,3 +3752,4 @@ export default function App() {
     </div>
   );
 }
+
