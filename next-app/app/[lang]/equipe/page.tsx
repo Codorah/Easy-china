@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { getDictionary, getStaticLangParams, type LangCode } from "@/lib/i18n";
+import { getDictionary, getStaticLangParams, LANGS, type LangCode } from "@/lib/i18n";
 import { getEquipe } from "@/lib/data";
 import { SectionHeader } from "@/components/server/SectionHeader";
+import { JsonLd } from "@/components/server/JsonLd";
+
+const BASE_URL = "https://easychina-services.com";
+const OG_IMAGE = `${BASE_URL}/og.png`;
 
 export const revalidate = 300;
 
@@ -15,10 +19,26 @@ export function generateStaticParams() { return getStaticLangParams(); }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
   const t = getDictionary(lang);
+  const canonical = `${BASE_URL}/${lang}/equipe`;
+  const languages: Record<string, string> = {};
+  for (const l of LANGS) languages[l.hreflang] = `${BASE_URL}/${l.code}/equipe`;
   return {
     title: t.eq_title,
     description: t.eq_subtitle,
-    alternates: { canonical: `https://easychina-services.com/${lang}/equipe` },
+    alternates: { canonical, languages },
+    openGraph: {
+      type: "website",
+      url: canonical,
+      title: t.eq_title,
+      description: t.eq_subtitle,
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: t.eq_title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.eq_title,
+      description: t.eq_subtitle,
+      images: [OG_IMAGE],
+    },
   };
 }
 
@@ -30,7 +50,18 @@ export default async function EquipePage({ params }: Props) {
   const initials = (name: string) =>
     name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    url: `${BASE_URL}/${lang}/equipe`,
+    name: t.eq_title,
+    description: t.eq_subtitle,
+    inLanguage: lang,
+  };
+
   return (
+    <>
+    <JsonLd data={jsonLd} />
     <div className="section-py">
       <div className="container-base">
         <SectionHeader
@@ -117,5 +148,6 @@ export default async function EquipePage({ params }: Props) {
         )}
       </div>
     </div>
+    </>
   );
 }
