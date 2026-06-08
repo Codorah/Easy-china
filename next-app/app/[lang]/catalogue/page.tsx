@@ -10,12 +10,12 @@ const waLink = (num: string, msg: string) =>
   `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
 const FALLBACK_IMAGES: Record<string, string> = {
-  Machines:       "https://images.unsplash.com/photo-1565715101539-8cca2c24bf0f?auto=format&fit=crop&w=600&h=400&q=80",
-  Électronique:   "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=400&q=80",
-  Textile:        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=400&q=80",
-  Alimentaire:    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&h=400&q=80",
+  Machines:        "https://images.unsplash.com/photo-1565715101539-8cca2c24bf0f?auto=format&fit=crop&w=600&h=400&q=80",
+  Électronique:    "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=400&q=80",
+  Textile:         "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=400&q=80",
+  Alimentaire:     "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&h=400&q=80",
   "Import général":"https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80",
-  Autre:          "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=600&h=400&q=80",
+  Autre:           "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=600&h=400&q=80",
 };
 const DEFAULT_IMG = "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80";
 
@@ -38,7 +38,6 @@ export default async function CataloguePage({ params }: Props) {
   const t = getDictionary(lang as LangCode);
   const items = await getCatalogue();
 
-  // Collect unique categories for the filter label display
   const categories = [...new Set(items.map((i) => i.category))];
 
   return (
@@ -50,15 +49,10 @@ export default async function CataloguePage({ params }: Props) {
           subtitle={t.cat_subtitle}
         />
 
-        {/* Category pills */}
         {categories.length > 1 && (
           <div className="flex flex-wrap gap-2 mb-10 justify-center">
             {categories.map((cat) => (
-              <span
-                key={cat}
-                className="pill-accent"
-                style={{ cursor: "default" }}
-              >
+              <span key={cat} className="pill-accent cursor-default">
                 {cat}
               </span>
             ))}
@@ -66,7 +60,7 @@ export default async function CataloguePage({ params }: Props) {
         )}
 
         {items.length === 0 ? (
-          <p className="text-center text-[var(--color-muted)] py-20" style={{ fontSize: "var(--text-md)" }}>
+          <p className="text-center text-[var(--color-muted)] text-[var(--text-md)] py-20">
             Catalogue en cours de mise à jour.
           </p>
         ) : (
@@ -77,7 +71,6 @@ export default async function CataloguePage({ params }: Props) {
 
               return (
                 <li key={item.id} className="card overflow-hidden flex flex-col group">
-                  {/* Image */}
                   <div className="h-52 overflow-hidden relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -86,43 +79,32 @@ export default async function CataloguePage({ params }: Props) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    {/* Category badge */}
                     <div className="absolute top-3 left-3">
-                      <span
-                        className="px-2.5 py-1 rounded-[var(--radius-full)] bg-[var(--color-text)]/80 text-white backdrop-blur-sm font-semibold uppercase"
-                        style={{ fontSize: "var(--text-xs)", letterSpacing: "0.08em" }}
-                      >
+                      <span className="px-2.5 py-1 rounded-[var(--radius-full)] bg-[var(--color-text)]/80 text-white backdrop-blur-sm text-[var(--text-xs)] tracking-[0.08em] font-semibold uppercase">
                         {item.category}
                       </span>
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="flex flex-col flex-1 p-5">
-                    <h2
-                      className="font-display font-bold text-[var(--color-text)] mb-2"
-                      style={{ fontSize: "var(--text-md)" }}
-                    >
+                    <h2 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)] mb-2">
                       {item.name}
                     </h2>
 
                     {item.description && (
-                      <p
-                        className="text-[var(--color-muted)] mb-4 flex-1"
-                        style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)" }}
-                      >
+                      <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] mb-4 flex-1">
                         {item.description}
                       </p>
                     )}
 
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--color-border)]">
                       {item.price && (
-                        <p className="font-bold text-[var(--color-accent)]" style={{ fontSize: "var(--text-md)" }}>
+                        <p className="font-bold text-[var(--color-accent)] text-[var(--text-md)]">
                           {item.price}
                         </p>
                       )}
                       {item.unit && (
-                        <span className="text-[var(--color-muted)]" style={{ fontSize: "var(--text-xs)" }}>
+                        <span className="text-[var(--color-muted)] text-[var(--text-xs)]">
                           / {item.unit}
                         </span>
                       )}
@@ -132,8 +114,7 @@ export default async function CataloguePage({ params }: Props) {
                       href={waLink(WA_TRANSITAIRE, msg)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white font-bold hover:bg-[var(--color-accent-strong)] transition-colors"
-                      style={{ fontSize: "var(--text-sm)" }}
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-[var(--text-sm)] text-white font-bold hover:bg-[var(--color-accent-strong)] transition-colors"
                     >
                       {t.cat_order}
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -147,11 +128,10 @@ export default async function CataloguePage({ params }: Props) {
           </ul>
         )}
 
-        {/* Transit CTA */}
         <div className="mt-16 p-8 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] flex flex-col sm:flex-row items-center gap-6 justify-between">
           <div>
             <p className="eyebrow mb-2">{t.cat_transit}</p>
-            <p className="text-[var(--color-muted)]" style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)" }}>
+            <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)]">
               Nous gérons le transport, le dédouanement et la livraison de vos marchandises partout en Afrique.
             </p>
           </div>
@@ -159,8 +139,7 @@ export default async function CataloguePage({ params }: Props) {
             href={waLink(WA_TRANSITAIRE, "Bonjour Easy China, je souhaite des informations sur votre service transitaire.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-[var(--radius-md)] border-2 border-[var(--color-accent)] text-[var(--color-accent)] font-bold hover:bg-[var(--color-accent)] hover:text-white transition-colors"
-            style={{ fontSize: "var(--text-sm)" }}
+            className="shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-[var(--radius-md)] border-2 border-[var(--color-accent)] text-[var(--color-accent)] text-[var(--text-sm)] font-bold hover:bg-[var(--color-accent)] hover:text-white transition-colors"
           >
             En savoir plus
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

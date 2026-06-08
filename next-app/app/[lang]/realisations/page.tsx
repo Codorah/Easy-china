@@ -47,7 +47,7 @@ export default async function RealisationsPage({ params }: Props) {
         />
 
         {items.length === 0 ? (
-          <p className="text-center text-[var(--color-muted)] py-20" style={{ fontSize: "var(--text-md)" }}>
+          <p className="text-center text-[var(--color-muted)] text-[var(--text-md)] py-20">
             Réalisations en cours de mise à jour.
           </p>
         ) : (
@@ -56,7 +56,6 @@ export default async function RealisationsPage({ params }: Props) {
               const img = item.image || FALLBACK_IMAGES[item.category] || DEFAULT_IMG;
               return (
                 <li key={item.id} className="card overflow-hidden flex flex-col group">
-                  {/* Image */}
                   <div className="h-60 overflow-hidden relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -65,43 +64,25 @@ export default async function RealisationsPage({ params }: Props) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(to bottom, transparent 50%, rgba(26,20,16,0.6))" }}
-                      aria-hidden
-                    />
-                    {/* Category + date overlay */}
+                    <div className="card-img-overlay" aria-hidden />
                     <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                      <span
-                        className="pill-accent"
-                        style={{ backdropFilter: "blur(8px)" }}
-                      >
+                      <span className="pill-accent backdrop-blur-[8px]">
                         {item.category}
                       </span>
                       {item.date && (
-                        <span
-                          className="text-white font-semibold"
-                          style={{ fontSize: "var(--text-xs)" }}
-                        >
+                        <span className="text-white text-[var(--text-xs)] font-semibold">
                           {item.date}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-5 flex flex-col gap-3 flex-1">
-                    <h2
-                      className="font-display font-bold text-[var(--color-text)]"
-                      style={{ fontSize: "var(--text-lg)" }}
-                    >
+                    <h2 className="font-display font-bold text-[var(--color-text)] text-[var(--text-lg)]">
                       {item.title}
                     </h2>
                     {item.description && (
-                      <p
-                        className="text-[var(--color-muted)] flex-1"
-                        style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)" }}
-                      >
+                      <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] flex-1">
                         {item.description}
                       </p>
                     )}
@@ -110,8 +91,7 @@ export default async function RealisationsPage({ params }: Props) {
                         {item.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2.5 py-1 rounded-[var(--radius-full)] bg-[var(--color-surface-alt)] text-[var(--color-muted)] font-medium border border-[var(--color-border)]"
-                            style={{ fontSize: "var(--text-xs)" }}
+                            className="px-2.5 py-1 rounded-[var(--radius-full)] bg-[var(--color-surface-alt)] text-[var(--color-muted)] text-[var(--text-xs)] font-medium border border-[var(--color-border)]"
                           >
                             {tag}
                           </span>
@@ -125,21 +105,16 @@ export default async function RealisationsPage({ params }: Props) {
           </ul>
         )}
 
-        {/* Bottom CTA */}
         <div className="mt-16 text-center">
           <p className="eyebrow mb-4">{t.real_cta}</p>
-          <p
-            className="text-[var(--color-muted)] max-w-xl mx-auto mb-8"
-            style={{ fontSize: "var(--text-md)", lineHeight: "var(--leading-body)" }}
-          >
+          <p className="text-[var(--color-muted)] text-[var(--text-md)] leading-[var(--leading-body)] max-w-xl mx-auto mb-8">
             {t.real_cta_sub}
           </p>
           <a
             href={waLink(WA_COMMERCIAL, "Bonjour Easy China, je voudrais démarrer un nouveau projet.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white font-bold shadow-[var(--shadow-accent)] hover:bg-[var(--color-accent-strong)] transition-colors"
-            style={{ fontSize: "var(--text-sm)" }}
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-[var(--text-sm)] text-white font-bold shadow-[var(--shadow-accent)] hover:bg-[var(--color-accent-strong)] transition-colors"
           >
             {t.real_cta}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

@@ -9,16 +9,15 @@ interface Props {
 }
 
 export function ScrollReveal({ children, delay = 0, direction = "up", className = "" }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref     = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // Skip animation for reduced-motion preference
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) { setVisible(true); return; }
+    // Set CSS custom property imperatively — avoids JSX style prop
+    el.style.setProperty("--reveal-delay", `${delay}s`);
 
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
@@ -26,19 +25,14 @@ export function ScrollReveal({ children, delay = 0, direction = "up", className 
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
-
-  const initialTransform = direction === "up" ? "translateY(28px)" : direction === "left" ? "translateX(-28px)" : direction === "right" ? "translateX(28px)" : "none";
+  }, [delay]);
 
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "none" : initialTransform,
-        transition: `opacity 0.6s ease ${delay}s, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
-      }}
+      className={`reveal ${className}`}
+      data-dir={direction}
+      data-visible={visible ? "" : undefined}
     >
       {children}
     </div>

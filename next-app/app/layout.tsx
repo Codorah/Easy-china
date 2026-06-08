@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Syne, Plus_Jakarta_Sans } from "next/font/google";
+import { LenisProvider } from "@/components/client/LenisProvider";
 import "./globals.css";
 
-// ── Self-hosted fonts (downloaded at build time, no Google network call) ──
 const syne = Syne({
   subsets: ["latin"],
   weight: ["700", "800"],
@@ -28,22 +28,22 @@ export const metadata: Metadata = {
   },
   description:
     "Easy China : votre agence de référence entre l'Afrique et la Chine. Import direct Guangzhou & Yiwu, université, visa, formation. Présents dans 15 pays africains.",
-  icons: {
-    icon: "/favicon.svg",
-  },
+  icons: { icon: "/favicon.svg" },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // lang set per-segment in [lang]/layout.tsx; root uses fr fallback
-    <html
-      lang="fr"
-      className={`${syne.variable} ${jakarta.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-screen flex flex-col">{children}</body>
+    <html lang="fr" className={`${syne.variable} ${jakarta.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+        {/* Skip-to-content for keyboard/screen-reader users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-[var(--radius-md)] focus:bg-[var(--color-accent)] focus:text-white focus:font-bold focus:text-[var(--text-sm)]"
+        >
+          Aller au contenu
+        </a>
+        <LenisProvider>{children}</LenisProvider>
+      </body>
     </html>
   );
 }

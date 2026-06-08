@@ -198,6 +198,62 @@
   .icon-lg  { width: var(--icon-lg); height: var(--icon-lg); }
 }
 
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.hero-bg-left {
+  background:
+    radial-gradient(ellipse at 90% 40%, rgba(201,48,44,0.055) 0%, transparent 60%),
+    var(--color-bg);
+}
+.hero-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.28) 100%);
+}
+.card-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(26,20,16,0.6));
+}
+
+/* ── Scroll-reveal ───────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity    0.6s ease            var(--reveal-delay, 0s),
+    transform  0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+.reveal[data-dir="up"]    { transform: translateY(28px); }
+.reveal[data-dir="left"]  { transform: translateX(-28px); }
+.reveal[data-dir="right"] { transform: translateX(28px); }
+.reveal[data-dir="none"]  { transform: none; }
+.reveal[data-visible]     { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ── Section gradient backgrounds ───────────────────────────────────────── */
+.section-alt { background: var(--color-surface-alt); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+
+/* ── Mobile nav overlay animation ───────────────────────────────────────── */
+.mobile-nav-overlay { animation: fadeUp 0.25s ease; }
+
+/* ── Nav scroll shrink ───────────────────────────────────────────────────── */
+.nav-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: none;
+  transition:
+    top          0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    left         0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    right        0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow   0.45s ease;
+}
+.nav-wrap[data-scrolled] {
+  top: 12px; left: 3%; right: 3%;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-raise);
+}
+
 /* ── Keyframes ───────────────────────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: 200% 0; }

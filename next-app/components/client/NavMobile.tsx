@@ -3,17 +3,11 @@ import { useState, useEffect } from "react";
 import type { Dict, LangCode } from "@/lib/i18n";
 
 interface NavLink { href: string; label: string }
-
-interface Props {
-  links: NavLink[];
-  t: Dict;
-  lang: LangCode;
-}
+interface Props { links: NavLink[]; t: Dict; lang: LangCode }
 
 export function NavMobile({ links, t }: Props) {
   const [open, setOpen] = useState(false);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -22,8 +16,9 @@ export function NavMobile({ links, t }: Props) {
   return (
     <>
       <button
+        type="button"
         aria-label={t.nav_open}
-        aria-expanded={open}
+        aria-expanded={open ? "true" : "false"}
         onClick={() => setOpen((o) => !o)}
         className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-[var(--radius-md)] hover:bg-[var(--color-surface-alt)] transition-colors relative z-[1002]"
       >
@@ -33,11 +28,9 @@ export function NavMobile({ links, t }: Props) {
       </button>
 
       {open && (
-        <div
-          className="fixed inset-0 z-[999] bg-[var(--color-surface)]/98 backdrop-blur-xl flex flex-col items-center justify-center gap-8"
-          style={{ animation: "fadeUp 0.25s ease" }}
-        >
+        <div className="mobile-nav-overlay fixed inset-0 z-[999] bg-[var(--color-surface)]/98 backdrop-blur-xl flex flex-col items-center justify-center gap-8">
           <button
+            type="button"
             aria-label="Close menu"
             onClick={() => setOpen(false)}
             className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-surface-alt)] text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
@@ -48,7 +41,7 @@ export function NavMobile({ links, t }: Props) {
           </button>
 
           <nav aria-label="Mobile navigation">
-            <ul className="flex flex-col items-center gap-6">
+            <ul className="flex flex-col items-center gap-6" role="list">
               {links.map((l) => (
                 <li key={l.href}>
                   <a

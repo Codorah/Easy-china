@@ -24,7 +24,7 @@ export default async function LangLayout({ children, params }: Props) {
     <div className="flex flex-col min-h-screen">
       <Nav t={t} lang={lang as LangCode} />
       {/* Offset content below fixed nav */}
-      <main className="flex-1 pt-[68px]">{children}</main>
+      <main id="main-content" className="flex-1 pt-[68px]">{children}</main>
       <Footer t={t} lang={lang as LangCode} />
     </div>
   );
