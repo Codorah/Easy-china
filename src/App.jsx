@@ -2861,7 +2861,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     const { type, id } = deleteModal;
     if (type === "article") {
       setArticles(prev => prev.filter(a => a.id !== id));
-      if (editingId === id) { setEditingId(null); resetForm(); }
+      if (editingArtId === id) { setEditingArtId(null); setArtNom(""); setArtPrix(""); setArtDesc(""); setArtImage(""); }
     } else if (type === "realisation") {
       setRealisations(prev => prev.filter(r => r.id !== id));
       if (editingRealId === id) {
@@ -2874,7 +2874,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     }
     setDeleteModal(null);
     showToast("Supprimé avec succès");
-  }, [deleteModal, editingId, editingRealId, editingMemId, showToast]);
+  }, [deleteModal, editingArtId, editingRealId, editingMemId, showToast]);
 
   // CRUD Équipe Actions
   const resetMemForm = () => {
