@@ -874,7 +874,7 @@ function FloatingNav({ pages, activePage, setPage }) {
         background: isScrolled ? "rgba(253,252,248,0.97)" : "rgba(253,252,248,0.92)",
         backdropFilter: "blur(20px)",
         border: isScrolled ? `1px solid var(--border)` : `1px solid rgba(230,223,210,0.5)`,
-        borderRadius: isScrolled ? "var(--radius-md)" + 4 : 0,
+        borderRadius: isScrolled ? "var(--radius-lg)" : 0,
         height: 68,
         padding: "0 2rem",
         display: "flex",
@@ -1300,7 +1300,7 @@ function HeroSection({ goTo }) {
       overflow: "hidden",
     }}>
       {/* Left — Text Content */}
-      <div style={{
+      <div className="hero-text-panel" style={{
         background: "var(--bg)",
         display: "flex",
         flexDirection: "column",
@@ -1700,7 +1700,7 @@ function ProcessusSection() {
         {/* Timeline track */}
         <div style={{ position: "relative" }}>
           {/* Connecting line */}
-          <div style={{
+          <div className="processus-line" style={{
             position: "absolute",
             top: 36,
             left: "calc(12.5% + 36px)",
@@ -1710,7 +1710,7 @@ function ProcessusSection() {
             zIndex: 0,
           }} />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
+          <div className="processus-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
             {steps.map((s, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 0.1}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 var(--space-3)" }}>
@@ -3013,7 +3013,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
           </h3>
           <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field label="Prix (ou indicatif) *" value={artPrix} onChange={setArtPrix} placeholder="Ex: À partir de 1,200 USD" />
             <Field
               label="Catégorie"
@@ -3110,7 +3110,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
           
           <Field label="Nom Client / Fonction" value={realClient} onChange={setRealClient} placeholder="Ex: Mme Ablavi T., Importatrice" />
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field
               label="Catégorie"
               value={realCat}
@@ -3223,11 +3223,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
           <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingMemId ? "✏️ Modifier le Membre" : "➕ Ajouter un Membre"}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field label="Nom Complet *" value={memNom} onChange={setMemNom} placeholder="Ex: Jean Koffi" />
             <Field label="Poste / Rôle *" value={memPoste} onChange={setMemPoste} placeholder="Ex: Directeur Général" />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field label="Téléphone" value={memContact} onChange={setMemContact} placeholder="+228 90 00 00 00" />
             <Field label="Email" type="email" value={memEmail} onChange={setMemEmail} placeholder="nom@easychina.com" />
           </div>
@@ -3515,6 +3515,24 @@ export default function App() {
           .grid-50-50 {
             gap: var(--space-8) !important;
           }
+          .processus-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .processus-line {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .nav-desktop-menu {
+            display: none !important;
+          }
+          .nav-mobile-trigger {
+            display: flex !important;
+          }
+          .hero-text-panel {
+            padding: var(--space-16) var(--gutter) var(--space-12) !important;
+          }
         }
 
         @media (max-width: 640px) {
@@ -3527,12 +3545,6 @@ export default function App() {
           .bento-card {
             grid-column: span 1 !important;
             grid-row: span 1 !important;
-          }
-          .nav-desktop-menu {
-            display: none !important;
-          }
-          .nav-mobile-trigger {
-            display: flex !important;
           }
           .form-row {
             grid-template-columns: 1fr !important;
@@ -3551,6 +3563,12 @@ export default function App() {
           }
           .timeline-card-wrapper {
             width: 100% !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .processus-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       ` }} />
