@@ -7,7 +7,9 @@ import {
   Edit2, Trash2, ChevronDown, Menu, X, Star, Package,
   Building2, Plane, Users, Award, TrendingUp, Clock,
   MessageCircle, CheckCircle, AlertCircle, Upload, Image,
-  Search, Filter, ShieldCheck, Settings, Film, FileText, Play
+  Search, Filter, ShieldCheck, Settings, Film, FileText, Play,
+  Leaf, Zap, Hammer, Heart, Shirt, Smartphone, UtensilsCrossed, Wind,
+  CalendarCheck, ClipboardList
 } from "lucide-react";
 
 // ─── DESIGN TOKEN BRIDGE ─────────────────────────────────────────────────────
@@ -356,7 +358,7 @@ function MediaDisplay({ src, alt = "", style = {}, fallback }) {
             background: "rgba(255,255,255,0.92)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <Play size={18} color={T.accent} style={{ marginLeft: 3 }} />
+            <Play size={18} color={"var(--accent)"} style={{ marginLeft: 3 }} />
           </div>
         </div>
       </div>
@@ -364,9 +366,9 @@ function MediaDisplay({ src, alt = "", style = {}, fallback }) {
   }
   if (type === "doc") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: T.surfaceAlt, gap: 8, ...style }}>
-        <FileText size={36} color={T.accent} />
-        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: T.accent, fontWeight: 600 }}>Ouvrir le document</a>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: 'var(--surface-alt)', gap: 8, ...style }}>
+        <FileText size={36} color={"var(--accent)"} />
+        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: 'var(--accent)', fontWeight: 600 }}>Ouvrir le document</a>
       </div>
     );
   }
@@ -395,9 +397,9 @@ const Img = ({ src, alt, style={} }) => {
             style={{width:"100%",height:"100%",objectFit:"cover",
               opacity:loaded?1:0,transition:"opacity .3s",borderRadius:"inherit"}}/>
         : <div style={{width:"100%",height:"100%",background:"#f8fafc",
-            border:`1px solid ${T.border}`,
+            border:`1px solid var(--border)`,
             display:"flex",alignItems:"center",justifyContent:"center",
-            color: T.accent,borderRadius:"inherit"}}>
+            color: 'var(--accent)',borderRadius:"inherit"}}>
             <Image size={32}/>
           </div>
       }
@@ -469,25 +471,24 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
   );
 }
 
-// 3. Carte Premium — Framer Motion hover spring
-function GlassCard({ children, tilt = true, style = {}, lift = 5, className = "" }) {
+// 3. Card — consistent surface with token-based hover lift
+function GlassCard({ children, tilt = true, style = {}, className = "" }) {
   return (
     <motion.div
       className={className}
-      whileHover={{
-        y: tilt ? -lift - 2 : -lift,
-        boxShadow: "0 20px 52px rgba(180,60,30,0.15), 0 4px 12px rgba(26,20,16,0.08)",
-        borderColor: "rgba(201,48,44,0.22)",
-      }}
-      transition={{ type: "spring", stiffness: 380, damping: 24 }}
+      whileHover={tilt ? {
+        y: -3,
+        boxShadow: "0 12px 32px rgba(26,20,16,0.12), 0 4px 8px rgba(26,20,16,0.06)",
+        borderColor: "rgba(201,48,44,0.18)",
+      } : {}}
+      transition={{ duration: 0.15, ease: "easeOut" }}
       style={{
         position: "relative",
-        borderRadius: T.radius,
-        background: "#ffffff",
-        border: `1px solid ${T.border}`,
-        padding: "2rem",
-        overflow: "hidden",
-        boxShadow: "0 2px 10px rgba(26,20,16,0.06), 0 1px 3px rgba(26,20,16,0.04)",
+        borderRadius: "var(--radius-md)",
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        padding: "var(--space-8)",
+        boxShadow: "var(--shadow-sm)",
         cursor: "default",
         ...style,
       }}
@@ -628,7 +629,7 @@ function Timeline({ items }) {
               width: 14,
               height: 14,
               borderRadius: "50%",
-              background: T.accent,
+              background: "var(--accent)",
               border: `3px solid #fff`,
               transform: "translateX(-50%)",
               boxShadow: `0 0 0 3px rgba(201, 48, 44, 0.15)`,
@@ -641,15 +642,15 @@ function Timeline({ items }) {
                   <span style={{
                     fontSize: "1.2rem",
                     fontWeight: 800,
-                    color: T.accent,
+                    color: 'var(--accent)',
                     display: "block",
                     marginBottom: "0.4rem",
-                    fontFamily: "'Syne', sans-serif"
+                    fontFamily: "var(--font-display)"
                   }}>
                     {item.year}
                   </span>
                   <h4 style={{
-                    color: T.text,
+                    color: 'var(--text)',
                     fontSize: "1rem",
                     fontWeight: 700,
                     marginBottom: "0.5rem",
@@ -657,7 +658,7 @@ function Timeline({ items }) {
                     {item.title}
                   </h4>
                   <p style={{
-                    color: T.muted,
+                    color: 'var(--muted)',
                     fontSize: "0.85rem",
                     lineHeight: 1.6,
                   }}>
@@ -678,15 +679,15 @@ function Testimonial({ quote, author, role, stars }) {
   return (
     <GlassCard tilt={true} style={{ padding: "2.2rem 2rem", display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
       <div>
-        <div style={{ fontSize: "2.8rem", color: T.accent, lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
-        <p style={{ fontStyle: "italic", fontSize: "0.9rem", color: T.text, lineHeight: 1.65, marginBottom: "1.8rem" }}>
+        <div style={{ fontSize: "2.8rem", color: 'var(--accent)', lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
+        <p style={{ fontStyle: "italic", fontSize: "0.9rem", color: 'var(--text)', lineHeight: 1.65, marginBottom: "1.8rem" }}>
           {quote}
         </p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{
           width: 44, height: 44, borderRadius: "50%",
-          background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
+          background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
           border: `1.5px solid rgba(201, 48, 44, 0.2)`,
           display: "flex", alignItems: "center", justifyContent: "center",
           fontWeight: 800, color: "#fff", fontSize: "0.95rem"
@@ -694,11 +695,11 @@ function Testimonial({ quote, author, role, stars }) {
           {author.charAt(0)}
         </div>
         <div>
-          <h4 style={{ fontSize: "0.88rem", fontWeight: 700, color: T.text, margin: 0 }}>{author}</h4>
-          <span style={{ fontSize: "0.72rem", color: T.muted, display: "block", marginTop: 2 }}>{role}</span>
-          <div style={{ color: T.accent, display: "flex", gap: 2, marginTop: 4 }}>
+          <h4 style={{ fontSize: "0.88rem", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{author}</h4>
+          <span style={{ fontSize: "0.72rem", color: 'var(--muted)', display: "block", marginTop: 2 }}>{role}</span>
+          <div style={{ color: 'var(--accent)', display: "flex", gap: 2, marginTop: 4 }}>
             {Array.from({ length: 5 }).map((_, idx) => (
-              <Star key={idx} size={14} fill={idx < stars ? T.accent : "transparent"} color={T.accent} />
+              <Star key={idx} size={14} fill={idx < stars ? "var(--accent)" : "transparent"} color={"var(--accent)"} />
             ))}
           </div>
         </div>
@@ -749,7 +750,7 @@ function TestimonialCarousel() {
               height: 8,
               borderRadius: 4,
               border: "none",
-              background: active === i ? T.accent : T.border,
+              background: active === i ? "var(--accent)" : "var(--border)",
               cursor: "pointer",
               transition: "all 0.3s ease",
             }}
@@ -796,11 +797,11 @@ function LangSwitcher() {
         style={{
           display: "flex", alignItems: "center", gap: 6,
           background: open ? "rgba(201,48,44,0.07)" : "transparent",
-          border: `1px solid ${open ? T.accent : T.border}`,
+          border: `1px solid ${open ? "var(--accent)" : "var(--border)"}`,
           borderRadius: 8, padding: "0.4rem 0.85rem",
           fontSize: "0.78rem", fontWeight: 600, cursor: "pointer",
-          color: open ? T.accent : T.muted, transition: "all 0.25s",
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          color: open ? "var(--accent)" : "var(--muted)", transition: "all 0.25s",
+          fontFamily: "var(--font-body)",
         }}
       >
         <span style={{ fontSize: "1rem" }}>{current.flag}</span>
@@ -810,8 +811,8 @@ function LangSwitcher() {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 8px)", right: 0,
-          background: "#fff", border: `1px solid ${T.border}`,
-          borderRadius: T.radius, boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          background: "#fff", border: `1px solid var(--border)`,
+          borderRadius: "var(--radius-md)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
           zIndex: 2000, minWidth: 150, overflow: "hidden",
           animation: "pageEnter 0.2s ease",
         }}>
@@ -825,8 +826,8 @@ function LangSwitcher() {
                 background: lang === l.code ? "rgba(201,48,44,0.06)" : "transparent",
                 border: "none", cursor: "pointer",
                 fontSize: "0.82rem", fontWeight: lang === l.code ? 700 : 500,
-                color: lang === l.code ? T.accent : T.text,
-                fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "background 0.2s",
+                color: lang === l.code ? "var(--accent)" : "var(--text)",
+                fontFamily: "var(--font-body)", transition: "background 0.2s",
               }}
               onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
               onMouseLeave={e => { if (lang !== l.code) e.currentTarget.style.background = "transparent"; }}
@@ -861,7 +862,7 @@ function FloatingNav({ pages, activePage, setPage }) {
       <div style={{
         position: "fixed", top: 0, left: 0,
         width: `${progress}%`, height: 3,
-        background: `linear-gradient(to right, ${T.accent}, ${T.accentStrong})`,
+        background: `linear-gradient(to right, var(--accent), var(--accent-strong))`,
         zIndex: 1003, transition: "width 0.1s ease",
       }} />
 
@@ -875,8 +876,8 @@ function FloatingNav({ pages, activePage, setPage }) {
         margin: "0 auto",
         background: isScrolled ? "rgba(253,252,248,0.97)" : "rgba(253,252,248,0.92)",
         backdropFilter: "blur(20px)",
-        border: isScrolled ? `1px solid ${T.border}` : `1px solid rgba(230,223,210,0.5)`,
-        borderRadius: isScrolled ? T.radius + 4 : 0,
+        border: isScrolled ? `1px solid var(--border)` : `1px solid rgba(230,223,210,0.5)`,
+        borderRadius: isScrolled ? "var(--radius-md)" + 4 : 0,
         height: 68,
         padding: "0 2rem",
         display: "flex",
@@ -908,7 +909,7 @@ function FloatingNav({ pages, activePage, setPage }) {
             gap: 6, position: "relative", zIndex: 1002,
           }}
         >
-          {isOpen ? <X size={24} color={T.text}/> : <Menu size={24} color={T.text}/>}
+          {isOpen ? <X size={24} color={"var(--text)"}/> : <Menu size={24} color={"var(--text)"}/>}
         </button>
       </nav>
 
@@ -925,9 +926,9 @@ function FloatingNav({ pages, activePage, setPage }) {
             <button key={k} onClick={() => { setPage(k); setIsOpen(false); }}
               style={{
                 background: "none", border: "none", fontSize: "1.5rem",
-                fontWeight: 700, color: activePage === k ? T.accent : T.text,
+                fontWeight: 700, color: activePage === k ? "var(--accent)" : "var(--text)",
                 cursor: "pointer", transition: "all 0.2s",
-                letterSpacing: "1px", fontFamily: "'Syne', sans-serif"
+                letterSpacing: "1px", fontFamily: "var(--font-display)"
               }}
             >
               {t(NAV_KEYS[k] || k)}
@@ -950,14 +951,14 @@ function NavBtn({ label, active, onClick }) {
       style={{
         background: active ? "rgba(201, 48, 44, 0.07)" : hov ? "rgba(15, 23, 42, 0.04)" : "none",
         border: "none",
-        color: active ? T.accent : hov ? T.text : T.muted,
+        color: active ? "var(--accent)" : hov ? "var(--text)" : "var(--muted)",
         cursor: "pointer",
         padding: "0.55rem 1.15rem",
         borderRadius: 8,
         fontSize: "0.85rem",
         fontWeight: 600,
         letterSpacing: "0.3px",
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        fontFamily: "var(--font-body)",
         transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         position: "relative",
       }}
@@ -969,7 +970,7 @@ function NavBtn({ label, active, onClick }) {
         left: active || hov ? "20%" : "50%",
         right: active || hov ? "20%" : "50%",
         height: 2,
-        background: T.accent,
+        background: "var(--accent)",
         borderRadius: 2,
         transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
       }} />
@@ -985,7 +986,7 @@ function Tag({ children }) {
       onMouseLeave={() => setHov(false)}
       style={{
         background: hov ? "rgba(201, 48, 44, 0.1)" : "rgba(201, 48, 44, 0.05)",
-        color: T.accent,
+        color: 'var(--accent)',
         border: `1px solid rgba(201, 48, 44, ${hov ? 0.35 : 0.18})`,
         padding: "0.45rem 1rem",
         borderRadius: 20,
@@ -1008,13 +1009,13 @@ function CityPill({ children }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: hov ? "rgba(201, 48, 44, 0.07)" : T.surfaceAlt,
-        border: `1px solid ${hov ? T.accent : T.border}`,
+        background: hov ? "rgba(201, 48, 44, 0.07)" : "var(--surface-alt)",
+        border: `1px solid ${hov ? "var(--accent)" : "var(--border)"}`,
         padding: "0.45rem 1.25rem",
         borderRadius: 30,
         fontSize: "0.8rem",
         fontWeight: 600,
-        color: hov ? T.accent : T.text,
+        color: hov ? "var(--accent)" : "var(--text)",
         transform: hov ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hov ? "0 4px 15px rgba(201,48,44,0.1)" : "none",
         transition: "all 0.25s ease",
@@ -1032,12 +1033,12 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
   const baseStyle = {
     width: "100%",
     padding: "0.85rem 1.1rem",
-    border: `1.5px solid ${foc ? T.accent : T.border}`,
+    border: `1.5px solid ${foc ? "var(--accent)" : "var(--border)"}`,
     borderRadius: 10,
     fontSize: "0.88rem",
-    background: foc ? "#fff" : T.surfaceAlt,
-    color: T.text,
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    background: foc ? "#fff" : "var(--surface-alt)",
+    color: 'var(--text)',
+    fontFamily: "var(--font-body)",
     outline: "none",
     boxShadow: foc ? `0 0 0 3px rgba(201, 48, 44, 0.1)` : "none",
     transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -1049,7 +1050,7 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
         <label style={{
           display: "block",
           fontSize: "0.8rem",
-          color: T.accent,
+          color: 'var(--accent)',
           marginBottom: 6,
           fontWeight: 600,
           letterSpacing: "0.5px"
@@ -1066,7 +1067,7 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
           style={{ ...baseStyle, cursor: "pointer" }}
         >
           {options.map((o) => (
-            <option key={o} value={o} style={{ background: "#fff", color: T.text }}>
+            <option key={o} value={o} style={{ background: "#fff", color: 'var(--text)' }}>
               {o}
             </option>
           ))}
@@ -1436,10 +1437,10 @@ function HeroSection({ goTo }) {
 function PageAccueil({ goTo }) {
   useLang();
   const services = [
-    { icon: <Ship size={26}/>, cat: "Import", title: t("svc1_name"), text: t("svc1_desc") },
-    { icon: <GraduationCap size={26}/>, cat: "Études", title: t("svc2_name"), text: t("svc2_desc") },
-    { icon: <Wrench size={26}/>, cat: "Formation", title: t("svc3_name"), text: t("svc3_desc") },
-    { icon: <FileCheck size={26}/>, cat: "Visa", title: t("svc4_name"), text: t("svc4_desc") },
+    { icon: <Ship size={22}/>,         cat: "Import",    title: t("svc1_name"), text: t("svc1_desc"), cta: "Démarrer un import",      msg: "Bonjour Easy China, je souhaite démarrer un import depuis la Chine." },
+    { icon: <GraduationCap size={22}/>, cat: "Études",   title: t("svc2_name"), text: t("svc2_desc"), cta: "Explorer les formations",  msg: "Bonjour Easy China, je souhaite des informations sur les études en Chine." },
+    { icon: <Wrench size={22}/>,        cat: "Formation", title: t("svc3_name"), text: t("svc3_desc"), cta: "Voir le programme",        msg: "Bonjour Easy China, je souhaite des informations sur la formation professionnelle." },
+    { icon: <FileCheck size={22}/>,     cat: "Visa",      title: t("svc4_name"), text: t("svc4_desc"), cta: "Commencer ma demande",     msg: "Bonjour Easy China, je souhaite des informations sur la procédure de visa." },
   ];
 
   const historyItems = [
@@ -1461,40 +1462,35 @@ function PageAccueil({ goTo }) {
       <PaysCouverts />
 
       {/* Services Grid */}
-      <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
-        <div className="grid-3">
-          {services.map((s, i) => (
-            <ScrollReveal key={i} direction="up" delay={i * 0.08}>
-              <GlassCard tilt={true} style={{ height: "100%", display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
-                <div style={{ height: 180, position: "relative" }}>
-                  <Img src={UNSPLASH_REAL[s.cat] || UNSPLASH[s.cat]} alt={s.title} style={{ borderRadius: "0px", height: "100%" }} />
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55))",
-                  }} />
-                  <div style={{
-                    position: "absolute", bottom: -20, left: "2rem",
-                    width: 50, height: 50, borderRadius: 12,
-                    background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: "0 8px 20px rgba(201,48,44,0.3)",
-                    color: "#fff",
-                    zIndex: 3
-                  }}>{s.icon}</div>
-                </div>
-                <div style={{ padding: "2.5rem 2rem 2rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                  <div>
-                    <h3 style={{ fontSize: "1.15rem", color: T.text, fontWeight: 700, marginBottom: "0.8rem", marginTop: "0.5rem", textAlign: "left" }}>{s.title}</h3>
-                    <p style={{ fontSize: "0.88rem", color: T.muted, lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>{s.text}</p>
+      <div style={{ padding: "var(--space-section) var(--gutter)" }}>
+        <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+          <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
+          <div className="grid-3">
+            {services.map((s, i) => (
+              <ScrollReveal key={i} direction="up" delay={i * 0.08}>
+                <GlassCard tilt style={{ height: "100%", display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
+                  {/* Photo */}
+                  <div className="zoom-container" style={{ height: 200, position: "relative" }}>
+                    <Img src={UNSPLASH_REAL[s.cat] || UNSPLASH[s.cat]} alt={s.title} style={{ borderRadius: 0, height: "100%" }} className="zoom-img" />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.45))" }} />
                   </div>
-                  <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite obtenir des informations sur le service : "${s.title}".`))} style={{ width: "100%" }}>
-                    {t("svc_learn")}
-                  </GoldenBtn>
-                </div>
-              </GlassCard>
-            </ScrollReveal>
-          ))}
+                  {/* Body */}
+                  <div style={{ padding: "var(--space-8)", flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: "var(--radius-sm)",
+                      background: "var(--accent-soft)", color: "var(--accent)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>{s.icon}</div>
+                    <h3 style={{ fontSize: "var(--text-md)", color: "var(--text)", fontWeight: 700, lineHeight: 1.3 }}>{s.title}</h3>
+                    <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.65, flex: 1 }}>{s.text}</p>
+                    <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, s.msg))} style={{ width: "100%", marginTop: "auto" }}>
+                      {s.cta} <ArrowRight size={14}/>
+                    </GoldenBtn>
+                  </div>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -1503,18 +1499,18 @@ function PageAccueil({ goTo }) {
       <ServicesComplementaires />
 
       {/* Tourisme & Business Section */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ background: 'var(--surface-alt)', borderTop: `1px solid var(--border)`, borderBottom: `1px solid var(--border)`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <div className="grid-50-50" style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: "0.72rem", color: T.accent, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
-              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: T.text, lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
+              <div style={{ fontSize: "0.72rem", color: 'var(--accent)', letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
+              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "var(--font-display)" }}>
                 {t("tour_title")}
               </h2>
-              <p style={{ color: T.muted, lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "0.95rem" }}>
+              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "0.95rem" }}>
                 {t("tour_p1")}
               </p>
-              <p style={{ color: T.muted, lineHeight: 1.7, marginBottom: "2rem", fontSize: "0.95rem" }}>
+              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "2rem", fontSize: "0.95rem" }}>
                 {t("tour_p2")}
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "1rem" }}>
@@ -1527,7 +1523,7 @@ function PageAccueil({ goTo }) {
 
           <ScrollReveal direction="right" delay={0.2}>
             <GlassCard tilt={true} style={{ padding: "2.5rem", textAlign: "center", background: "rgba(201, 48, 44,0.02)" }}>
-              <div style={{ height: 250, marginBottom: "2rem", borderRadius: T.radius, overflow: "hidden" }}>
+              <div style={{ height: 250, marginBottom: "2rem", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
                 <Img src="https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
@@ -1535,7 +1531,7 @@ function PageAccueil({ goTo }) {
                   <CityPill key={c}>{c}</CityPill>
                 ))}
               </div>
-              <p style={{ color: T.muted, fontSize: "0.8rem", marginTop: "1.5rem", fontStyle: "italic" }}>
+              <p style={{ color: 'var(--muted)', fontSize: "0.8rem", marginTop: "1.5rem", fontStyle: "italic" }}>
                 {t("tour_note")}
               </p>
             </GlassCard>
@@ -1552,7 +1548,7 @@ function PageAccueil({ goTo }) {
       <SecteursSection />
 
       {/* Testimonials Section */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ background: 'var(--surface-alt)', borderTop: `1px solid var(--border)`, borderBottom: `1px solid var(--border)`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
@@ -1570,11 +1566,11 @@ function PageAccueil({ goTo }) {
                   <Img src={b.query} alt={b.title} style={{ borderRadius: "0px", height: "100%" }} />
                 </div>
                 <div style={{ padding: "2rem", textAlign: "left" }}>
-                  <h3 style={{ color: T.accent, marginBottom: "1rem", fontSize: "1.1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ color: 'var(--accent)', marginBottom: "1rem", fontSize: "1.1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
                     <span>{b.flag}</span> {b.title}
                   </h3>
                   {b.lines.map((l, j) => (
-                    <p key={j} style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.6, marginBottom: 4 }}>{l}</p>
+                    <p key={j} style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.6, marginBottom: 4 }}>{l}</p>
                   ))}
                 </div>
               </GlassCard>
@@ -1585,7 +1581,7 @@ function PageAccueil({ goTo }) {
 
       {/* CTA Final */}
       <div style={{
-        background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
+        background: `linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 60%, #b71c1c 100%)`,
         padding: "var(--space-section) var(--gutter)",
         textAlign: "center",
         position: "relative",
@@ -1606,7 +1602,7 @@ function PageAccueil({ goTo }) {
 
         <div style={{ position: "relative", zIndex: 3, maxWidth: 650, margin: "0 auto" }}>
           <ScrollReveal direction="up" delay={0.1}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif", color: "#fff" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "var(--font-display)", color: "#fff" }}>
               {t("cta_title")}
             </h2>
           </ScrollReveal>
@@ -1630,7 +1626,7 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Formulaire de Contact */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ background: 'var(--surface-alt)', borderTop: `1px solid var(--border)`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 580, margin: "0 auto" }}>
           <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />
@@ -1655,20 +1651,20 @@ const PAYS_AFRIQUE = [
 function PaysCouverts() {
   useLang();
   return (
-    <div style={{ background: T.surfaceAlt, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"5rem 2rem", position:"relative", zIndex:2 }}>
+    <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
       <SectionTitle eyebrow={t("pays_eyebrow")} title={t("pays_title")} subtitle={t("pays_subtitle")} />
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent:"center", maxWidth:1000, margin:"0 auto" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", justifyContent: "center", maxWidth: "var(--container)", margin: "0 auto" }}>
         {PAYS_AFRIQUE.map((p) => (
           <div key={p.name} style={{
             display:"flex", alignItems:"center", gap:8,
-            background:"#fff", border:`1px solid ${T.border}`,
+            background:"#fff", border:`1px solid var(--border)`,
             borderRadius:40, padding:"0.55rem 1.2rem",
             boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
-            fontSize:"0.82rem", fontWeight:600, color:T.text,
+            fontSize:"0.82rem", fontWeight:600, color:"var(--text)",
             transition:"all 0.25s",
           }}
-            onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.accent; e.currentTarget.style.color=T.accent; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
-            onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.color=T.text; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--accent)"; e.currentTarget.style.color="var(--accent)"; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.color="var(--text)"; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
           >
             <span style={{fontSize:"1.2rem"}}>{p.flag}</span>
             {p.name}
@@ -1676,7 +1672,7 @@ function PaysCouverts() {
         ))}
       </div>
       <div style={{ textAlign:"center", marginTop:"2.5rem" }}>
-        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(201,48,44,0.06)", border:`1px solid rgba(201,48,44,0.2)`, color:T.accent, borderRadius:30, padding:"0.5rem 1.4rem", fontSize:"0.8rem", fontWeight:700 }}>
+        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(201,48,44,0.06)", border:`1px solid rgba(201,48,44,0.2)`, color:"var(--accent)", borderRadius:30, padding:"0.5rem 1.4rem", fontSize:"0.8rem", fontWeight:700 }}>
           <Globe size={14}/> +15 pays · Livraison porte-à-porte
         </div>
       </div>
@@ -1684,67 +1680,84 @@ function PaysCouverts() {
   );
 }
 
-// ─── PROCESSUS 4 ÉTAPES ───────────────────────────────────────────────────────
+// ─── PROCESSUS 4 ÉTAPES — Horizontal timeline ────────────────────────────────
 function ProcessusSection() {
   useLang();
   const steps = [
-    { num:"01", icon:<MessageCircle size={28}/>, title:t("proc1_title"), desc:t("proc1_desc"), color:"#c9302c" },
-    { num:"02", icon:<Search size={28}/>,  title:t("proc2_title"), desc:t("proc2_desc"), color:"#1e3a8a" },
-    { num:"03", icon:<Ship size={28}/>,    title:t("proc3_title"), desc:t("proc3_desc"), color:"#0f766e" },
-    { num:"04", icon:<Package size={28}/>, title:t("proc4_title"), desc:t("proc4_desc"), color:"#7c3aed" },
+    { num: "01", icon: <MessageCircle size={24}/>, title: t("proc1_title"), desc: t("proc1_desc") },
+    { num: "02", icon: <Search size={24}/>,        title: t("proc2_title"), desc: t("proc2_desc") },
+    { num: "03", icon: <Ship size={24}/>,          title: t("proc3_title"), desc: t("proc3_desc") },
+    { num: "04", icon: <Package size={24}/>,       title: t("proc4_title"), desc: t("proc4_desc") },
   ];
 
   return (
-    <div style={{ padding:"6rem 2rem", maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
-      <SectionTitle eyebrow={t("proc_eyebrow")} title={t("proc_title")} subtitle={t("proc_subtitle")} />
-      <div className="grid-4">
-        {steps.map((s, i) => (
-          <ScrollReveal key={i} direction="up" delay={i * 0.1}>
-            <div style={{
-              position:"relative", padding:"2.2rem 1.8rem",
-              background:"#fff", border:`1px solid ${T.border}`,
-              borderRadius:T.radius, height:"100%",
-              boxShadow:"0 2px 12px rgba(0,0,0,0.05)",
-              transition:"all 0.3s ease",
-            }}
-              onMouseEnter={e=>{ e.currentTarget.style.borderColor=s.color; e.currentTarget.style.boxShadow=`0 8px 30px rgba(0,0,0,0.1)`; e.currentTarget.style.transform="translateY(-4px)"; }}
-              onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.boxShadow="0 2px 12px rgba(0,0,0,0.05)"; e.currentTarget.style.transform="none"; }}
-            >
-              {/* Step number */}
-              <div style={{
-                position:"absolute", top:"-1px", right:20,
-                background:s.color, color:"#fff",
-                fontSize:"0.65rem", fontWeight:800,
-                padding:"0.2rem 0.7rem", borderRadius:"0 0 8px 8px",
-                letterSpacing:"1px",
-              }}>{s.num}</div>
+    <div style={{ padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+        <SectionTitle eyebrow={t("proc_eyebrow")} title={t("proc_title")} subtitle={t("proc_subtitle")} />
 
-              {/* Icon */}
-              <div style={{
-                width:60, height:60, borderRadius:16,
-                background:`${s.color}15`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                marginBottom:"1.5rem", color:s.color,
-              }}>{s.icon}</div>
+        {/* Timeline track */}
+        <div style={{ position: "relative" }}>
+          {/* Connecting line */}
+          <div style={{
+            position: "absolute",
+            top: 36,
+            left: "calc(12.5% + 36px)",
+            right: "calc(12.5% + 36px)",
+            height: 1,
+            background: "var(--border)",
+            zIndex: 0,
+          }} />
 
-              <h3 style={{ fontSize:"1rem", fontWeight:700, color:T.text, marginBottom:"0.7rem", lineHeight:1.3 }}>
-                {s.title}
-              </h3>
-              <p style={{ fontSize:"0.83rem", color:T.muted, lineHeight:1.7 }}>
-                {s.desc}
-              </p>
-
-              {/* Connector line between steps (desktop) */}
-              {i < 3 && (
-                <div style={{
-                  position:"absolute", top:"50%", right:-20, width:20, height:2,
-                  background:`linear-gradient(to right, ${s.color}, ${steps[i+1].color})`,
-                  zIndex:3,
-                }} className="proc-connector" />
-              )}
-            </div>
-          </ScrollReveal>
-        ))}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
+            {steps.map((s, i) => (
+              <ScrollReveal key={i} direction="up" delay={i * 0.1}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 var(--space-3)" }}>
+                  {/* Circle */}
+                  <div style={{
+                    width: 72, height: 72, borderRadius: "50%",
+                    background: "var(--surface)",
+                    border: "2px solid var(--border)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "var(--accent)",
+                    position: "relative", zIndex: 1,
+                    marginBottom: "var(--space-6)",
+                    boxShadow: "var(--shadow-sm)",
+                    transition: "border-color 0.15s, box-shadow 0.15s",
+                  }}>
+                    {s.icon}
+                    {/* Step badge */}
+                    <div style={{
+                      position: "absolute", top: -8, right: -8,
+                      background: "var(--accent)", color: "#fff",
+                      borderRadius: "var(--radius-full)",
+                      width: 22, height: 22,
+                      fontSize: "0.6rem", fontWeight: 800,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      letterSpacing: "0.5px",
+                    }}>{s.num}</div>
+                  </div>
+                  <h3 style={{
+                    fontSize: "var(--text-sm)",
+                    fontWeight: 700,
+                    color: "var(--text)",
+                    marginBottom: "var(--space-2)",
+                    lineHeight: 1.3,
+                  }}>
+                    {s.title}
+                  </h3>
+                  <p style={{
+                    fontSize: "var(--text-xs)",
+                    color: "var(--muted)",
+                    lineHeight: 1.65,
+                    maxWidth: "22ch",
+                  }}>
+                    {s.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1752,39 +1765,51 @@ function ProcessusSection() {
 
 // ─── SECTEURS D'ACTIVITÉ ──────────────────────────────────────────────────────
 const SECTEURS = [
-  { emoji:"🌱", name:"Agriculture & Irrigation",   desc:"Pompes solaires, systèmes d'irrigation, équipements agricoles de haute précision." },
-  { emoji:"⚡", name:"Énergie Solaire",             desc:"Panneaux photovoltaïques, onduleurs, batteries, systèmes off-grid pour l'Afrique." },
-  { emoji:"🏗️", name:"Construction & BTP",         desc:"Matériaux de construction, outillage professionnel, équipements de chantier." },
-  { emoji:"🏥", name:"Santé & Médical",             desc:"Équipements médicaux, matériel de laboratoire, consommables hospitaliers certifiés." },
-  { emoji:"👗", name:"Mode & Textile",              desc:"Tissus, prêt-à-porter, accessoires de mode directement des ateliers de Guangzhou." },
-  { emoji:"📱", name:"Électronique & Tech",         desc:"Téléphones, ordinateurs, LED, composants électroniques à prix usine." },
-  { emoji:"🍽️", name:"Agroalimentaire",             desc:"Machines d'emballage, de conditionnement, de transformation alimentaire industrielle." },
-  { emoji:"🧺", name:"Pressing & Blanchisserie",    desc:"Lignes complètes de lavage, séchage, repassage industriel et formation technique." },
+  { icon: <Leaf size={20}/>,             name: "Agriculture & Irrigation",   desc: "Pompes solaires, systèmes d'irrigation, équipements agricoles de haute précision." },
+  { icon: <Zap size={20}/>,              name: "Énergie Solaire",             desc: "Panneaux photovoltaïques, onduleurs, batteries, systèmes off-grid pour l'Afrique." },
+  { icon: <Hammer size={20}/>,           name: "Construction & BTP",          desc: "Matériaux de construction, outillage professionnel, équipements de chantier." },
+  { icon: <Heart size={20}/>,            name: "Santé & Médical",             desc: "Équipements médicaux, matériel de laboratoire, consommables hospitaliers certifiés." },
+  { icon: <Shirt size={20}/>,            name: "Mode & Textile",              desc: "Tissus, prêt-à-porter, accessoires de mode directement des ateliers de Guangzhou." },
+  { icon: <Smartphone size={20}/>,       name: "Électronique & Tech",         desc: "Téléphones, ordinateurs, LED, composants électroniques à prix usine." },
+  { icon: <UtensilsCrossed size={20}/>,  name: "Agroalimentaire",             desc: "Machines d'emballage, de conditionnement, de transformation alimentaire industrielle." },
+  { icon: <Wind size={20}/>,             name: "Pressing & Blanchisserie",    desc: "Lignes complètes de lavage, séchage, repassage industriel et formation technique." },
 ];
 
 function SecteursSection() {
   useLang();
   return (
-    <div style={{ background:T.surfaceAlt, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"6rem 2rem", position:"relative", zIndex:2 }}>
-      <SectionTitle eyebrow={t("sec_eyebrow")} title={t("sec_title")} subtitle={t("sec_subtitle")} />
-      <div className="grid-4" style={{ maxWidth:1100, margin:"0 auto" }}>
-        {SECTEURS.map((s, i) => (
-          <ScrollReveal key={i} direction="up" delay={i * 0.05}>
-            <div style={{
-              background:"#fff", border:`1px solid ${T.border}`,
-              borderRadius:T.radius, padding:"1.8rem 1.5rem",
-              display:"flex", flexDirection:"column", gap:"0.8rem",
-              cursor:"default", transition:"all 0.3s ease",
-            }}
-              onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.accent; e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.boxShadow=`0 12px 32px rgba(201,48,44,0.1)`; }}
-              onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="none"; }}
-            >
-              <div style={{ fontSize:"2.2rem", lineHeight:1 }}>{s.emoji}</div>
-              <h4 style={{ fontSize:"0.92rem", fontWeight:700, color:T.text, lineHeight:1.3 }}>{s.name}</h4>
-              <p style={{ fontSize:"0.8rem", color:T.muted, lineHeight:1.6 }}>{s.desc}</p>
-            </div>
-          </ScrollReveal>
-        ))}
+    <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+        <SectionTitle eyebrow={t("sec_eyebrow")} title={t("sec_title")} subtitle={t("sec_subtitle")} centered={false} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-3)" }}>
+          {SECTEURS.map((s, i) => (
+            <ScrollReveal key={i} direction="up" delay={Math.floor(i / 2) * 0.08}>
+              <div style={{
+                display: "flex", gap: "var(--space-4)", alignItems: "flex-start",
+                padding: "var(--space-6)",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-md)",
+                transition: "border-color 0.15s, box-shadow 0.15s, transform 0.15s",
+                cursor: "default",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "var(--shadow-md)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                <div style={{
+                  width: 40, height: 40, borderRadius: "var(--radius-sm)",
+                  background: "var(--accent-soft)", color: "var(--accent)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                }}>{s.icon}</div>
+                <div>
+                  <h4 style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text)", marginBottom: "var(--space-1)", lineHeight: 1.3 }}>{s.name}</h4>
+                  <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.6 }}>{s.desc}</p>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1794,48 +1819,62 @@ function SecteursSection() {
 function PremiumServices() {
   useLang();
   const items = [
-    { icon:<ShieldCheck size={28}/>, tag:t("prem1_tag"), title:t("prem1_title"), desc:t("prem1_desc"), color:"#c9302c" },
-    { icon:<Award size={28}/>,       tag:t("prem2_tag"), title:t("prem2_title"), desc:t("prem2_desc"), color:"#1e3a8a" },
-    { icon:<Globe size={28}/>,       tag:t("prem3_tag"), title:t("prem3_title"), desc:t("prem3_desc"), color:"#0f766e" },
-    { icon:<Plane size={28}/>,       tag:t("prem4_tag"), title:t("prem4_title"), desc:t("prem4_desc"), color:"#7c3aed" },
+    { icon: <ShieldCheck size={24}/>, tag: t("prem1_tag"), title: t("prem1_title"), desc: t("prem1_desc") },
+    { icon: <Award size={24}/>,       tag: t("prem2_tag"), title: t("prem2_title"), desc: t("prem2_desc") },
+    { icon: <Globe size={24}/>,       tag: t("prem3_tag"), title: t("prem3_title"), desc: t("prem3_desc") },
+    { icon: <Plane size={24}/>,       tag: t("prem4_tag"), title: t("prem4_title"), desc: t("prem4_desc") },
   ];
 
   return (
-    <div style={{ padding:"6rem 2rem", maxWidth:1100, margin:"0 auto", position:"relative", zIndex:2 }}>
-      <SectionTitle eyebrow={t("prem_eyebrow")} title={t("prem_title")} subtitle={t("prem_subtitle")} />
-      <div className="grid-4">
-        {items.map((item, i) => (
-          <ScrollReveal key={i} direction="up" delay={i * 0.09}>
-            <GlassCard tilt style={{ height:"100%", padding:"2rem", position:"relative", overflow:"visible" }}>
-              <div style={{
-                position:"absolute", top:-14, left:20,
-                background:`linear-gradient(135deg, ${item.color}, ${item.color}cc)`,
-                color:"#fff", fontSize:"0.65rem", fontWeight:800,
-                padding:"0.25rem 0.9rem", borderRadius:20,
-                letterSpacing:"0.5px", boxShadow:`0 4px 12px ${item.color}44`,
-              }}>{item.tag}</div>
+    <div style={{ padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+        <SectionTitle eyebrow={t("prem_eyebrow")} title={t("prem_title")} subtitle={t("prem_subtitle")} centered={false} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "var(--space-6)" }}>
+          {items.map((item, i) => (
+            <ScrollReveal key={i} direction="up" delay={i * 0.09}>
+              <GlassCard tilt style={{ height: "100%" }}>
+                {/* Category tag */}
+                <div style={{
+                  display: "inline-block",
+                  background: "var(--accent-soft)",
+                  color: "var(--accent)",
+                  fontSize: "var(--text-xs)",
+                  fontWeight: 700,
+                  padding: "0.2rem 0.75rem",
+                  borderRadius: "var(--radius-full)",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  marginBottom: "var(--space-6)",
+                }}>{item.tag}</div>
 
-              <div style={{
-                width:56, height:56, borderRadius:14,
-                background:`${item.color}12`, color:item.color,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                marginBottom:"1.2rem", marginTop:"1rem",
-              }}>{item.icon}</div>
+                <div style={{
+                  width: 48, height: 48, borderRadius: "var(--radius-sm)",
+                  background: "var(--accent-soft)", color: "var(--accent)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginBottom: "var(--space-4)",
+                }}>{item.icon}</div>
 
-              <h3 style={{ fontSize:"1rem", fontWeight:800, color:T.text, marginBottom:"0.7rem", fontFamily:"'Syne',sans-serif" }}>
-                {item.title}
-              </h3>
-              <p style={{ fontSize:"0.82rem", color:T.muted, lineHeight:1.7 }}>
-                {item.desc}
-              </p>
-            </GlassCard>
-          </ScrollReveal>
-        ))}
-      </div>
-      <div style={{ textAlign:"center", marginTop:"3rem" }}>
-        <GoldenBtn variant="solid" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je suis intéressé par vos services premium (DDP, Marque Privée, Visite d'usine)."))}>
-          <TrendingUp size={17} style={{marginRight:8}}/> Discuter de mes besoins spécifiques
-        </GoldenBtn>
+                <h3 style={{
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 700,
+                  color: "var(--text)",
+                  marginBottom: "var(--space-2)",
+                  fontFamily: "var(--font-display)",
+                }}>
+                  {item.title}
+                </h3>
+                <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.7, flex: 1 }}>
+                  {item.desc}
+                </p>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
+        </div>
+        <div style={{ marginTop: "var(--space-12)" }}>
+          <GoldenBtn variant="solid" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je suis intéressé par vos services premium (DDP, Marque Privée, Visite d'usine)."))}>
+            <TrendingUp size={16}/> Discuter de mes besoins spécifiques
+          </GoldenBtn>
+        </div>
       </div>
     </div>
   );
@@ -1846,64 +1885,70 @@ function ServicesComplementaires() {
   useLang();
   const extras = [
     {
-      icon: <MessageCircle size={28}/>,
-      color: "#0f766e",
+      icon: <MessageCircle size={22}/>,
       name: t("svc5_name"),
       desc: t("svc5_desc"),
       features: [t("svc5_f1"), t("svc5_f2"), t("svc5_f3"), t("svc5_f4")],
+      cta: "Suivre ma commande",
+      msg: "Bonjour Easy China, je souhaite des informations sur votre service de messagerie et suivi.",
     },
     {
-      icon: <Building2 size={28}/>,
-      color: "#1e3a8a",
+      icon: <Ship size={22}/>,
       name: t("svc6_name"),
       desc: t("svc6_desc"),
       features: [t("svc6_f1"), t("svc6_f2"), t("svc6_f3"), t("svc6_f4")],
+      cta: "Demander un devis fret",
+      msg: "Bonjour Easy China, je souhaite un devis pour le transit maritime depuis la Chine.",
     },
     {
-      icon: <Plane size={28}/>,
-      color: "#7c3aed",
+      icon: <FileCheck size={22}/>,
       name: t("svc7_name"),
       desc: t("svc7_desc"),
       features: [t("svc7_f1"), t("svc7_f2"), t("svc7_f3"), t("svc7_f4")],
+      cta: "Commencer ma demande de visa",
+      msg: "Bonjour Easy China, je souhaite des informations sur les visas et démarches administratives.",
     },
     {
-      icon: <Globe size={28}/>,
-      color: "#c9302c",
+      icon: <GraduationCap size={22}/>,
       name: t("svc8_name"),
       desc: t("svc8_desc"),
       features: [t("svc8_f1"), t("svc8_f2"), t("svc8_f3"), t("svc8_f4")],
+      cta: "Explorer les universités",
+      msg: "Bonjour Easy China, je souhaite des informations sur l'inscription dans les universités chinoises.",
     },
   ];
 
   return (
-    <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
-      <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
-      <div className="grid-4" style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
-        {extras.map((s, i) => (
-          <ScrollReveal key={i} direction="up" delay={i * 0.08}>
-            <GlassCard tilt={true} style={{ padding: "2rem", height: "100%", display: "flex", flexDirection: "column" }}>
-              <div style={{
-                width: 54, height: 54, borderRadius: 13,
-                background: `${s.color}12`, border: `1.5px solid ${s.color}28`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: s.color, marginBottom: "1.2rem",
-              }}>{s.icon}</div>
-              <h3 style={{ fontSize: "1rem", fontWeight: 800, color: T.text, marginBottom: "0.6rem", fontFamily: "'Syne',sans-serif" }}>{s.name}</h3>
-              <p style={{ fontSize: "0.82rem", color: T.muted, lineHeight: 1.65, marginBottom: "1.2rem", flex: 1 }}>{s.desc}</p>
-              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.5rem" }}>
-                {s.features.map((f, j) => (
-                  <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: "0.78rem", color: T.muted, marginBottom: 7 }}>
-                    <CheckCircle size={13} color={s.color} style={{ flexShrink: 0, marginTop: 2 }} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je suis intéressé par : "${s.name}".`))} style={{ width: "100%" }}>
-                {t("svc_learn")}
-              </GoldenBtn>
-            </GlassCard>
-          </ScrollReveal>
-        ))}
+    <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+        <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--space-6)" }}>
+          {extras.map((s, i) => (
+            <ScrollReveal key={i} direction="up" delay={i * 0.08}>
+              <GlassCard tilt style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: "var(--radius-sm)",
+                  background: "var(--accent-soft)", color: "var(--accent)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  marginBottom: "var(--space-4)",
+                }}>{s.icon}</div>
+                <h3 style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--text)", marginBottom: "var(--space-2)", fontFamily: "var(--font-display)" }}>{s.name}</h3>
+                <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.65, marginBottom: "var(--space-4)", flex: 1 }}>{s.desc}</p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 var(--space-6)" }}>
+                  {s.features.map((f, j) => (
+                    <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-2)", fontSize: "var(--text-xs)", color: "var(--muted)", marginBottom: "var(--space-2)" }}>
+                      <CheckCircle size={13} color="var(--accent)" style={{ flexShrink: 0, marginTop: 2 }} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, s.msg))} style={{ width: "100%" }}>
+                  {s.cta}
+                </GoldenBtn>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1926,8 +1971,8 @@ function FAQAccordion() {
       {faqs.map((faq, i) => (
         <ScrollReveal key={i} direction="up" delay={i * 0.05}>
           <div style={{
-            border: `1px solid ${open === i ? T.accent : T.border}`,
-            borderRadius: T.radius,
+            border: `1px solid ${open === i ? "var(--accent)" : "var(--border)"}`,
+            borderRadius: "var(--radius-md)",
             overflow: "hidden",
             background: "#fff",
             boxShadow: open === i ? "0 4px 20px rgba(201,48,44,0.08)" : "0 1px 4px rgba(0,0,0,0.04)",
@@ -1939,27 +1984,27 @@ function FAQAccordion() {
                 width: "100%", textAlign: "left", padding: "1.3rem 1.8rem",
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 background: "none", border: "none", cursor: "pointer",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontFamily: "var(--font-body)",
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: "0.92rem", color: T.text, paddingRight: "1rem", lineHeight: 1.4 }}>
+              <span style={{ fontWeight: 700, fontSize: "0.92rem", color: 'var(--text)', paddingRight: "1rem", lineHeight: 1.4 }}>
                 {faq.q}
               </span>
               <span style={{
                 width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                background: open === i ? `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})` : T.surfaceAlt,
+                background: open === i ? `linear-gradient(135deg, var(--accent), var(--accent-strong))` : "var(--surface-alt)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 transition: "all 0.3s ease",
               }}>
                 <ChevronDown size={16}
-                  color={open === i ? "#fff" : T.muted}
+                  color={open === i ? "#fff" : "var(--muted)"}
                   style={{ transform: open === i ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}
                 />
               </span>
             </button>
             {open === i && (
               <div style={{ padding: "0 1.8rem 1.4rem", animation: "pageEnter 0.25s ease" }}>
-                <p style={{ color: T.muted, fontSize: "0.88rem", lineHeight: 1.75, borderTop: `1px solid ${T.border}`, paddingTop: "1rem" }}>
+                <p style={{ color: 'var(--muted)', fontSize: "0.88rem", lineHeight: 1.75, borderTop: `1px solid var(--border)`, paddingTop: "1rem" }}>
                   {faq.a}
                 </p>
               </div>
@@ -2004,7 +2049,7 @@ function ContactForm() {
   };
 
   return (
-    <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid ${T.border}` }}>
+    <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid var(--border)` }}>
       <input type="text" value={honey} onChange={e => setHoney(e.target.value)}
         style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
       <Field label={t("form_name")} value={f.nom} onChange={v => setF(p => ({ ...p, nom: v }))} placeholder={t("form_ph_name")} />
@@ -2059,9 +2104,9 @@ function PageCatalogue({ articles }) {
                 key={c}
                 onClick={() => setSelectedCat(c)}
                 style={{
-                  background: isActive ? `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})` : T.surfaceAlt,
-                  border: `1px solid ${isActive ? T.accent : T.border}`,
-                  color: isActive ? "#fff" : T.muted,
+                  background: isActive ? `linear-gradient(135deg, var(--accent), var(--accent-strong))` : "var(--surface-alt)",
+                  border: `1px solid ${isActive ? "var(--accent)" : "var(--border)"}`,
+                  color: isActive ? "#fff" : "var(--muted)",
                   padding: "0.6rem 1.5rem",
                   borderRadius: 30,
                   fontSize: "0.85rem",
@@ -2095,8 +2140,8 @@ function PageCatalogue({ articles }) {
                   position: "absolute",
                   top: 12,
                   right: 12,
-                  background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
-                  color: T.bg,
+                  background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
+                  color: "var(--bg)",
                   fontSize: "0.7rem",
                   fontWeight: 800,
                   padding: "0.3rem 0.8rem",
@@ -2111,14 +2156,14 @@ function PageCatalogue({ articles }) {
                   left: 12,
                   background: "rgba(5, 8, 16, 0.75)",
                   backdropFilter: "blur(4px)",
-                  border: `1.5px solid ${T.accent}`,
+                  border: `1.5px solid var(--accent)`,
                   width: 36,
                   height: 36,
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: T.accent
+                  color: 'var(--accent)'
                 }}>
                   <Package size={18}/>
                 </div>
@@ -2126,13 +2171,13 @@ function PageCatalogue({ articles }) {
 
               <div style={{ padding: "1.8rem", display: "flex", flexDirection: "column", height: "calc(100% - 200px)", justifyContent: "space-between" }}>
                 <div style={{ textAlign: "left" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: T.text, marginBottom: "0.5rem" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: 'var(--text)', marginBottom: "0.5rem" }}>
                     {a.titre}
                   </h3>
-                  <div style={{ color: T.accent, fontWeight: 800, fontSize: "1rem", marginBottom: "0.8rem" }}>
+                  <div style={{ color: 'var(--accent)', fontWeight: 800, fontSize: "1rem", marginBottom: "0.8rem" }}>
                     {a.prix}
                   </div>
-                  <p style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.5, marginBottom: "1.8rem" }}>
+                  <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.5, marginBottom: "1.8rem" }}>
                     {a.desc}
                   </p>
                 </div>
@@ -2214,7 +2259,7 @@ function PageRealisations({ realisations }) {
                         <span style={{
                           background: "rgba(201, 48, 44,0.08)",
                           border: `1px solid rgba(201, 48, 44,0.25)`,
-                          color: T.accent,
+                          color: 'var(--accent)',
                           fontSize: "0.68rem",
                           fontWeight: 700,
                           padding: "0.25rem 0.75rem",
@@ -2224,7 +2269,7 @@ function PageRealisations({ realisations }) {
                         }}>
                           {r.cat}
                         </span>
-                        <span style={{ color: T.accent }}>
+                        <span style={{ color: 'var(--accent)' }}>
                           {r.cat === "Import" ? <Ship size={20}/> :
                            r.cat === "Études" ? <GraduationCap size={20}/> :
                            r.cat === "Formation" ? <Wrench size={20}/> :
@@ -2235,15 +2280,15 @@ function PageRealisations({ realisations }) {
                       <h3 style={{
                         fontSize: isLarge ? "1.3rem" : "1.05rem",
                         fontWeight: 800,
-                        color: T.text,
+                        color: 'var(--text)',
                         lineHeight: 1.25,
                         marginBottom: "0.6rem",
-                        fontFamily: "'Syne', sans-serif",
+                        fontFamily: "var(--font-display)",
                         textAlign: "left"
                       }}>
                         {r.titre}
                       </h3>
-                      <p style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>
+                      <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>
                         {r.desc}
                       </p>
                     </div>
@@ -2251,19 +2296,19 @@ function PageRealisations({ realisations }) {
                     {/* Testimonial Quote inside Bento Box */}
                     {r.temoignage && (
                       <div style={{
-                        borderTop: `1px solid ${T.border}`,
+                        borderTop: `1px solid var(--border)`,
                         paddingTop: "1.2rem",
                         marginTop: "1rem"
                       }}>
-                        <div style={{ color: T.accent, fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
-                        <p style={{ fontStyle: "italic", fontSize: "0.82rem", color: T.text, lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
+                        <div style={{ color: 'var(--accent)', fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
+                        <p style={{ fontStyle: "italic", fontSize: "0.82rem", color: 'var(--text)', lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
                           {r.temoignage}
                         </p>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: T.accent }}>{r.client}</span>
-                          <span style={{ color: T.accent, display: "flex", gap: 1 }}>
+                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: 'var(--accent)' }}>{r.client}</span>
+                          <span style={{ color: 'var(--accent)', display: "flex", gap: 1 }}>
                             {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
-                              <Star key={stIdx} size={11} fill={T.accent} color={T.accent} />
+                              <Star key={stIdx} size={11} fill={"var(--accent)"} color={"var(--accent)"} />
                             ))}
                           </span>
                         </div>
@@ -2279,15 +2324,15 @@ function PageRealisations({ realisations }) {
 
       <ScrollReveal direction="up" delay={0.1}>
         <GlassCard style={{
-          background: `linear-gradient(135deg, ${T.surfaceAlt}, #fff)`,
-          border: `1.5px solid ${T.border}`,
+          background: `linear-gradient(135deg, var(--surface-alt), #fff)`,
+          border: `1.5px solid var(--border)`,
           padding: "3.5rem",
           textAlign: "center"
         }}>
-          <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: T.text, marginBottom: "1rem", fontFamily: "'Syne', sans-serif" }}>
+          <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: 'var(--text)', marginBottom: "1rem", fontFamily: "var(--font-display)" }}>
             Vous aussi, concrétisez vos projets avec la Chine !
           </h3>
-          <p style={{ color: T.muted, fontSize: "0.95rem", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--muted)', fontSize: "0.95rem", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
             Bénéficiez de la sécurité et de la puissance de notre réseau transitaire et académique pour réaliser vos ambitions d'importation ou d'études.
           </p>
           <GoldenBtn variant="glow" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite démarrer un projet logistique/études avec vous."))}>
@@ -2308,8 +2353,8 @@ function PageEquipe({ equipe }) {
     <div style={{ padding: "var(--space-section) var(--gutter)" }}>
       {/* Hero Banner */}
       <div style={{
-        background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
-        borderRadius: T.radius,
+        background: `linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 60%, #b71c1c 100%)`,
+        borderRadius: "var(--radius-md)",
         padding: "4rem 3rem",
         textAlign: "center",
         marginBottom: "5rem",
@@ -2326,7 +2371,7 @@ function PageEquipe({ equipe }) {
             {t("eq_eyebrow")}
             <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
           </div>
-          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: "#fff", fontFamily: "'Syne', sans-serif", marginBottom: "1rem" }}>
+          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: "#fff", fontFamily: "var(--font-display)", marginBottom: "1rem" }}>
             {t("eq_title")}
           </h1>
           <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", maxWidth: 580, margin: "0 auto", lineHeight: 1.75 }}>
@@ -2349,7 +2394,7 @@ function PageEquipe({ equipe }) {
                     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.65))" }} />
                     {/* Name overlay on photo */}
                     <div style={{ position: "absolute", bottom: 18, left: 22, right: 22, zIndex: 2 }}>
-                      <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#fff", marginBottom: 2, fontFamily: "'Syne', sans-serif" }}>{member.nom}</h3>
+                      <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#fff", marginBottom: 2, fontFamily: "var(--font-display)" }}>{member.nom}</h3>
                       <div style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.78rem", fontWeight: 600 }}>{member.poste}</div>
                     </div>
                   </div>
@@ -2357,7 +2402,7 @@ function PageEquipe({ equipe }) {
                   {/* Content */}
                   <div style={{ padding: "1.8rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
-                      <p style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.7, marginBottom: "1.2rem" }}>{member.bio}</p>
+                      <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem" }}>{member.bio}</p>
 
                       {specs.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
@@ -2365,7 +2410,7 @@ function PageEquipe({ equipe }) {
                             <span key={j} style={{
                               background: "rgba(201,48,44,0.06)",
                               border: "1px solid rgba(201,48,44,0.18)",
-                              color: T.accent,
+                              color: 'var(--accent)',
                               padding: "0.3rem 0.75rem",
                               borderRadius: 20,
                               fontSize: "0.72rem",
@@ -2377,23 +2422,23 @@ function PageEquipe({ equipe }) {
                     </div>
 
                     {/* Contact */}
-                    <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: "1.2rem", display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ borderTop: `1px solid var(--border)`, paddingTop: "1.2rem", display: "flex", flexDirection: "column", gap: 10 }}>
                       {member.contact && (
-                        <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.color = T.accent}
-                          onMouseLeave={e => e.currentTarget.style.color = T.muted}>
+                        <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
+                          onMouseLeave={e => e.currentTarget.style.color = "var(--muted)"}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            <Phone size={13} color={T.accent} />
+                            <Phone size={13} color={"var(--accent)"} />
                           </span>
                           {member.contact}
                         </a>
                       )}
                       {member.email && (
-                        <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.color = T.accent}
-                          onMouseLeave={e => e.currentTarget.style.color = T.muted}>
+                        <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                          onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
+                          onMouseLeave={e => e.currentTarget.style.color = "var(--muted)"}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            <Mail size={13} color={T.accent} />
+                            <Mail size={13} color={"var(--accent)"} />
                           </span>
                           {member.email}
                         </a>
@@ -2412,7 +2457,7 @@ function PageEquipe({ equipe }) {
         </div>
 
         {equipe.length === 0 && (
-          <div style={{ textAlign: "center", padding: "4rem 2rem", color: T.muted }}>
+          <div style={{ textAlign: "center", padding: "4rem 2rem", color: 'var(--muted)' }}>
             <Users size={48} style={{ opacity: 0.3, marginBottom: "1rem" }} />
             <p>L'équipe n'a pas encore été renseignée.</p>
           </div>
@@ -2480,7 +2525,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
 
   return (
     <div style={{ marginBottom: "1.1rem", textAlign: "left" }}>
-      <label style={{ fontSize: ".78rem", color: T.accent, fontWeight: 600, display: "block", marginBottom: 6 }}>
+      <label style={{ fontSize: ".78rem", color: 'var(--accent)', fontWeight: 600, display: "block", marginBottom: 6 }}>
         {label}
       </label>
       <div
@@ -2489,10 +2534,10 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         onDragLeave={() => setDrag(false)}
         onDrop={e => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
         style={{
-          border: `2px dashed ${drag ? T.accent : uploadErr ? "#e53935" : T.border}`,
+          border: `2px dashed ${drag ? "var(--accent)" : uploadErr ? "#e53935" : "var(--border)"}`,
           borderRadius: 12, padding: "1rem", textAlign: "center",
           cursor: uploading ? "wait" : "pointer",
-          background: drag ? "rgba(201,48,44,0.05)" : T.surfaceAlt,
+          background: drag ? "rgba(201,48,44,0.05)" : "var(--surface-alt)",
           transition: "all .2s", position: "relative", minHeight: 120,
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", gap: 8,
@@ -2500,8 +2545,8 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
       >
         {uploading ? (
           <>
-            <div style={{ width: 30, height: 30, border: `3px solid ${T.border}`, borderTop: `3px solid ${T.accent}`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
-            <p style={{ fontSize: ".8rem", color: T.muted, margin: 0 }}>Upload GitHub en cours…</p>
+            <div style={{ width: 30, height: 30, border: `3px solid var(--border)`, borderTop: `3px solid var(--accent)`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
+            <p style={{ fontSize: ".8rem", color: 'var(--muted)', margin: 0 }}>Upload GitHub en cours…</p>
           </>
         ) : displaySrc ? (
           <>
@@ -2509,14 +2554,14 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
               <video src={displaySrc} controls style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8 }} preload="metadata" />
             ) : type === "doc" ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <FileText size={32} color={T.accent} />
-                <a href={displaySrc} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: ".78rem", color: T.accent }}>Ouvrir le fichier</a>
+                <FileText size={32} color={"var(--accent)"} />
+                <a href={displaySrc} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: ".78rem", color: 'var(--accent)' }}>Ouvrir le fichier</a>
               </div>
             ) : (
               <img src={displaySrc} alt="preview" style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8, objectFit: "cover" }} />
             )}
             {uploading === false && objectUrl && (
-              <p style={{ fontSize: ".65rem", color: T.secondary, margin: 0 }}>
+              <p style={{ fontSize: ".65rem", color: 'var(--secondary)', margin: 0 }}>
                 ✓ Déployé sur GitHub — visible après le prochain redéploiement Vercel (~2 min)
               </p>
             )}
@@ -2528,12 +2573,12 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         ) : (
           <>
             <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
-              <Image size={22} color={T.accent} opacity={0.7} />
-              <Film size={22} color={T.accent} opacity={0.7} />
-              <FileText size={22} color={T.accent} opacity={0.7} />
+              <Image size={22} color={"var(--accent)"} opacity={0.7} />
+              <Film size={22} color={"var(--accent)"} opacity={0.7} />
+              <FileText size={22} color={"var(--accent)"} opacity={0.7} />
             </div>
             <p style={{ fontSize: ".8rem", color: "#aaa", margin: 0 }}>
-              Glisse un fichier ici ou <span style={{ color: T.accent, fontWeight: 600 }}>clique pour choisir</span>
+              Glisse un fichier ici ou <span style={{ color: 'var(--accent)', fontWeight: 600 }}>clique pour choisir</span>
             </p>
             <p style={{ fontSize: ".7rem", color: "#bbb", margin: 0 }}>
               Images · Vidéos MP4/MOV/WEBM · PDF · Tous formats
@@ -2552,7 +2597,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         value={preview.startsWith("data:") ? "" : preview}
         onChange={e => { setObjectUrl(""); setPreview(e.target.value); onChange(e.target.value); }}
         placeholder="Ou colle une URL (image, vidéo YouTube, lien…)"
-        style={{ width: "100%", marginTop: 8, padding: ".6rem .9rem", border: `1.5px solid ${T.border}`, borderRadius: 8, fontSize: ".8rem", fontFamily: "inherit", outline: "none", background: T.surfaceAlt, color: T.text }}
+        style={{ width: "100%", marginTop: 8, padding: ".6rem .9rem", border: `1.5px solid var(--border)`, borderRadius: 8, fontSize: ".8rem", fontFamily: "inherit", outline: "none", background: 'var(--surface-alt)', color: 'var(--text)' }}
       />
     </div>
   );
@@ -2872,21 +2917,21 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     const isLocked = lockoutTime > Date.now();
     return (
       <div style={{ padding: "10rem 2rem 8rem", display: "flex", justifyContent: "center" }}>
-        <GlassCard style={{ maxWidth: 450, width: "100%", padding: "3rem 2.5rem", border: `1.5px solid ${T.accent}` }}>
+        <GlassCard style={{ maxWidth: 450, width: "100%", padding: "3rem 2.5rem", border: `1.5px solid var(--accent)` }}>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <div style={{
               width: 60, height: 60, borderRadius: "50%",
               background: "rgba(201,48,44,0.1)",
-              border: `1px solid ${T.border}`,
+              border: `1px solid var(--border)`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 1rem", color: T.accent
+              margin: "0 auto 1rem", color: 'var(--accent)'
             }}>
               <Lock size={26}/>
             </div>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, marginTop: "1rem", fontFamily: "'Syne', sans-serif" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, marginTop: "1rem", fontFamily: "var(--font-display)" }}>
               Accès Administration
             </h2>
-            <p style={{ color: T.muted, fontSize: "0.85rem", marginTop: "0.5rem" }}>
+            <p style={{ color: 'var(--muted)', fontSize: "0.85rem", marginTop: "0.5rem" }}>
               Veuillez saisir le code d'accès pour modifier le catalogue d'importation et les réalisations.
             </p>
           </div>
@@ -2900,12 +2945,12 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               placeholder="Code administrateur"
             />
             {errorMsg && (
-              <p style={{ color: T.pink, fontSize: "0.8rem", fontWeight: 600, marginBottom: "1rem", textAlign: "left" }}>
+              <p style={{ color: 'var(--danger)', fontSize: "0.8rem", fontWeight: 600, marginBottom: "1rem", textAlign: "left" }}>
                 ⚠️ {errorMsg}
               </p>
             )}
             {isLocked && (
-              <p style={{ color: T.pink, fontSize: "0.8rem", fontWeight: 700, marginBottom: "1rem", textAlign: "left" }}>
+              <p style={{ color: 'var(--danger)', fontSize: "0.8rem", fontWeight: 700, marginBottom: "1rem", textAlign: "left" }}>
                 🔒 Compte verrouillé temporairement. Réessayez dans {timeLeft}s.
               </p>
             )}
@@ -2926,10 +2971,10 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "3rem" }}>
         <div style={{ textAlign: "left" }}>
-          <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.accent }}>
+          <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--accent)' }}>
             Espace Professionnel Administration
           </h2>
-          <p style={{ color: T.muted, fontSize: "0.9rem" }}>
+          <p style={{ color: 'var(--muted)', fontSize: "0.9rem" }}>
             Gérez vos produits du catalogue en temps réel ainsi que les réalisations et témoignages clients de l'agence.
           </p>
         </div>
@@ -2943,16 +2988,16 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         const cfg = {
           saving:    { bg: "rgba(234,179,8,0.08)",  border: "rgba(234,179,8,0.4)",  icon: <Clock size={20} color="#b45309"/>,       title: "⏳ Envoi en cours…",         body: "Vos modifications sont en cours d'envoi vers GitHub. Ne fermez pas cette page." },
           deploying: { bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.4)",  icon: <CheckCircle size={20} color="#16a34a"/>, title: "🚀 Déploiement lancé !",      body: "Les données ont été sauvegardées. Vercel redéploie le site — les visiteurs verront les changements dans ~2 minutes." },
-          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={T.accent}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
-          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={T.accent}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
+          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={"var(--accent)"}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
+          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={"var(--accent)"}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
         };
         const s = cfg[deployStatus] || cfg[null];
         return (
-          <div style={{ background: s.bg, border: `1.5px solid ${s.border}`, borderRadius: T.radius, padding: "1.2rem 1.6rem", marginBottom: "2.5rem", display: "flex", gap: 14, alignItems: "flex-start" }}>
+          <div style={{ background: s.bg, border: `1.5px solid ${s.border}`, borderRadius: "var(--radius-md)", padding: "1.2rem 1.6rem", marginBottom: "2.5rem", display: "flex", gap: 14, alignItems: "flex-start" }}>
             <div style={{ flexShrink: 0, marginTop: 2 }}>{s.icon}</div>
             <div>
-              <div style={{ fontWeight: 700, color: T.text, fontSize: "0.88rem", marginBottom: "0.3rem" }}>{s.title}</div>
-              <p style={{ color: T.muted, fontSize: "0.82rem", lineHeight: 1.6 }}>{s.body}</p>
+              <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: "0.88rem", marginBottom: "0.3rem" }}>{s.title}</div>
+              <p style={{ color: 'var(--muted)', fontSize: "0.82rem", lineHeight: 1.6 }}>{s.body}</p>
             </div>
           </div>
         );
@@ -2961,7 +3006,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* CATALOGUE CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingArtId ? "✏️ Modifier le Produit" : "➕ Ajouter au Catalogue"}
           </h3>
           <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
@@ -3003,19 +3048,19 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* CATALOGUE LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Produits du Catalogue ({articles.length})
           </h3>
           {articles.length === 0 ? (
-            <p style={{ color: T.muted, fontSize: "0.85rem" }}>Aucun produit dans le catalogue.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucun produit dans le catalogue.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {articles.map((art) => (
                 <div key={art.id} style={{
                   padding: "1rem",
-                  background: T.surfaceAlt,
+                  background: 'var(--surface-alt)',
                   borderRadius: 10,
-                  border: `1px solid ${T.border}`,
+                  border: `1px solid var(--border)`,
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -3023,23 +3068,23 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                 }}>
                   <div style={{ textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: T.accent }}><Package size={18}/></span>
+                      <span style={{ color: 'var(--accent)' }}><Package size={18}/></span>
                       <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{art.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{art.prix} · {art.cat}</span>
+                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{art.prix} · {art.cat}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditArticle(art)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
                     <button
                       aria-label="Supprimer"
                       onClick={() => handleDeleteArticle(art.id)}
-                      style={{ background: "rgba(233, 30, 140, 0.15)", color: T.pink, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(233, 30, 140, 0.15)", color: 'var(--danger)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Trash2 size={14}/>
                     </button>
@@ -3056,7 +3101,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* REALISATIONS CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingRealId ? "✏️ Modifier la Réalisation" : "➕ Ajouter une Réalisation"}
           </h3>
           <Field label="Titre de la Réalisation *" value={realNom} onChange={setRealNom} placeholder="Ex: Livraison d'un Conteneur de 40 pieds" />
@@ -3107,19 +3152,19 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* REALISATIONS LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Réalisations Clients ({realisations.length})
           </h3>
           {realisations.length === 0 ? (
-            <p style={{ color: T.muted, fontSize: "0.85rem" }}>Aucune réalisation enregistrée.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucune réalisation enregistrée.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {realisations.map((real) => (
                 <div key={real.id} style={{
                   padding: "1rem",
-                  background: T.surfaceAlt,
+                  background: 'var(--surface-alt)',
                   borderRadius: 10,
-                  border: `1px solid ${T.border}`,
+                  border: `1px solid var(--border)`,
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -3127,7 +3172,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                 }}>
                   <div style={{ textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: T.accent }}>
+                      <span style={{ color: 'var(--accent)' }}>
                         {real.cat === "Import" ? <Ship size={18}/> :
                          real.cat === "Études" ? <GraduationCap size={18}/> :
                          real.cat === "Formation" ? <Wrench size={18}/> :
@@ -3135,20 +3180,20 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                       </span>
                       <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{real.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
+                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditRealisation(real)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
                     <button
                       aria-label="Supprimer"
                       onClick={() => handleDeleteRealisation(real.id)}
-                      style={{ background: "rgba(233, 30, 140, 0.15)", color: T.pink, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(233, 30, 140, 0.15)", color: 'var(--danger)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Trash2 size={14}/>
                     </button>
@@ -3164,16 +3209,16 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
       {/* ─── ÉQUIPE CRUD ─── */}
       <div style={{ marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "0.4rem" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "0.4rem" }}>
           👥 Gestion de l'Équipe
         </h3>
-        <p style={{ color: T.muted, fontSize: "0.85rem" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
+        <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
       </div>
 
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* ÉQUIPE FORM */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingMemId ? "✏️ Modifier le Membre" : "➕ Ajouter un Membre"}
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -3204,40 +3249,40 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* ÉQUIPE LIST */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.text, marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Membres de l'Équipe ({equipe.length})
           </h3>
           {equipe.length === 0 ? (
-            <p style={{ color: T.muted, fontSize: "0.85rem" }}>Aucun membre enregistré.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucun membre enregistré.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {equipe.map((m) => (
                 <div key={m.id} style={{
                   padding: "1rem",
-                  background: T.surfaceAlt,
+                  background: 'var(--surface-alt)',
                   borderRadius: 10,
-                  border: `1px solid ${T.border}`,
+                  border: `1px solid var(--border)`,
                   display: "flex",
                   alignItems: "center",
                   gap: "1rem"
                 }}>
                   {/* Mini photo */}
-                  <div style={{ width: 48, height: 48, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: T.border }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: "var(--border)" }}>
                     {m.image ? (
                       <img src={m.image} alt={m.nom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
                       <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Users size={20} color={T.muted} />
+                        <Users size={20} color={"var(--muted)"} />
                       </div>
                     )}
                   </div>
                   <div style={{ flex: 1, textAlign: "left" }}>
-                    <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: T.text, margin: 0 }}>{m.nom}</h4>
-                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{m.poste}</span>
+                    <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{m.nom}</h4>
+                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{m.poste}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
                     <button aria-label="Modifier" onClick={() => handleEditMembre(m)}
-                      style={{ background: "rgba(201,48,44,0.1)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      style={{ background: "rgba(201,48,44,0.1)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
                       <Edit2 size={14}/>
                     </button>
                     <button aria-label="Supprimer" onClick={() => handleDeleteMembre(m.id)}
@@ -3336,10 +3381,10 @@ export default function App() {
 
   return (
     <div style={{
-      fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
+      fontFamily: "var(--font-body)",
       minHeight: "100vh",
-      background: T.bg,
-      color: T.text,
+      background: 'var(--bg)',
+      color: 'var(--text)',
       position: "relative",
       overflowX: "hidden"
     }}>
@@ -3559,6 +3604,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
