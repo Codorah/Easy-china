@@ -760,7 +760,7 @@ function TestimonialCarousel() {
 
 // ─── LOGO ────────────────────────────────────────────────────────────────────
 const Logo = ({ onClick, size="md" }) => {
-  const h = size === "sm" ? 52 : 68;
+  const h = size === "sm" ? 64 : 88;
   return (
     <motion.div
       onClick={onClick}
@@ -2987,20 +2987,17 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         .adm-sidebar {
           position: fixed; top: 0; left: 0; bottom: 0; width: 210px;
           background: var(--surface); border-right: 1px solid var(--border);
-          display: flex; flex-direction: column; z-index: 50; transition: transform .25s;
+          display: flex; flex-direction: column; z-index: 50;
         }
         .adm-main { margin-left: 210px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-        .adm-overlay { display: none; }
+        .adm-tab-strip { display: none; }
         @media (max-width: 767px) {
-          .adm-sidebar { transform: translateX(-100%); }
-          .adm-sidebar.open { transform: translateX(0); }
+          .adm-sidebar { display: none; }
           .adm-main { margin-left: 0; }
-          .adm-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 45; }
-          .adm-mobile-btn { display: flex !important; }
-        }
-        @media (min-width: 768px) {
-          .adm-mobile-btn { display: none !important; }
-          .adm-sidebar { transform: translateX(0) !important; }
+          .adm-tab-strip {
+            display: flex; border-bottom: 1px solid var(--border);
+            background: var(--surface); overflow-x: auto; flex-shrink: 0;
+          }
         }
         .adm-nav-btn {
           display: flex; align-items: center; gap: 10px;
@@ -3022,10 +3019,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         .adm-toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; padding: .85rem 1.4rem; border-radius: 10px; font-size: var(--text-sm); font-weight: 600; box-shadow: 0 4px 24px rgba(0,0,0,.2); display: flex; align-items: center; gap: 8px; }
       `}</style>
 
-      {sidebarOpen && <div className="adm-overlay" onClick={() => setSidebarOpen(false)} />}
-
       {/* ── SIDEBAR ── */}
-      <aside className={`adm-sidebar${sidebarOpen ? " open" : ""}`}>
+      <aside className="adm-sidebar">
         <div style={{ padding: "1.3rem 1.1rem 1rem", borderBottom: "1px solid var(--border)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -3044,7 +3039,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             { id: "equipe",       icon: <Users size={15}/>,         label: "Équipe" },
           ].map(({ id, icon, label }) => (
             <button key={id} className={`adm-nav-btn${activeTab === id ? " active" : ""}`}
-              onClick={() => { setActiveTab(id); setSidebarOpen(false); }}>
+              onClick={() => setActiveTab(id)}>
               {icon} {label}
             </button>
           ))}
@@ -3060,10 +3055,6 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       <div className="adm-main">
         {/* Top bar */}
         <header style={{ position: "sticky", top: 0, zIndex: 40, background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: ".8rem 1.6rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-          <button className="adm-icon-btn adm-mobile-btn" onClick={() => setSidebarOpen(s => !s)}
-            style={{ background: "var(--surface-alt)", color: "var(--text)", display: "none" }}>
-            <Menu size={18} />
-          </button>
           <div style={{ flex: 1, fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text)" }}>
             {activeTab === "catalogue" ? "Catalogue" : activeTab === "realisations" ? "Réalisations" : "Équipe"}
           </div>
@@ -3079,6 +3070,26 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             return <span style={{ fontSize: "11px", fontWeight: 700, color: p.color, background: p.bg, padding: "3px 11px", borderRadius: 20, flexShrink: 0 }}>{p.label}</span>;
           })()}
         </header>
+
+        {/* Mobile tab strip — visible only on small screens */}
+        <div className="adm-tab-strip" style={{ display: "none" }}>
+          {[
+            { id: "catalogue",    icon: <Package size={14}/>,       label: "Catalogue" },
+            { id: "realisations", icon: <ClipboardList size={14}/>, label: "Réalisations" },
+            { id: "equipe",       icon: <Users size={14}/>,         label: "Équipe" },
+          ].map(({ id, icon, label }) => (
+            <button key={id} onClick={() => setActiveTab(id)} style={{
+              flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+              padding: ".7rem .5rem", border: "none", cursor: "pointer",
+              background: activeTab === id ? "rgba(201,48,44,.08)" : "transparent",
+              borderBottom: activeTab === id ? "2.5px solid var(--accent)" : "2.5px solid transparent",
+              color: activeTab === id ? "var(--accent)" : "var(--muted)",
+              fontSize: "11px", fontWeight: 700, whiteSpace: "nowrap",
+            }}>
+              {icon}{label}
+            </button>
+          ))}
+        </div>
 
         {/* Content */}
         <main style={{ padding: "2rem", maxWidth: 1100, width: "100%", margin: "0 auto" }}>
