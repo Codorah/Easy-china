@@ -1,30 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import { VALID_LANGS, type LangCode } from "./lib/i18n";
 
-const PUBLIC_FILE = /\.(.*)$/;          // any path with a dot (assets)
+const PUBLIC_FILE = /\.(.*)$/;
 const DEFAULT_LANG: LangCode = "fr";
+const SESSION_COOKIE = "ec_admin";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip public assets, API routes, Next.js internals
+  // ── Admin auth guard ──────────────────────────────────────────────────────
+  if (pathname.startsWith("/admin")) {
+    // Login page is always accessible
+    if (pathname === "/admin/login" || pathname.startsWith("/admin/login/")) {
+      return NextResponse.next();
+    }
+    // All other /admin/* paths require a valid session cookie
+    const session = request.cookies.get(SESSION_COOKIE);
+    if (!session?.value) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/admin/login";
+      return NextResponse.redirect(loginUrl, { status: 307 });
+    }
+    return NextResponse.next();
+  }
+
+  // ── Skip public assets & Next.js internals ────────────────────────────────
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api")   ||
-    pathname.startsWith("/admin") ||
     PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
   }
 
-  // If already under a valid lang segment, pass through
+  // ── i18n lang prefix injection ────────────────────────────────────────────
   const firstSegment = pathname.split("/")[1] as LangCode;
   if (VALID_LANGS.includes(firstSegment)) {
     return NextResponse.next();
   }
 
-  // Detect preferred language from Accept-Language header
-  const accepted = request.headers.get("accept-language") ?? "";
+  const accepted  = request.headers.get("accept-language") ?? "";
   const preferred = accepted
     .split(",")
     .map((s) => s.split(";")[0].trim().slice(0, 2))
@@ -37,11 +52,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths EXCEPT:
-     * - _next/static, _next/image, favicon.ico
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
