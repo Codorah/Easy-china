@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { usePathname } from "next/navigation";
 import { AdminShell } from "./AdminShell";
 
@@ -13,3 +13,4 @@ export function AdminLayoutWrapper({ children, logoutAction }: Props) {
   if (pathname === "/admin/login") return <>{children}</>;
   return <AdminShell logoutAction={logoutAction}>{children}</AdminShell>;
 }
+

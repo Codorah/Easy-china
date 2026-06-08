@@ -1,4 +1,4 @@
-interface Props {
+﻿interface Props {
   data: Record<string, unknown> | Record<string, unknown>[];
 }
 
@@ -10,3 +10,4 @@ export function JsonLd({ data }: Props) {
     />
   );
 }
+

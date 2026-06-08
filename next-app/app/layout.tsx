@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Syne, Plus_Jakarta_Sans } from "next/font/google";
 import { LenisProvider } from "@/components/client/LenisProvider";
 import "./globals.css";
@@ -26,28 +26,28 @@ const OG_IMAGE = `${BASE_URL}/og.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Easy China – Import, Université, Visa & Tourisme Chine | Afrique Francophone",
+    default: "Easy China â€“ Import, UniversitÃ©, Visa & Tourisme Chine | Afrique Francophone",
     template: "%s | Easy China",
   },
   description:
-    "Easy China : votre agence de référence entre l'Afrique et la Chine. Import direct Guangzhou & Yiwu, université, visa, formation. Présents dans 15 pays africains.",
-  keywords: ["import Chine", "Afrique", "visa Chine", "université Chine", "Guangzhou", "Yiwu", "Easy China"],
+    "Easy China : votre agence de rÃ©fÃ©rence entre l'Afrique et la Chine. Import direct Guangzhou & Yiwu, universitÃ©, visa, formation. PrÃ©sents dans 15 pays africains.",
+  keywords: ["import Chine", "Afrique", "visa Chine", "universitÃ© Chine", "Guangzhou", "Yiwu", "Easy China"],
   authors: [{ name: "Easy China" }],
   creator: "Easy China",
   icons: { icon: "/favicon.svg" },
   openGraph: {
     type: "website",
     siteName: "Easy China",
-    title: "Easy China – Import, Université, Visa & Tourisme Chine",
+    title: "Easy China â€“ Import, UniversitÃ©, Visa & Tourisme Chine",
     description:
-      "Votre agence de référence entre l'Afrique et la Chine. Import direct, université, visa, formation. Présents dans 15 pays africains.",
+      "Votre agence de rÃ©fÃ©rence entre l'Afrique et la Chine. Import direct, universitÃ©, visa, formation. PrÃ©sents dans 15 pays africains.",
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "Easy China" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Easy China – Import, Université, Visa & Tourisme Chine",
+    title: "Easy China â€“ Import, UniversitÃ©, Visa & Tourisme Chine",
     description:
-      "Votre agence de référence entre l'Afrique et la Chine. Import direct, université, visa, formation.",
+      "Votre agence de rÃ©fÃ©rence entre l'Afrique et la Chine. Import direct, universitÃ©, visa, formation.",
     images: [OG_IMAGE],
   },
   robots: {
@@ -73,3 +73,4 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
+

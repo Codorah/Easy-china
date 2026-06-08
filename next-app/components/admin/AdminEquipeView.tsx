@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useActionState, useState } from "react";
 import type { TeamMember } from "@/lib/data";
 
@@ -20,7 +20,7 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="font-display font-extrabold text-[var(--color-text)] text-[var(--text-2xl)]">Équipe</h1>
+        <h1 className="font-display font-extrabold text-[var(--color-text)] text-[var(--text-2xl)]">Ã‰quipe</h1>
         <p className="text-[var(--color-muted)] text-[var(--text-sm)] mt-1">{items.length} membre{items.length !== 1 ? "s" : ""}</p>
       </div>
 
@@ -30,7 +30,7 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
           {items.length === 0 ? (
             <div className="card p-12 text-center text-[var(--color-muted)]">
               <p className="text-[var(--text-md)] font-semibold mb-2">Aucun membre</p>
-              <p className="text-[var(--text-sm)]">Ajoutez le premier membre de l'équipe.</p>
+              <p className="text-[var(--text-sm)]">Ajoutez le premier membre de l'Ã©quipe.</p>
             </div>
           ) : (
             <ul className="flex flex-col gap-3" role="list">
@@ -78,7 +78,7 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="field-label" htmlFor="m-name">Nom *</label>
-                <input id="m-name" name="name" required defaultValue={editing.name} key={editing.id + "-n"} className="field-input" placeholder="Prénom Nom" />
+                <input id="m-name" name="name" required defaultValue={editing.name} key={editing.id + "-n"} className="field-input" placeholder="PrÃ©nom Nom" />
               </div>
 
               <div>
@@ -88,22 +88,22 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
 
               <div className="sm:col-span-2">
                 <label className="field-label" htmlFor="m-image">Photo (URL https://)</label>
-                <input id="m-image" name="image" type="url" defaultValue={editing.image} key={editing.id + "-i"} className="field-input" placeholder="https://…" />
+                <input id="m-image" name="image" type="url" defaultValue={editing.image} key={editing.id + "-i"} className="field-input" placeholder="https://â€¦" />
               </div>
 
               <div>
                 <label className="field-label" htmlFor="m-wa">WhatsApp</label>
-                <input id="m-wa" name="whatsapp" defaultValue={editing.whatsapp} key={editing.id + "-w"} className="field-input" placeholder="+22890000001" />
+                <input id="m-wa" name="whatsapp" defaultValue={editing.whatsapp} key={editing.id + "-w"} className="field-input" placeholder="+8619876105148" />
               </div>
 
               <div>
                 <label className="field-label" htmlFor="m-li">LinkedIn (URL)</label>
-                <input id="m-li" name="linkedin" type="url" defaultValue={editing.linkedin} key={editing.id + "-l"} className="field-input" placeholder="https://linkedin.com/in/…" />
+                <input id="m-li" name="linkedin" type="url" defaultValue={editing.linkedin} key={editing.id + "-l"} className="field-input" placeholder="https://linkedin.com/in/â€¦" />
               </div>
 
               <div className="sm:col-span-2">
                 <label className="field-label" htmlFor="m-bio">Biographie</label>
-                <textarea id="m-bio" name="bio" rows={3} defaultValue={editing.bio} key={editing.id + "-b"} className="field-input resize-none" placeholder="Présentation du membre" />
+                <textarea id="m-bio" name="bio" rows={3} defaultValue={editing.bio} key={editing.id + "-b"} className="field-input resize-none" placeholder="PrÃ©sentation du membre" />
               </div>
             </div>
 
@@ -111,7 +111,7 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
 
             <div className="flex gap-3 pt-2">
               <button type="submit" disabled={saving} className="flex-1 py-2.5 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white font-bold text-[var(--text-sm)] shadow-[var(--shadow-accent)] hover:bg-[var(--color-accent-strong)] disabled:opacity-60 transition-colors">
-                {saving ? "Enregistrement…" : editing.id ? "Mettre à jour" : "Ajouter"}
+                {saving ? "Enregistrementâ€¦" : editing.id ? "Mettre Ã  jour" : "Ajouter"}
               </button>
               {editing.id && (
                 <button type="button" onClick={cancel} className="px-5 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] text-[var(--text-sm)] font-semibold text-[var(--color-muted)] hover:bg-[var(--color-surface-alt)] transition-colors">
@@ -125,3 +125,4 @@ export function AdminEquipeView({ items, saveAction, deleteAction }: Props) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { LANGS, type LangCode } from "@/lib/i18n";
@@ -9,7 +9,7 @@ export function LangSwitcher({ current }: { current: LangCode }) {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  // Set aria-expanded imperatively — linter can't evaluate JSX expressions,
+  // Set aria-expanded imperatively â€” linter can't evaluate JSX expressions,
   // so dynamic ARIA booleans must be set via the DOM, not JSX attributes.
   useEffect(() => {
     btnRef.current?.setAttribute("aria-expanded", open ? "true" : "false");
@@ -80,3 +80,4 @@ export function LangSwitcher({ current }: { current: LangCode }) {
     </div>
   );
 }
+

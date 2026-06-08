@@ -1,4 +1,4 @@
-import type { Dict } from "@/lib/i18n";
+﻿import type { Dict } from "@/lib/i18n";
 import { SectionHeader } from "./SectionHeader";
 import { ScrollReveal } from "@/components/client/ScrollReveal";
 
@@ -38,3 +38,4 @@ export function ProcessSection({ t }: Props) {
     </section>
   );
 }
+

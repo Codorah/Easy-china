@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import type { Dict, LangCode } from "@/lib/i18n";
 
@@ -60,3 +60,4 @@ export function NavMobile({ links, t }: Props) {
     </>
   );
 }
+

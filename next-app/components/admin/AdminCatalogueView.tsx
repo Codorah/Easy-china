@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 import { useActionState, useState } from "react";
 import type { CatalogueItem } from "@/lib/data";
 
-const CATEGORIES = ["Machines", "Électronique", "Textile", "Alimentaire", "Import général", "Autre"];
+const CATEGORIES = ["Machines", "Ã‰lectronique", "Textile", "Alimentaire", "Import gÃ©nÃ©ral", "Autre"];
 
 interface Props {
   items: CatalogueItem[];
@@ -29,7 +29,7 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8 items-start">
-        {/* ── Item list ──────────────────────────────────────────────────── */}
+        {/* â”€â”€ Item list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <section aria-label="Liste des produits">
           {items.length === 0 ? (
             <div className="card p-12 text-center text-[var(--color-muted)]">
@@ -50,7 +50,7 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-[var(--color-text)] text-[var(--text-sm)] truncate">{item.name}</p>
-                    <p className="text-[var(--color-muted)] text-[var(--text-xs)]">{item.category}{item.price ? ` · ${item.price}` : ""}</p>
+                    <p className="text-[var(--color-muted)] text-[var(--text-xs)]">{item.category}{item.price ? ` Â· ${item.price}` : ""}</p>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <button
@@ -78,7 +78,7 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
           {delState.error && <p className="mt-3 text-red-600 text-[var(--text-sm)]">{delState.error}</p>}
         </section>
 
-        {/* ── Form ───────────────────────────────────────────────────────── */}
+        {/* â”€â”€ Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <section className="card p-6 sticky top-8" aria-label={editing.id ? "Modifier le produit" : "Ajouter un produit"}>
           <h2 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)] mb-5">
             {editing.id ? "Modifier" : "Ajouter un produit"}
@@ -94,7 +94,7 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
               </div>
 
               <div>
-                <label className="field-label" htmlFor="cat-cat">Catégorie</label>
+                <label className="field-label" htmlFor="cat-cat">CatÃ©gorie</label>
                 <select id="cat-cat" name="category" defaultValue={editing.category} key={editing.id + "-cat"} className="field-input">
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -106,18 +106,18 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
               </div>
 
               <div>
-                <label className="field-label" htmlFor="cat-unit">Unité</label>
-                <input id="cat-unit" name="unit" defaultValue={editing.unit} key={editing.id + "-unit"} className="field-input" placeholder="Ex: pièce, kg" />
+                <label className="field-label" htmlFor="cat-unit">UnitÃ©</label>
+                <input id="cat-unit" name="unit" defaultValue={editing.unit} key={editing.id + "-unit"} className="field-input" placeholder="Ex: piÃ¨ce, kg" />
               </div>
 
               <div>
                 <label className="field-label" htmlFor="cat-min">Commande min.</label>
-                <input id="cat-min" name="minOrder" defaultValue={editing.minOrder} key={editing.id + "-min"} className="field-input" placeholder="Ex: 10 pièces" />
+                <input id="cat-min" name="minOrder" defaultValue={editing.minOrder} key={editing.id + "-min"} className="field-input" placeholder="Ex: 10 piÃ¨ces" />
               </div>
 
               <div className="sm:col-span-2">
                 <label className="field-label" htmlFor="cat-image">Image (URL https://)</label>
-                <input id="cat-image" name="image" type="url" defaultValue={editing.image} key={editing.id + "-img"} className="field-input" placeholder="https://…" />
+                <input id="cat-image" name="image" type="url" defaultValue={editing.image} key={editing.id + "-img"} className="field-input" placeholder="https://â€¦" />
               </div>
 
               <div className="sm:col-span-2">
@@ -130,7 +130,7 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
 
             <div className="flex gap-3 pt-2">
               <button type="submit" disabled={saving} className="flex-1 py-2.5 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white font-bold text-[var(--text-sm)] shadow-[var(--shadow-accent)] hover:bg-[var(--color-accent-strong)] disabled:opacity-60 transition-colors">
-                {saving ? "Enregistrement…" : editing.id ? "Mettre à jour" : "Ajouter"}
+                {saving ? "Enregistrementâ€¦" : editing.id ? "Mettre Ã  jour" : "Ajouter"}
               </button>
               {editing.id && (
                 <button type="button" onClick={cancel} className="px-5 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] text-[var(--text-sm)] font-semibold text-[var(--color-muted)] hover:bg-[var(--color-surface-alt)] transition-colors">
@@ -144,3 +144,4 @@ export function AdminCatalogueView({ items, saveAction, deleteAction }: Props) {
     </div>
   );
 }
+

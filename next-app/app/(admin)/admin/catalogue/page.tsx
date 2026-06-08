@@ -1,4 +1,4 @@
-import { requireAuth } from "@/lib/auth";
+﻿import { requireAuth } from "@/lib/auth";
 import { getCatalogue, type CatalogueItem } from "@/lib/data";
 import { ghCommit } from "@/lib/github";
 import { revalidatePath } from "next/cache";
@@ -8,7 +8,7 @@ import { AdminCatalogueView } from "@/components/admin/AdminCatalogueView";
 
 export const metadata = { title: "Catalogue | Admin" };
 
-// ── File path for local writes ────────────────────────────────────────────────
+// â”€â”€ File path for local writes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const DATA_FILE = path.join(process.cwd(), "public", "data", "catalogue.json");
 const GH_PATH   = "next-app/public/data/catalogue.json";
 
@@ -18,7 +18,7 @@ async function writeData(items: CatalogueItem[]) {
   revalidatePath("/[lang]/catalogue", "page");
 }
 
-// ── Server Actions ────────────────────────────────────────────────────────────
+// â”€â”€ Server Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function saveItem(_prev: unknown, formData: FormData): Promise<{ error?: string }> {
   "use server";
@@ -34,7 +34,7 @@ async function saveItem(_prev: unknown, formData: FormData): Promise<{ error?: s
   const description = (formData.get("description") as string | null)?.trim() ?? "";
 
   if (!name) return { error: "Le nom du produit est requis." };
-  if (image && !image.startsWith("https://")) return { error: "L'image doit être une URL https://…" };
+  if (image && !image.startsWith("https://")) return { error: "L'image doit Ãªtre une URL https://â€¦" };
 
   const items = await getCatalogue();
 
@@ -63,7 +63,7 @@ async function deleteItem(_prev: unknown, formData: FormData): Promise<{ error?:
   return {};
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default async function AdminCataloguePage() {
   await requireAuth();
@@ -76,3 +76,4 @@ export default async function AdminCataloguePage() {
     />
   );
 }
+

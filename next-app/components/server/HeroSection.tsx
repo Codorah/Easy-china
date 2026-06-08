@@ -1,8 +1,8 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import type { Dict, LangCode } from "@/lib/i18n";
 import { HeroEntrance } from "@/components/client/HeroEntrance";
 
-const WA_COMMERCIAL = "+22890000001";
+const WA_COMMERCIAL = "+8619876105148";
 const waLink = (num: string, msg: string) =>
   `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
@@ -106,3 +106,4 @@ export function HeroSection({ t, lang }: Props) {
     </section>
   );
 }
+

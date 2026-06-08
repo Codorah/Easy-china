@@ -1,4 +1,4 @@
-import type { Dict, LangCode } from "@/lib/i18n";
+﻿import type { Dict, LangCode } from "@/lib/i18n";
 import Image from "next/image";
 
 interface Props { t: Dict; lang: LangCode }
@@ -15,7 +15,7 @@ export function Footer({ t, lang }: Props) {
     <footer className="bg-[var(--color-text)] text-[#94a3b8] border-t-[3px] border-[var(--color-accent)]">
       <div className="container-base py-16 flex flex-col gap-8 items-center text-center">
         {/* Logo */}
-        <a href={`/${lang}`} aria-label="Easy China — Accueil">
+        <a href={`/${lang}`} aria-label="Easy China â€” Accueil">
           <Image
             src="/logo.png"
             alt="Easy China"
@@ -58,14 +58,14 @@ export function Footer({ t, lang }: Props) {
             WhatsApp
           </a>
           <a
-            href="mailto:contact@easychina-services.com"
+            href="mailto:services@easychina.online"
             className="flex items-center gap-2 text-[#94a3b8] hover:text-white transition-colors"
           >
             <svg className="icon-md" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <rect x="2" y="4" width="20" height="16" rx="2"/>
               <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/>
             </svg>
-            contact@easychina-services.com
+            services@easychina.online
           </a>
         </div>
 
@@ -76,3 +76,4 @@ export function Footer({ t, lang }: Props) {
     </footer>
   );
 }
+

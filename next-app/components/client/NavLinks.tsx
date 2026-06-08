@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { usePathname } from "next/navigation";
 
 interface NavLink { href: string; label: string }
@@ -9,7 +9,7 @@ export function NavLinks({ links }: { links: NavLink[] }) {
   return (
     <ul className="hidden md:flex items-center gap-1" role="list">
       {links.map((l) => {
-        // Active if exact match OR if the link is a sub-path (catalogue, equipe…)
+        // Active if exact match OR if the link is a sub-path (catalogue, equipeâ€¦)
         const isActive = pathname === l.href || (l.href.split("/").length > 2 && pathname.startsWith(l.href));
 
         return (
@@ -37,3 +37,4 @@ export function NavLinks({ links }: { links: NavLink[] }) {
     </ul>
   );
 }
+

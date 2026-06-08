@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -16,7 +16,7 @@ export function ScrollReveal({ children, delay = 0, direction = "up", className 
     const el = ref.current;
     if (!el) return;
 
-    // Set CSS custom property imperatively — avoids JSX style prop
+    // Set CSS custom property imperatively â€” avoids JSX style prop
     el.style.setProperty("--reveal-delay", `${delay}s`);
 
     const obs = new IntersectionObserver(
@@ -38,3 +38,4 @@ export function ScrollReveal({ children, delay = 0, direction = "up", className 
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import { destroySession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { AdminLayoutWrapper } from "@/components/admin/AdminLayoutWrapper";
@@ -17,3 +17,4 @@ async function logoutAction() {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return <AdminLayoutWrapper logoutAction={logoutAction}>{children}</AdminLayoutWrapper>;
 }
+

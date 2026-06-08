@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { checkPassword, createSession, getSession } from "@/lib/auth";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 
@@ -21,7 +21,7 @@ async function loginAction(_prev: { error?: string }, formData: FormData) {
 }
 
 export default async function LoginPage() {
-  // Already authenticated → skip login
+  // Already authenticated â†’ skip login
   const session = await getSession();
   if (session) redirect("/admin/catalogue");
 
@@ -37,7 +37,7 @@ export default async function LoginPage() {
             </svg>
           </div>
           <h1 className="font-display font-extrabold text-[var(--color-text)] text-[var(--text-xl)]">Administration</h1>
-          <p className="text-[var(--color-muted)] text-[var(--text-sm)] mt-1">Easy China — accès sécurisé</p>
+          <p className="text-[var(--color-muted)] text-[var(--text-sm)] mt-1">Easy China â€” accÃ¨s sÃ©curisÃ©</p>
         </div>
 
         <div className="card p-8">
@@ -47,3 +47,4 @@ export default async function LoginPage() {
     </div>
   );
 }
+

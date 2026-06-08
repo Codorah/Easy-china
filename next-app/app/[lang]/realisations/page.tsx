@@ -9,7 +9,7 @@ const OG_IMAGE = `${BASE_URL}/og.png`;
 
 export const revalidate = 300;
 
-const WA_COMMERCIAL = "+22890000001";
+const WA_COMMERCIAL = "+8619876105148";
 const waLink = (num: string, msg: string) =>
   `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 

@@ -1,8 +1,8 @@
-import type { Dict } from "@/lib/i18n";
+﻿import type { Dict } from "@/lib/i18n";
 import { SectionHeader } from "./SectionHeader";
 import { ScrollReveal } from "@/components/client/ScrollReveal";
 
-const WA_COMMERCIAL = "+22890000001";
+const WA_COMMERCIAL = "+8619876105148";
 const waLink = (num: string, msg: string) =>
   `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
@@ -69,3 +69,4 @@ export function ServicesSection({ t }: Props) {
     </section>
   );
 }
+

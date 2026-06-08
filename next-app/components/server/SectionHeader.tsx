@@ -1,4 +1,4 @@
-interface Props {
+﻿interface Props {
   eyebrow: string;
   title: string;
   subtitle?: string;
@@ -21,3 +21,4 @@ export function SectionHeader({ eyebrow, title, subtitle, center = true, classNa
     </div>
   );
 }
+

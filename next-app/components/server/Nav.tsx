@@ -1,4 +1,4 @@
-import type { Dict, LangCode } from "@/lib/i18n";
+﻿import type { Dict, LangCode } from "@/lib/i18n";
 import { LangSwitcher } from "@/components/client/LangSwitcher";
 import { NavMobile } from "@/components/client/NavMobile";
 import { NavLinks } from "@/components/client/NavLinks";
@@ -21,7 +21,7 @@ export function Nav({ t, lang }: Props) {
         aria-label="Main navigation"
         className="bg-[var(--color-bg)]/95 backdrop-blur-2xl border-b border-[var(--color-border)]/60 h-[68px] px-6 flex items-center justify-between"
       >
-        <a href={`/${lang}`} className="flex items-center shrink-0" aria-label="Easy China — Accueil">
+        <a href={`/${lang}`} className="flex items-center shrink-0" aria-label="Easy China â€” Accueil">
           <Image
             src="/logo.png"
             alt="Easy China"
@@ -42,3 +42,4 @@ export function Nav({ t, lang }: Props) {
     </NavScroll>
   );
 }
+

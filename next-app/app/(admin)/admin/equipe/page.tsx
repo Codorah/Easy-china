@@ -1,4 +1,4 @@
-import { requireAuth } from "@/lib/auth";
+﻿import { requireAuth } from "@/lib/auth";
 import { getEquipe, type TeamMember } from "@/lib/data";
 import { ghCommit } from "@/lib/github";
 import { revalidatePath } from "next/cache";
@@ -6,7 +6,7 @@ import fs from "fs/promises";
 import path from "path";
 import { AdminEquipeView } from "@/components/admin/AdminEquipeView";
 
-export const metadata = { title: "Équipe | Admin" };
+export const metadata = { title: "Ã‰quipe | Admin" };
 
 const DATA_FILE = path.join(process.cwd(), "public", "data", "equipe.json");
 const GH_PATH   = "next-app/public/data/equipe.json";
@@ -31,7 +31,7 @@ async function saveItem(_prev: unknown, formData: FormData): Promise<{ error?: s
 
   if (!name) return { error: "Le nom est requis." };
   if (!role) return { error: "Le poste est requis." };
-  if (image && !image.startsWith("https://")) return { error: "L'image doit être une URL https://…" };
+  if (image && !image.startsWith("https://")) return { error: "L'image doit Ãªtre une URL https://â€¦" };
 
   const items = await getEquipe();
 
@@ -61,3 +61,4 @@ export default async function AdminEquipePage() {
   const members = await getEquipe();
   return <AdminEquipeView items={members} saveAction={saveItem} deleteAction={deleteItem} />;
 }
+

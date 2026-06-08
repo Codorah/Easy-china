@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useActionState } from "react";
 
 interface Props {
@@ -20,7 +20,7 @@ export function AdminLoginForm({ action }: Props) {
           type="password"
           autoComplete="current-password"
           required
-          placeholder="••••••••"
+          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
           className="w-full px-4 py-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] text-[var(--text-sm)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition"
         />
       </div>
@@ -36,8 +36,9 @@ export function AdminLoginForm({ action }: Props) {
         disabled={pending}
         className="w-full py-3 px-6 rounded-[var(--radius-md)] bg-[var(--color-accent)] text-white font-bold text-[var(--text-sm)] shadow-[var(--shadow-accent)] hover:bg-[var(--color-accent-strong)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
       >
-        {pending ? "Connexion…" : "Se connecter"}
+        {pending ? "Connexionâ€¦" : "Se connecter"}
       </button>
     </form>
   );
 }
+

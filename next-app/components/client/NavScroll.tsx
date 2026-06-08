@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState } from "react";
 
 export function NavScroll({ children }: { children: React.ReactNode }) {
@@ -17,3 +17,4 @@ export function NavScroll({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
