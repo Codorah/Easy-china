@@ -114,6 +114,17 @@ body {
   padding-bottom: var(--space-section);
 }
 
+/* Paragraph body copy defaults — comfortable reading width & line-height */
+p {
+  max-width: 70ch;
+  line-height: 1.7;
+}
+
+/* Unrestricted paragraphs inside flex/grid containers (they set their own widths) */
+.grid-3 p, .grid-4 p, .grid-50-50 p, .bento-grid p {
+  max-width: none;
+}
+
 /* ── prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

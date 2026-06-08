@@ -512,32 +512,29 @@ function AnimatedCounter({ value, suffix = "+", duration = 2.5 }) {
   );
 }
 
-// 5. Wrapper Scroll Reveal
-function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.6, style = {}, className = "" }) {
-  const [ref, isVisible] = useScrollReveal({ once: true, threshold: 0.08 });
-  
-  const getTransform = () => {
-    if (!isVisible) {
-      switch (direction) {
-        case "up": return "translateY(40px)";
-        case "down": return "translateY(-40px)";
-        case "left": return "translateX(40px)";
-        case "right": return "translateX(-40px)";
-        default: return "translateY(40px)";
-      }
-    }
-    return "translate(0, 0)";
-  };
+// 5. Scroll Reveal — fade + 14px translate, once, reduced-motion safe
+function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.5, style = {}, className = "" }) {
+  const [ref, isVisible] = useScrollReveal({ once: true, threshold: 0.1 });
 
-  const finalStyle = {
-    opacity: isVisible ? 1 : 0,
-    transform: getTransform(),
-    transition: `opacity ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
-    ...style
-  };
+  const dist = 14;
+  const hidden = {
+    up:    `translateY(${dist}px)`,
+    down:  `translateY(-${dist}px)`,
+    left:  `translateX(${dist}px)`,
+    right: `translateX(-${dist}px)`,
+  }[direction] || `translateY(${dist}px)`;
 
   return (
-    <div ref={ref} className={className} style={finalStyle}>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translate(0,0)" : hidden,
+        transition: `opacity ${duration}s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform ${duration}s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+        ...style,
+      }}
+    >
       {children}
     </div>
   );
@@ -553,7 +550,7 @@ function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
           <div style={{
             fontSize: "var(--text-xs)",
             color: "var(--accent)",
-            letterSpacing: "3px",
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
             fontWeight: 700,
             marginBottom: "var(--space-3)",
@@ -640,8 +637,8 @@ function Timeline({ items }) {
               <ScrollReveal direction={isLeft ? "left" : "right"} delay={index * 0.08}>
                 <GlassCard tilt={true} style={{ padding: "1.8rem" }}>
                   <span style={{
-                    fontSize: "1.2rem",
-                    fontWeight: 800,
+                    fontSize: "var(--text-md)",
+                    fontWeight: 700,
                     color: 'var(--accent)',
                     display: "block",
                     marginBottom: "0.4rem",
@@ -651,7 +648,7 @@ function Timeline({ items }) {
                   </span>
                   <h4 style={{
                     color: 'var(--text)',
-                    fontSize: "1rem",
+                    fontSize: "var(--text-base)",
                     fontWeight: 700,
                     marginBottom: "0.5rem",
                   }}>
@@ -659,7 +656,7 @@ function Timeline({ items }) {
                   </h4>
                   <p style={{
                     color: 'var(--muted)',
-                    fontSize: "0.85rem",
+                    fontSize: "var(--text-sm)",
                     lineHeight: 1.6,
                   }}>
                     {item.desc}
@@ -680,7 +677,7 @@ function Testimonial({ quote, author, role, stars }) {
     <GlassCard tilt={true} style={{ padding: "2.2rem 2rem", display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
       <div>
         <div style={{ fontSize: "2.8rem", color: 'var(--accent)', lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
-        <p style={{ fontStyle: "italic", fontSize: "0.9rem", color: 'var(--text)', lineHeight: 1.65, marginBottom: "1.8rem" }}>
+        <p style={{ fontStyle: "italic", fontSize: "var(--text-sm)", color: 'var(--text)', lineHeight: 1.65, marginBottom: "1.8rem" }}>
           {quote}
         </p>
       </div>
@@ -690,13 +687,13 @@ function Testimonial({ quote, author, role, stars }) {
           background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
           border: `1.5px solid rgba(201, 48, 44, 0.2)`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 800, color: "#fff", fontSize: "0.95rem"
+          fontWeight: 700, color: "#fff", fontSize: "var(--text-base)"
         }}>
           {author.charAt(0)}
         </div>
         <div>
-          <h4 style={{ fontSize: "0.88rem", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{author}</h4>
-          <span style={{ fontSize: "0.72rem", color: 'var(--muted)', display: "block", marginTop: 2 }}>{role}</span>
+          <h4 style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{author}</h4>
+          <span style={{ fontSize: "var(--text-xs)", color: 'var(--muted)', display: "block", marginTop: 2 }}>{role}</span>
           <div style={{ color: 'var(--accent)', display: "flex", gap: 2, marginTop: 4 }}>
             {Array.from({ length: 5 }).map((_, idx) => (
               <Star key={idx} size={14} fill={idx < stars ? "var(--accent)" : "transparent"} color={"var(--accent)"} />
@@ -752,7 +749,7 @@ function TestimonialCarousel() {
               border: "none",
               background: active === i ? "var(--accent)" : "var(--border)",
               cursor: "pointer",
-              transition: "all 0.3s ease",
+              transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
             }}
           />
         ))}
@@ -799,12 +796,12 @@ function LangSwitcher() {
           background: open ? "rgba(201,48,44,0.07)" : "transparent",
           border: `1px solid ${open ? "var(--accent)" : "var(--border)"}`,
           borderRadius: 8, padding: "0.4rem 0.85rem",
-          fontSize: "0.78rem", fontWeight: 600, cursor: "pointer",
-          color: open ? "var(--accent)" : "var(--muted)", transition: "all 0.25s",
+          fontSize: "var(--text-xs)", fontWeight: 600, cursor: "pointer",
+          color: open ? "var(--accent)" : "var(--muted)", transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
           fontFamily: "var(--font-body)",
         }}
       >
-        <span style={{ fontSize: "1rem" }}>{current.flag}</span>
+        <span style={{ fontSize: "var(--text-base)" }}>{current.flag}</span>
         <span>{current.label}</span>
         <ChevronDown size={13} style={{ transition: "transform 0.25s", transform: open ? "rotate(180deg)" : "none" }} />
       </button>
@@ -825,14 +822,14 @@ function LangSwitcher() {
                 alignItems: "center", gap: 10, padding: "0.65rem 1rem",
                 background: lang === l.code ? "rgba(201,48,44,0.06)" : "transparent",
                 border: "none", cursor: "pointer",
-                fontSize: "0.82rem", fontWeight: lang === l.code ? 700 : 500,
+                fontSize: "var(--text-sm)", fontWeight: lang === l.code ? 700 : 500,
                 color: lang === l.code ? "var(--accent)" : "var(--text)",
                 fontFamily: "var(--font-body)", transition: "background 0.2s",
               }}
               onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
               onMouseLeave={e => { if (lang !== l.code) e.currentTarget.style.background = "transparent"; }}
             >
-              <span style={{ fontSize: "1.1rem" }}>{l.flag}</span>
+              <span style={{ fontSize: "var(--text-md)" }}>{l.flag}</span>
               {l.label}
             </button>
           ))}
@@ -886,7 +883,7 @@ function FloatingNav({ pages, activePage, setPage }) {
         boxShadow: isScrolled
           ? "0 6px 28px rgba(26,20,16,0.1), 0 1px 4px rgba(26,20,16,0.06)"
           : "0 1px 0 rgba(26,20,16,0.06)",
-        transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s cubic-bezier(0.16,1,0.3,1)",
         zIndex: 1000,
       }}>
         <Logo onClick={() => { setPage("accueil"); setIsOpen(false); }} />
@@ -925,10 +922,10 @@ function FloatingNav({ pages, activePage, setPage }) {
           {pages.map(([k]) => (
             <button key={k} onClick={() => { setPage(k); setIsOpen(false); }}
               style={{
-                background: "none", border: "none", fontSize: "1.5rem",
+                background: "none", border: "none", fontSize: "var(--text-lg)",
                 fontWeight: 700, color: activePage === k ? "var(--accent)" : "var(--text)",
-                cursor: "pointer", transition: "all 0.2s",
-                letterSpacing: "1px", fontFamily: "var(--font-display)"
+                cursor: "pointer", transition: "color 0.15s, background 0.15s, transform 0.15s",
+                letterSpacing: "0.06em", fontFamily: "var(--font-display)"
               }}
             >
               {t(NAV_KEYS[k] || k)}
@@ -949,30 +946,35 @@ function NavBtn({ label, active, onClick }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: active ? "rgba(201, 48, 44, 0.07)" : hov ? "rgba(15, 23, 42, 0.04)" : "none",
+        background: active ? "var(--accent-soft)" : hov ? "rgba(26,20,16,0.04)" : "none",
         border: "none",
         color: active ? "var(--accent)" : hov ? "var(--text)" : "var(--muted)",
         cursor: "pointer",
-        padding: "0.55rem 1.15rem",
-        borderRadius: 8,
-        fontSize: "0.85rem",
+        padding: "0.5rem 1rem",
+        borderRadius: "var(--radius-sm)",
+        fontSize: "var(--text-sm)",
         fontWeight: 600,
-        letterSpacing: "0.3px",
+        letterSpacing: "0.02em",
         fontFamily: "var(--font-body)",
-        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        transition: "color 0.15s, background 0.15s",
         position: "relative",
+        minHeight: 44,
+        minWidth: 44,
       }}
     >
       {label}
+      {/* Underline — scaleX draw, GPU-composited */}
       <span style={{
         position: "absolute",
-        bottom: 4,
-        left: active || hov ? "20%" : "50%",
-        right: active || hov ? "20%" : "50%",
+        bottom: 6,
+        left: "10%",
+        width: "80%",
         height: 2,
         background: "var(--accent)",
         borderRadius: 2,
-        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+        transform: active || hov ? "scaleX(1)" : "scaleX(0)",
+        transformOrigin: "left center",
+        transition: "transform 0.18s ease",
       }} />
     </button>
   );
@@ -990,10 +992,10 @@ function Tag({ children }) {
         border: `1px solid rgba(201, 48, 44, ${hov ? 0.35 : 0.18})`,
         padding: "0.45rem 1rem",
         borderRadius: 20,
-        fontSize: "0.75rem",
+        fontSize: "var(--text-xs)",
         fontWeight: 600,
         transform: hov ? "translateY(-1px)" : "translateY(0)",
-        transition: "all 0.25s ease",
+        transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
         cursor: "default",
       }}
     >
@@ -1013,12 +1015,12 @@ function CityPill({ children }) {
         border: `1px solid ${hov ? "var(--accent)" : "var(--border)"}`,
         padding: "0.45rem 1.25rem",
         borderRadius: 30,
-        fontSize: "0.8rem",
+        fontSize: "var(--text-sm)",
         fontWeight: 600,
         color: hov ? "var(--accent)" : "var(--text)",
         transform: hov ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hov ? "0 4px 15px rgba(201,48,44,0.1)" : "none",
-        transition: "all 0.25s ease",
+        transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
         cursor: "default"
       }}
     >
@@ -1035,13 +1037,13 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
     padding: "0.85rem 1.1rem",
     border: `1.5px solid ${foc ? "var(--accent)" : "var(--border)"}`,
     borderRadius: 10,
-    fontSize: "0.88rem",
+    fontSize: "var(--text-sm)",
     background: foc ? "#fff" : "var(--surface-alt)",
     color: 'var(--text)',
     fontFamily: "var(--font-body)",
     outline: "none",
     boxShadow: foc ? `0 0 0 3px rgba(201, 48, 44, 0.1)` : "none",
-    transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+    transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.2s, box-shadow 0.2s",
   };
 
   return (
@@ -1049,11 +1051,11 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
       {label && (
         <label style={{
           display: "block",
-          fontSize: "0.8rem",
+          fontSize: "var(--text-sm)",
           color: 'var(--accent)',
           marginBottom: 6,
           fontWeight: 600,
-          letterSpacing: "0.5px"
+          letterSpacing: "0.03em"
         }}>
           {label}
         </label>
@@ -1320,7 +1322,7 @@ function HeroSection({ goTo }) {
             padding: "0.45rem 1rem",
             borderRadius: "var(--radius-full)",
             marginBottom: "var(--space-8)",
-            letterSpacing: "2.5px",
+            letterSpacing: "0.15em",
             textTransform: "uppercase",
             fontWeight: 700,
             alignSelf: "flex-start",
@@ -1404,7 +1406,7 @@ function HeroSection({ goTo }) {
                 fontSize: "var(--text-xs)",
                 color: "var(--muted)",
                 textTransform: "uppercase",
-                letterSpacing: "1px",
+                letterSpacing: "0.06em",
                 fontWeight: 600,
                 marginTop: "var(--space-1)",
               }}>
@@ -1503,14 +1505,14 @@ function PageAccueil({ goTo }) {
         <div className="grid-50-50" style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: "0.72rem", color: 'var(--accent)', letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
-              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: 'var(--text)', lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "var(--font-display)" }}>
+              <div style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
+              <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 700, color: 'var(--text)', lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "var(--font-display)" }}>
                 {t("tour_title")}
               </h2>
-              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "0.95rem" }}>
+              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem", fontSize: "var(--text-base)" }}>
                 {t("tour_p1")}
               </p>
-              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "2rem", fontSize: "0.95rem" }}>
+              <p style={{ color: 'var(--muted)', lineHeight: 1.7, marginBottom: "2rem", fontSize: "var(--text-base)" }}>
                 {t("tour_p2")}
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "1rem" }}>
@@ -1531,7 +1533,7 @@ function PageAccueil({ goTo }) {
                   <CityPill key={c}>{c}</CityPill>
                 ))}
               </div>
-              <p style={{ color: 'var(--muted)', fontSize: "0.8rem", marginTop: "1.5rem", fontStyle: "italic" }}>
+              <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", marginTop: "1.5rem", fontStyle: "italic" }}>
                 {t("tour_note")}
               </p>
             </GlassCard>
@@ -1566,11 +1568,11 @@ function PageAccueil({ goTo }) {
                   <Img src={b.query} alt={b.title} style={{ borderRadius: "0px", height: "100%" }} />
                 </div>
                 <div style={{ padding: "2rem", textAlign: "left" }}>
-                  <h3 style={{ color: 'var(--accent)', marginBottom: "1rem", fontSize: "1.1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ color: 'var(--accent)', marginBottom: "1rem", fontSize: "var(--text-md)", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
                     <span>{b.flag}</span> {b.title}
                   </h3>
                   {b.lines.map((l, j) => (
-                    <p key={j} style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.6, marginBottom: 4 }}>{l}</p>
+                    <p key={j} style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.6, marginBottom: 4 }}>{l}</p>
                   ))}
                 </div>
               </GlassCard>
@@ -1602,12 +1604,12 @@ function PageAccueil({ goTo }) {
 
         <div style={{ position: "relative", zIndex: 3, maxWidth: 650, margin: "0 auto" }}>
           <ScrollReveal direction="up" delay={0.1}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: "1.5rem", fontFamily: "var(--font-display)", color: "#fff" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "1.5rem", fontFamily: "var(--font-display)", color: "#fff" }}>
               {t("cta_title")}
             </h2>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
-            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", lineHeight: 1.75, marginBottom: "3rem" }}>
+            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "var(--text-base)", lineHeight: 1.75, marginBottom: "3rem" }}>
               {t("cta_subtitle")}
             </p>
           </ScrollReveal>
@@ -1661,7 +1663,7 @@ function PaysCouverts() {
             borderRadius:40, padding:"0.55rem 1.2rem",
             boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
             fontSize:"0.82rem", fontWeight:600, color:"var(--text)",
-            transition:"all 0.25s",
+            transition:"color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
           }}
             onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--accent)"; e.currentTarget.style.color="var(--accent)"; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
             onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.color="var(--text)"; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
@@ -1731,9 +1733,9 @@ function ProcessusSection() {
                       background: "var(--accent)", color: "#fff",
                       borderRadius: "var(--radius-full)",
                       width: 22, height: 22,
-                      fontSize: "0.6rem", fontWeight: 800,
+                      fontSize: "var(--text-xs)", fontWeight: 700,
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      letterSpacing: "0.5px",
+                      letterSpacing: "0.03em",
                     }}>{s.num}</div>
                   </div>
                   <h3 style={{
@@ -1842,7 +1844,7 @@ function PremiumServices() {
                   fontWeight: 700,
                   padding: "0.2rem 0.75rem",
                   borderRadius: "var(--radius-full)",
-                  letterSpacing: "1px",
+                  letterSpacing: "0.06em",
                   textTransform: "uppercase",
                   marginBottom: "var(--space-6)",
                 }}>{item.tag}</div>
@@ -1976,7 +1978,7 @@ function FAQAccordion() {
             overflow: "hidden",
             background: "#fff",
             boxShadow: open === i ? "0 4px 20px rgba(201,48,44,0.08)" : "0 1px 4px rgba(0,0,0,0.04)",
-            transition: "all 0.3s ease",
+            transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
           }}>
             <button
               onClick={() => setOpen(open === i ? null : i)}
@@ -1987,14 +1989,14 @@ function FAQAccordion() {
                 fontFamily: "var(--font-body)",
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: "0.92rem", color: 'var(--text)', paddingRight: "1rem", lineHeight: 1.4 }}>
+              <span style={{ fontWeight: 700, fontSize: "var(--text-base)", color: 'var(--text)', paddingRight: "1rem", lineHeight: 1.4 }}>
                 {faq.q}
               </span>
               <span style={{
                 width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
                 background: open === i ? `linear-gradient(135deg, var(--accent), var(--accent-strong))` : "var(--surface-alt)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.3s ease",
+                transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
               }}>
                 <ChevronDown size={16}
                   color={open === i ? "#fff" : "var(--muted)"}
@@ -2004,7 +2006,7 @@ function FAQAccordion() {
             </button>
             {open === i && (
               <div style={{ padding: "0 1.8rem 1.4rem", animation: "pageEnter 0.25s ease" }}>
-                <p style={{ color: 'var(--muted)', fontSize: "0.88rem", lineHeight: 1.75, borderTop: `1px solid var(--border)`, paddingTop: "1rem" }}>
+                <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", lineHeight: 1.75, borderTop: `1px solid var(--border)`, paddingTop: "1rem" }}>
                   {faq.a}
                 </p>
               </div>
@@ -2109,10 +2111,10 @@ function PageCatalogue({ articles }) {
                   color: isActive ? "#fff" : "var(--muted)",
                   padding: "0.6rem 1.5rem",
                   borderRadius: 30,
-                  fontSize: "0.85rem",
+                  fontSize: "var(--text-sm)",
                   fontWeight: 600,
                   cursor: "pointer",
-                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.2s, box-shadow 0.2s",
                   boxShadow: isActive ? "0 4px 15px rgba(201, 48, 44, 0.25)" : "none",
                   transform: isActive ? "translateY(-2px)" : "translateY(0)"
                 }}
@@ -2142,8 +2144,8 @@ function PageCatalogue({ articles }) {
                   right: 12,
                   background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
                   color: "var(--bg)",
-                  fontSize: "0.7rem",
-                  fontWeight: 800,
+                  fontSize: "var(--text-xs)",
+                  fontWeight: 700,
                   padding: "0.3rem 0.8rem",
                   borderRadius: 20,
                   boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
@@ -2171,13 +2173,13 @@ function PageCatalogue({ articles }) {
 
               <div style={{ padding: "1.8rem", display: "flex", flexDirection: "column", height: "calc(100% - 200px)", justifyContent: "space-between" }}>
                 <div style={{ textAlign: "left" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: 'var(--text)', marginBottom: "0.5rem" }}>
+                  <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, color: 'var(--text)', marginBottom: "0.5rem" }}>
                     {a.titre}
                   </h3>
-                  <div style={{ color: 'var(--accent)', fontWeight: 800, fontSize: "1rem", marginBottom: "0.8rem" }}>
+                  <div style={{ color: 'var(--accent)', fontWeight: 700, fontSize: "var(--text-base)", marginBottom: "0.8rem" }}>
                     {a.prix}
                   </div>
-                  <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.5, marginBottom: "1.8rem" }}>
+                  <p style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.5, marginBottom: "1.8rem" }}>
                     {a.desc}
                   </p>
                 </div>
@@ -2260,12 +2262,12 @@ function PageRealisations({ realisations }) {
                           background: "rgba(201, 48, 44,0.08)",
                           border: `1px solid rgba(201, 48, 44,0.25)`,
                           color: 'var(--accent)',
-                          fontSize: "0.68rem",
+                          fontSize: "var(--text-xs)",
                           fontWeight: 700,
                           padding: "0.25rem 0.75rem",
                           borderRadius: 20,
                           textTransform: "uppercase",
-                          letterSpacing: "0.5px"
+                          letterSpacing: "0.03em"
                         }}>
                           {r.cat}
                         </span>
@@ -2279,7 +2281,7 @@ function PageRealisations({ realisations }) {
 
                       <h3 style={{
                         fontSize: isLarge ? "1.3rem" : "1.05rem",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         color: 'var(--text)',
                         lineHeight: 1.25,
                         marginBottom: "0.6rem",
@@ -2288,7 +2290,7 @@ function PageRealisations({ realisations }) {
                       }}>
                         {r.titre}
                       </h3>
-                      <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>
+                      <p style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>
                         {r.desc}
                       </p>
                     </div>
@@ -2301,11 +2303,11 @@ function PageRealisations({ realisations }) {
                         marginTop: "1rem"
                       }}>
                         <div style={{ color: 'var(--accent)', fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
-                        <p style={{ fontStyle: "italic", fontSize: "0.82rem", color: 'var(--text)', lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
+                        <p style={{ fontStyle: "italic", fontSize: "var(--text-sm)", color: 'var(--text)', lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
                           {r.temoignage}
                         </p>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: 'var(--accent)' }}>{r.client}</span>
+                          <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: 'var(--accent)' }}>{r.client}</span>
                           <span style={{ color: 'var(--accent)', display: "flex", gap: 1 }}>
                             {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
                               <Star key={stIdx} size={11} fill={"var(--accent)"} color={"var(--accent)"} />
@@ -2329,10 +2331,10 @@ function PageRealisations({ realisations }) {
           padding: "3.5rem",
           textAlign: "center"
         }}>
-          <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: 'var(--text)', marginBottom: "1rem", fontFamily: "var(--font-display)" }}>
+          <h3 style={{ fontSize: "1.8rem", fontWeight: 700, color: 'var(--text)', marginBottom: "1rem", fontFamily: "var(--font-display)" }}>
             Vous aussi, concrétisez vos projets avec la Chine !
           </h3>
-          <p style={{ color: 'var(--muted)', fontSize: "0.95rem", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--muted)', fontSize: "var(--text-base)", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
             Bénéficiez de la sécurité et de la puissance de notre réseau transitaire et académique pour réaliser vos ambitions d'importation ou d'études.
           </p>
           <GoldenBtn variant="glow" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite démarrer un projet logistique/études avec vous."))}>
@@ -2366,15 +2368,15 @@ function PageEquipe({ equipe }) {
         <div style={{ position: "absolute", left: "-5%", top: "-40%", width: 400, height: 400, borderRadius: "50%", background: "rgba(255,255,255,0.07)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", right: "-5%", bottom: "-40%", width: 320, height: 320, borderRadius: "50%", background: "rgba(255,255,255,0.07)", pointerEvents: "none" }} />
         <ScrollReveal direction="up" delay={0.1}>
-          <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.7)", letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <div style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.7)", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
             <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
             {t("eq_eyebrow")}
             <span style={{ display: "inline-block", width: 20, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 2 }} />
           </div>
-          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: "#fff", fontFamily: "var(--font-display)", marginBottom: "1rem" }}>
+          <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, color: "#fff", fontFamily: "var(--font-display)", marginBottom: "1rem" }}>
             {t("eq_title")}
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "1rem", maxWidth: 580, margin: "0 auto", lineHeight: 1.75 }}>
+          <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "var(--text-base)", maxWidth: 580, margin: "0 auto", lineHeight: 1.75 }}>
             {t("eq_subtitle")}
           </p>
         </ScrollReveal>
@@ -2394,15 +2396,15 @@ function PageEquipe({ equipe }) {
                     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.65))" }} />
                     {/* Name overlay on photo */}
                     <div style={{ position: "absolute", bottom: 18, left: 22, right: 22, zIndex: 2 }}>
-                      <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#fff", marginBottom: 2, fontFamily: "var(--font-display)" }}>{member.nom}</h3>
-                      <div style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.78rem", fontWeight: 600 }}>{member.poste}</div>
+                      <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, color: "#fff", marginBottom: 2, fontFamily: "var(--font-display)" }}>{member.nom}</h3>
+                      <div style={{ color: "rgba(255,255,255,0.85)", fontSize: "var(--text-xs)", fontWeight: 600 }}>{member.poste}</div>
                     </div>
                   </div>
 
                   {/* Content */}
                   <div style={{ padding: "1.8rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
-                      <p style={{ fontSize: "0.85rem", color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem" }}>{member.bio}</p>
+                      <p style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.7, marginBottom: "1.2rem" }}>{member.bio}</p>
 
                       {specs.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
@@ -2413,7 +2415,7 @@ function PageEquipe({ equipe }) {
                               color: 'var(--accent)',
                               padding: "0.3rem 0.75rem",
                               borderRadius: 20,
-                              fontSize: "0.72rem",
+                              fontSize: "var(--text-xs)",
                               fontWeight: 600,
                             }}>{s}</span>
                           ))}
@@ -2424,7 +2426,7 @@ function PageEquipe({ equipe }) {
                     {/* Contact */}
                     <div style={{ borderTop: `1px solid var(--border)`, paddingTop: "1.2rem", display: "flex", flexDirection: "column", gap: 10 }}>
                       {member.contact && (
-                        <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                        <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "var(--text-sm)", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
                           onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
                           onMouseLeave={e => e.currentTarget.style.color = "var(--muted)"}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -2434,7 +2436,7 @@ function PageEquipe({ equipe }) {
                         </a>
                       )}
                       {member.email && (
-                        <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
+                        <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: 'var(--muted)', fontSize: "var(--text-sm)", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
                           onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
                           onMouseLeave={e => e.currentTarget.style.color = "var(--muted)"}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -2538,7 +2540,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
           borderRadius: 12, padding: "1rem", textAlign: "center",
           cursor: uploading ? "wait" : "pointer",
           background: drag ? "rgba(201,48,44,0.05)" : "var(--surface-alt)",
-          transition: "all .2s", position: "relative", minHeight: 120,
+          transition: "color 0.15s, background 0.15s, transform 0.15s", position: "relative", minHeight: 120,
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", gap: 8,
         }}
@@ -2928,10 +2930,10 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
             }}>
               <Lock size={26}/>
             </div>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, marginTop: "1rem", fontFamily: "var(--font-display)" }}>
+            <h2 style={{ fontSize: "var(--text-lg)", fontWeight: 700, marginTop: "1rem", fontFamily: "var(--font-display)" }}>
               Accès Administration
             </h2>
-            <p style={{ color: 'var(--muted)', fontSize: "0.85rem", marginTop: "0.5rem" }}>
+            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", marginTop: "0.5rem" }}>
               Veuillez saisir le code d'accès pour modifier le catalogue d'importation et les réalisations.
             </p>
           </div>
@@ -2945,12 +2947,12 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               placeholder="Code administrateur"
             />
             {errorMsg && (
-              <p style={{ color: 'var(--danger)', fontSize: "0.8rem", fontWeight: 600, marginBottom: "1rem", textAlign: "left" }}>
+              <p style={{ color: 'var(--danger)', fontSize: "var(--text-sm)", fontWeight: 600, marginBottom: "1rem", textAlign: "left" }}>
                 ⚠️ {errorMsg}
               </p>
             )}
             {isLocked && (
-              <p style={{ color: 'var(--danger)', fontSize: "0.8rem", fontWeight: 700, marginBottom: "1rem", textAlign: "left" }}>
+              <p style={{ color: 'var(--danger)', fontSize: "var(--text-sm)", fontWeight: 700, marginBottom: "1rem", textAlign: "left" }}>
                 🔒 Compte verrouillé temporairement. Réessayez dans {timeLeft}s.
               </p>
             )}
@@ -2971,10 +2973,10 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "3rem" }}>
         <div style={{ textAlign: "left" }}>
-          <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--accent)' }}>
+          <h2 style={{ fontSize: "var(--text-2xl)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--accent)' }}>
             Espace Professionnel Administration
           </h2>
-          <p style={{ color: 'var(--muted)', fontSize: "0.9rem" }}>
+          <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>
             Gérez vos produits du catalogue en temps réel ainsi que les réalisations et témoignages clients de l'agence.
           </p>
         </div>
@@ -2996,8 +2998,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
           <div style={{ background: s.bg, border: `1.5px solid ${s.border}`, borderRadius: "var(--radius-md)", padding: "1.2rem 1.6rem", marginBottom: "2.5rem", display: "flex", gap: 14, alignItems: "flex-start" }}>
             <div style={{ flexShrink: 0, marginTop: 2 }}>{s.icon}</div>
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: "0.88rem", marginBottom: "0.3rem" }}>{s.title}</div>
-              <p style={{ color: 'var(--muted)', fontSize: "0.82rem", lineHeight: 1.6 }}>{s.body}</p>
+              <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: "var(--text-sm)", marginBottom: "0.3rem" }}>{s.title}</div>
+              <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", lineHeight: 1.6 }}>{s.body}</p>
             </div>
           </div>
         );
@@ -3006,7 +3008,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* CATALOGUE CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingArtId ? "✏️ Modifier le Produit" : "➕ Ajouter au Catalogue"}
           </h3>
           <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
@@ -3048,11 +3050,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* CATALOGUE LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Produits du Catalogue ({articles.length})
           </h3>
           {articles.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucun produit dans le catalogue.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucun produit dans le catalogue.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {articles.map((art) => (
@@ -3069,9 +3071,9 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                   <div style={{ textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ color: 'var(--accent)' }}><Package size={18}/></span>
-                      <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{art.titre}</h4>
+                      <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, margin: 0 }}>{art.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{art.prix} · {art.cat}</span>
+                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{art.prix} · {art.cat}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
@@ -3101,7 +3103,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* REALISATIONS CRUD PANEL */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingRealId ? "✏️ Modifier la Réalisation" : "➕ Ajouter une Réalisation"}
           </h3>
           <Field label="Titre de la Réalisation *" value={realNom} onChange={setRealNom} placeholder="Ex: Livraison d'un Conteneur de 40 pieds" />
@@ -3152,11 +3154,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* REALISATIONS LIST VIEW */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Réalisations Clients ({realisations.length})
           </h3>
           {realisations.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucune réalisation enregistrée.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucune réalisation enregistrée.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {realisations.map((real) => (
@@ -3178,9 +3180,9 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                          real.cat === "Formation" ? <Wrench size={18}/> :
                          <FileCheck size={18}/>}
                       </span>
-                      <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{real.titre}</h4>
+                      <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, margin: 0 }}>{real.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
+                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
@@ -3209,16 +3211,16 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
       {/* ─── ÉQUIPE CRUD ─── */}
       <div style={{ marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "0.4rem" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "0.4rem" }}>
           👥 Gestion de l'Équipe
         </h3>
-        <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
+        <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
       </div>
 
       <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
         {/* ÉQUIPE FORM */}
         <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             {editingMemId ? "✏️ Modifier le Membre" : "➕ Ajouter un Membre"}
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -3249,11 +3251,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
         {/* ÉQUIPE LIST */}
         <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.15rem", fontWeight: 800, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
+          <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
             Membres de l'Équipe ({equipe.length})
           </h3>
           {equipe.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "0.85rem" }}>Aucun membre enregistré.</p>
+            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucun membre enregistré.</p>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {equipe.map((m) => (
@@ -3277,8 +3279,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                     )}
                   </div>
                   <div style={{ flex: 1, textAlign: "left" }}>
-                    <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{m.nom}</h4>
-                    <span style={{ fontSize: "0.75rem", color: 'var(--accent)', fontWeight: 600 }}>{m.poste}</span>
+                    <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{m.nom}</h4>
+                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{m.poste}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
                     <button aria-label="Modifier" onClick={() => handleEditMembre(m)}
@@ -3587,7 +3589,7 @@ export default function App() {
               style={{ height: 44, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)" }}
             />
           </div>
-          <p style={{ fontSize: "var(--text-xs)", letterSpacing: "0.3px", color: "rgba(255,255,255,0.4)" }}>
+          <p style={{ fontSize: "var(--text-xs)", letterSpacing: "0.02em", color: "rgba(255,255,255,0.4)" }}>
             {t("footer_copy")}
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-8)", flexWrap: "wrap" }}>
@@ -3604,6 +3606,9 @@ export default function App() {
     </div>
   );
 }
+
+
+
 
 
 
