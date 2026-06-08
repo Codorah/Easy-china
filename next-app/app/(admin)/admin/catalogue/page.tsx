@@ -1,4 +1,3 @@
-"use server";
 import { requireAuth } from "@/lib/auth";
 import { getCatalogue, type CatalogueItem } from "@/lib/data";
 import { ghCommit } from "@/lib/github";

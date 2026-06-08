@@ -1,4 +1,3 @@
-"use server";
 import { requireAuth } from "@/lib/auth";
 import { getEquipe, type TeamMember } from "@/lib/data";
 import { ghCommit } from "@/lib/github";

@@ -1,4 +1,3 @@
-"use server";
 import { redirect } from "next/navigation";
 import { checkPassword, createSession, getSession } from "@/lib/auth";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";

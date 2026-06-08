@@ -1,4 +1,3 @@
-"use server";
 import { requireAuth } from "@/lib/auth";
 import { getRealisations, type Realisation } from "@/lib/data";
 import { ghCommit } from "@/lib/github";
