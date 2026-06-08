@@ -3,7 +3,7 @@
    Warm African-modern palette: sand / clay / off-white + China red accent.
 ───────────────────────────────────────────────────────────────────────────── */
 
-/* Self-hosted fonts */
+/* Self-hosted fonts — no render-blocking Google Fonts link */
 @import "@fontsource/syne/700.css";
 @import "@fontsource/syne/800.css";
 @import "@fontsource/plus-jakarta-sans/400.css";
@@ -14,39 +14,62 @@
 
 :root {
   /* ── Backgrounds ── */
-  --bg:          #fdfcf8;   /* warm off-white — page canvas */
-  --surface:     #ffffff;   /* card / panel */
-  --surface-alt: #f6f2ea;   /* sand — alternate sections */
-  --accent-soft: rgba(201, 48, 44, 0.07); /* accent tint for bg */
+  --bg:          #fdfcf8;
+  --surface:     #ffffff;
+  --surface-alt: #f6f2ea;
+  --accent-soft: rgba(201, 48, 44, 0.07);
 
   /* ── Text ── */
-  --text:   #1a1410;   /* warm near-black */
-  --muted:  #6b5e52;   /* warm brown-grey */
+  --text:  #1a1410;
+  --muted: #6b5e52;
 
   /* ── Border ── */
-  --border: #e6dfd2;   /* warm beige */
+  --border: #e6dfd2;
 
-  /* ── Accent — China red, the ONE true accent ── */
+  /* ── Accent — China red, the ONE accent ── */
   --accent:        #c9302c;
-  --accent-strong: #a82622;   /* hover / pressed */
+  --accent-strong: #a82622;
 
   /* ── Secondary — deep navy, used sparingly ── */
   --secondary: #1a2f5e;
 
-  /* ── Typography — Modular scale 1.25 ratio, base 16px ── */
+  /* ── Danger — admin destructive actions only ── */
+  --danger: #c2185b;
+
+  /* ── Typography ── */
   --font-display: "Syne", sans-serif;
   --font-body:    "Plus Jakarta Sans", sans-serif;
 
-  --text-xs:   0.64rem;    /* 10.2px  */
-  --text-sm:   0.8rem;     /* 12.8px  */
-  --text-base: 1rem;       /* 16px    */
-  --text-md:   1.25rem;    /* 20px    */
-  --text-lg:   1.5625rem;  /* 25px    */
-  --text-xl:   1.953rem;   /* 31.25px */
-  --text-2xl:  2.441rem;   /* 39px    */
-  --text-3xl:  3.052rem;   /* 48.8px  */
+  /* Modular scale 1.25, base 16px */
+  --text-xs:   0.64rem;
+  --text-sm:   0.8rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.953rem;
+  --text-2xl:  2.441rem;
+  --text-3xl:  3.052rem;
 
-  /* ── Spacing ── */
+  /* ── Spacing scale (4px base, harmonically spaced) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Section vertical rhythm */
+  --space-section: clamp(64px, 10vw, 112px);
+
+  /* Layout */
+  --container: 1100px;
+  --gutter:    clamp(20px, 5vw, 48px);
+
+  /* ── Radius ── */
   --radius-sm:   6px;
   --radius-md:   12px;
   --radius-lg:   20px;
@@ -57,11 +80,13 @@
   --shadow-sm:     0 1px 3px rgba(26,20,16,0.08), 0 1px 2px rgba(26,20,16,0.06);
   --shadow-md:     0 4px 12px rgba(26,20,16,0.10), 0 2px 4px rgba(26,20,16,0.06);
   --shadow-lg:     0 12px 32px rgba(26,20,16,0.12), 0 4px 8px rgba(26,20,16,0.06);
-  --shadow-accent: 0 6px 20px rgba(201,48,44,0.28);
+  --shadow-accent: 0 6px 20px rgba(201,48,44,0.25);
 }
 
 /* ── Base reset ── */
 *, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -72,6 +97,21 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Layout utilities ── */
+.container {
+  max-width: var(--container);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.section-pad {
+  padding-top: var(--space-section);
+  padding-bottom: var(--space-section);
 }
 
 /* ── prefers-reduced-motion ── */
@@ -80,5 +120,6 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

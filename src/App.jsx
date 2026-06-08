@@ -10,20 +10,22 @@ import {
   Search, Filter, ShieldCheck, Settings, Film, FileText, Play
 } from "lucide-react";
 
-// ─── THEME & COLOR SYSTEM ───────────────────────────────────────────────────
+// ─── DESIGN TOKEN BRIDGE ─────────────────────────────────────────────────────
+// CSS vars are the source of truth (src/tokens.css).
+// T gives JSX access to those vars as strings — no hardcoded hex here.
 const T = {
-  bgDeep:    "#fdfcf8",              // Ivoire chaud — plus humain que le blanc pur
-  bgCard:    "#ffffff",
-  bgSection: "#f6f2ea",              // Beige doux — sections alternées
-  bgGlass:   "rgba(180,40,30,0.03)",
-  gold:      "#c9302c",              // Rouge Chine — accent principal
-  gold2:     "#e53935",              // Rouge vif — survol
-  amber:     "#b8780a",              // Or chaud — accents luxe (étoiles, tags)
-  navy:      "#1a2f5e",              // Marine profond
-  border:    "#e6dfd2",              // Bordure beige chaude
-  text:      "#1a1410",              // Brun sombre chaud
-  muted:     "#6b5e52",              // Gris-brun atténué
-  radius:    16,
+  bg:           "var(--bg)",
+  surface:      "var(--surface)",
+  surfaceAlt:   "var(--surface-alt)",
+  accentSoft:   "var(--accent-soft)",
+  accent:       "var(--accent)",
+  accentStrong: "var(--accent-strong)",
+  secondary:    "var(--secondary)",
+  border:       "var(--border)",
+  text:         "var(--text)",
+  muted:        "var(--muted)",
+  pink:         "var(--danger)",
+  radius:       12,
 };
 
 // ─── CONSTANTS & CONFIGURATION ───────────────────────────────────────────────
@@ -545,51 +547,38 @@ function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.6, s
 function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
   return (
     <ScrollReveal direction="up" delay={0}>
-      <div style={{ textAlign: centered ? "center" : "left", marginBottom: "3.5rem" }}>
+      <div style={{ textAlign: centered ? "center" : "left", marginBottom: "var(--space-12)" }}>
         {eyebrow && (
           <div style={{
-            display: "inline-flex", alignItems: "center", gap: 10,
-            fontSize: "0.67rem", color: T.accent,
-            letterSpacing: "3.5px", textTransform: "uppercase",
-            fontWeight: 700, marginBottom: "1rem",
+            fontSize: "var(--text-xs)",
+            color: "var(--accent)",
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+            fontWeight: 700,
+            marginBottom: "var(--space-3)",
+            fontFamily: "var(--font-body)",
           }}>
-            <span style={{
-              display: "inline-block", width: 28, height: 1.5,
-              background: `linear-gradient(90deg, transparent, ${T.accent})`,
-              borderRadius: 2,
-            }}/>
             {eyebrow}
-            <span style={{
-              display: "inline-block", width: 28, height: 1.5,
-              background: `linear-gradient(90deg, ${T.accent}, transparent)`,
-              borderRadius: 2,
-            }}/>
           </div>
         )}
         <h2 style={{
-          fontSize: "clamp(1.85rem, 4vw, 2.9rem)",
-          fontWeight: 800, color: T.text,
-          lineHeight: 1.15, marginBottom: "0.9rem",
-          fontFamily: "'Syne', sans-serif",
-          letterSpacing: "-0.3px",
+          fontSize: "clamp(1.75rem, 3.5vw, 2.6rem)",
+          fontWeight: 700,
+          color: "var(--text)",
+          lineHeight: 1.2,
+          marginBottom: subtitle ? "var(--space-4)" : 0,
+          fontFamily: "var(--font-display)",
+          letterSpacing: "-0.02em",
         }}>
           {title}
         </h2>
-        {/* Decorative accent: red bar + amber dot */}
-        <div style={{
-          display: "flex",
-          justifyContent: centered ? "center" : "flex-start",
-          alignItems: "center", gap: 5, marginBottom: subtitle ? "1.2rem" : 0,
-        }}>
-          <div style={{ width: 38, height: 3.5, borderRadius: 3, background: `linear-gradient(90deg, ${T.accent}, ${T.accentStrong})` }}/>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.secondary, opacity: 0.85 }}/>
-          <div style={{ width: 14, height: 3.5, borderRadius: 3, background: T.border }}/>
-        </div>
         {subtitle && (
           <p style={{
-            color: T.muted, fontSize: "0.95rem",
-            maxWidth: 560, margin: centered ? "0 auto" : "0",
-            lineHeight: 1.75,
+            color: "var(--muted)",
+            fontSize: "var(--text-base)",
+            maxWidth: "56ch",
+            margin: centered ? "0 auto" : "0",
+            lineHeight: 1.7,
           }}>
             {subtitle}
           </p>
@@ -1291,12 +1280,11 @@ function SEOHead({ page }) {
 
 // ─── PAGES & SECTIONS ────────────────────────────────────────────────────────
 
-// 1. Section Hero — Split Layout Light
+// 1. Section Hero — Split Layout
 function HeroSection({ goTo }) {
   useLang();
   const heroStats = [
     { n: 500, l: t("hero_stat1"), s: "+" },
-    { n: 8,   l: t("hero_stat2"), s: "+" },
     { n: 15,  l: t("hero_stat3"), s: "+" },
     { n: 100, l: t("hero_stat4"), s: "%" },
   ];
@@ -1310,93 +1298,118 @@ function HeroSection({ goTo }) {
     }}>
       {/* Left — Text Content */}
       <div style={{
-        background: `radial-gradient(ellipse at 90% 40%, rgba(201,48,44,0.055) 0%, transparent 60%), ${T.bg}`,
+        background: "var(--bg)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "7rem 4rem 4rem clamp(2rem, 8%, 6rem)",
+        padding: "8rem var(--space-12) var(--space-16) clamp(var(--space-8), 8%, var(--space-24))",
       }}>
-        <ScrollReveal direction="right" delay={0.1}>
-          <div style={{
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 8,
-            background: "rgba(201, 48, 44, 0.07)",
+            gap: "var(--space-2)",
+            background: "var(--accent-soft)",
             border: "1px solid rgba(201, 48, 44, 0.2)",
-            color: T.accent,
-            fontSize: "0.72rem",
-            padding: "0.45rem 1.1rem",
-            borderRadius: 30,
-            marginBottom: "2rem",
+            color: "var(--accent)",
+            fontSize: "var(--text-xs)",
+            padding: "0.45rem 1rem",
+            borderRadius: "var(--radius-full)",
+            marginBottom: "var(--space-8)",
             letterSpacing: "2.5px",
             textTransform: "uppercase",
             fontWeight: 700,
-          }}>
-            <Globe size={13}/> {t("hero_badge")}
-          </div>
-        </ScrollReveal>
+            alignSelf: "flex-start",
+          }}
+        >
+          <Globe size={12}/> {t("hero_badge")}
+        </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 36 }}
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           style={{
-            fontSize: "clamp(2.2rem, 4vw, 3.8rem)",
-            fontWeight: 800, lineHeight: 1.1, marginBottom: "1.5rem",
-            fontFamily: "'Syne', sans-serif", color: T.text, letterSpacing: "-0.5px",
+            fontSize: "clamp(2.2rem, 4vw, 3.6rem)",
+            fontWeight: 700,
+            lineHeight: 1.1,
+            marginBottom: "var(--space-6)",
+            fontFamily: "var(--font-display)",
+            color: "var(--text)",
+            letterSpacing: "-0.03em",
           }}
         >
           EASY CHINA
           <br/>
-          <span style={{
-            color: T.accent, fontFamily: "'Playfair Display','Syne',serif",
-            fontStyle: "italic", fontWeight: 700, letterSpacing: "0px",
-          }}>{t("hero_title2")}</span>
+          <span style={{ color: "var(--accent)" }}>{t("hero_title2")}</span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.32, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          style={{ color: T.muted, fontSize: "1rem", maxWidth: 460, lineHeight: 1.8, marginBottom: "2.5rem" }}
+          transition={{ delay: 0.32, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            color: "var(--muted)",
+            fontSize: "var(--text-base)",
+            maxWidth: "44ch",
+            lineHeight: 1.75,
+            marginBottom: "var(--space-8)",
+          }}
         >
           {t("hero_desc")}
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}
+          transition={{ delay: 0.44, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: "flex", gap: "var(--space-3)", flexWrap: "wrap", marginBottom: "var(--space-12)" }}
         >
           <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
-            <Package size={17} style={{marginRight: 8}}/> {t("hero_cta1")}
+            <Package size={16}/> {t("hero_cta1")}
           </GoldenBtn>
           <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
-            <MessageCircle size={17} style={{marginRight: 8}}/> {t("hero_cta2")}
+            <MessageCircle size={16}/> {t("hero_cta2")}
           </GoldenBtn>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.7 }}
-          style={{ display: "flex", gap: "2.5rem", paddingTop: "2rem", borderTop: `1px solid ${T.border}`, flexWrap: "wrap" }}
+          transition={{ delay: 0.58, duration: 0.6 }}
+          style={{
+            display: "flex",
+            gap: "var(--space-12)",
+            paddingTop: "var(--space-6)",
+            borderTop: "1px solid var(--border)",
+            flexWrap: "wrap",
+          }}
         >
           {heroStats.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65 + i * 0.08, duration: 0.5 }}
-            >
-              <div style={{ fontSize: "1.9rem", fontWeight: 800, color: T.accent, fontFamily: "'Syne',sans-serif", lineHeight: 1 }}>
+            <div key={i}>
+              <div style={{
+                fontSize: "var(--text-xl)",
+                fontWeight: 700,
+                color: "var(--accent)",
+                fontFamily: "var(--font-display)",
+                lineHeight: 1,
+              }}>
                 <AnimatedCounter value={s.n} suffix={s.s} duration={2} />
               </div>
-              <div style={{ fontSize: "0.7rem", color: T.muted, textTransform: "uppercase", letterSpacing: "1.2px", fontWeight: 600, marginTop: 4 }}>
+              <div style={{
+                fontSize: "var(--text-xs)",
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                fontWeight: 600,
+                marginTop: "var(--space-1)",
+              }}>
                 {s.l}
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>
@@ -1406,23 +1419,13 @@ function HeroSection({ goTo }) {
         <Img
           src="https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=1200&h=1400&q=80"
           alt="Shanghai skyline"
-          style={{ borderRadius: 0, height: "100%", width: "100%" }}
+          style={{ borderRadius: 0, height: "100%", width: "100%", objectFit: "cover" }}
         />
         <div style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.25) 100%)",
+          background: "linear-gradient(to right, rgba(253,252,248,0.12) 0%, rgba(0,0,0,0.18) 100%)",
           zIndex: 1,
-        }} />
-        {/* Red accent ribbon */}
-        <div style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: 5,
-          height: "100%",
-          background: `linear-gradient(to bottom, ${T.accent}, ${T.accentStrong})`,
-          zIndex: 2,
         }} />
       </div>
     </div>
@@ -1458,7 +1461,7 @@ function PageAccueil({ goTo }) {
       <PaysCouverts />
 
       {/* Services Grid */}
-      <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
+      <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
         <div className="grid-3">
           {services.map((s, i) => (
@@ -1500,8 +1503,8 @@ function PageAccueil({ goTo }) {
       <ServicesComplementaires />
 
       {/* Tourisme & Business Section */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
-        <div className="grid-50-50" style={{ maxWidth: 1100, margin: "0 auto" }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
+        <div className="grid-50-50" style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: "0.72rem", color: T.accent, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
@@ -1541,7 +1544,7 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Timeline Section */}
-      <div style={{ padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("hist_eyebrow")} title={t("hist_title")} subtitle={t("hist_subtitle")} />
         <Timeline items={historyItems} />
       </div>
@@ -1549,7 +1552,7 @@ function PageAccueil({ goTo }) {
       <SecteursSection />
 
       {/* Testimonials Section */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
@@ -1557,7 +1560,7 @@ function PageAccueil({ goTo }) {
       <PremiumServices />
 
       {/* Bureaux Section */}
-      <div style={{ padding: "6rem 2rem", maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 2 }}>
+      <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("off_eyebrow")} title={t("off_title")} />
         <div className="grid-3" style={{justifyContent: "center"}}>
           {officesList.map((b, i) => (
@@ -1583,7 +1586,7 @@ function PageAccueil({ goTo }) {
       {/* CTA Final */}
       <div style={{
         background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
-        padding: "7rem 2rem",
+        padding: "var(--space-section) var(--gutter)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
@@ -1621,13 +1624,13 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* FAQ Section */}
-      <div style={{ padding: "6rem 2rem", maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
+      <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("faq_eyebrow")} title={t("faq_title")} subtitle={t("faq_subtitle")} />
         <FAQAccordion />
       </div>
 
       {/* Formulaire de Contact */}
-      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 580, margin: "0 auto" }}>
           <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />
@@ -1873,9 +1876,9 @@ function ServicesComplementaires() {
   ];
 
   return (
-    <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+    <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
       <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
-      <div className="grid-4" style={{ maxWidth: 1100, margin: "0 auto" }}>
+      <div className="grid-4" style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
         {extras.map((s, i) => (
           <ScrollReveal key={i} direction="up" delay={i * 0.08}>
             <GlassCard tilt={true} style={{ padding: "2rem", height: "100%", display: "flex", flexDirection: "column" }}>
@@ -2033,7 +2036,7 @@ function PageCatalogue({ articles }) {
   }, [articles, selectedCat]);
 
   return (
-    <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
       <SectionTitle
         eyebrow={t("cat_eyebrow")}
         title={t("cat_title")}
@@ -2163,7 +2166,7 @@ function PageCatalogue({ articles }) {
 function PageRealisations({ realisations }) {
   useLang();
   return (
-    <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
       <SectionTitle
         eyebrow={t("real_eyebrow")}
         title={t("real_title")}
@@ -2302,7 +2305,7 @@ function PageEquipe({ equipe }) {
   const DEFAULT_IMG = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80";
 
   return (
-    <div style={{ padding: "8rem 2rem 6rem" }}>
+    <div style={{ padding: "var(--space-section) var(--gutter)" }}>
       {/* Hero Banner */}
       <div style={{
         background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
@@ -2312,7 +2315,7 @@ function PageEquipe({ equipe }) {
         marginBottom: "5rem",
         position: "relative",
         overflow: "hidden",
-        maxWidth: 1100,
+        maxWidth: "var(--container)",
         margin: "0 auto 5rem",
       }}>
         <div style={{ position: "absolute", left: "-5%", top: "-40%", width: 400, height: 400, borderRadius: "50%", background: "rgba(255,255,255,0.07)", pointerEvents: "none" }} />
@@ -2333,7 +2336,7 @@ function PageEquipe({ equipe }) {
       </div>
 
       {/* Team Cards */}
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
         <div className="grid-3">
           {equipe.map((member, i) => {
             const specs = member.specialites ? member.specialites.split(",").map(s => s.trim()).filter(Boolean) : [];
@@ -2920,7 +2923,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
   }
 
   return (
-    <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "3rem" }}>
         <div style={{ textAlign: "left" }}>
           <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.accent }}>
@@ -3345,34 +3348,18 @@ export default function App() {
 
       {/* Global CSS Stylesheet Injection */}
       <style dangerouslySetInnerHTML={{ __html: `
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-        
-        body {
-          background-color: ${T.bg};
-          color: ${T.text};
-          font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-          overflow-x: hidden;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          font-feature-settings: "kern" 1, "liga" 1;
-        }
-
         ::selection {
           background: rgba(201,48,44,0.18);
-          color: ${T.text};
+          color: var(--text);
         }
 
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: ${T.surfaceAlt}; }
+        ::-webkit-scrollbar-track { background: var(--surface-alt); }
         ::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, ${T.accent}, ${T.secondary});
+          background: var(--accent);
           border-radius: 6px;
         }
-        ::-webkit-scrollbar-thumb:hover { background: ${T.accentStrong}; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-strong); }
 
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
@@ -3384,39 +3371,47 @@ export default function App() {
         }
 
         @keyframes pageEnter {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
 
+        /* ── Layout utilities ── */
+        .section-wrap {
+          padding-top: var(--space-section);
+          padding-bottom: var(--space-section);
+          padding-left: var(--gutter);
+          padding-right: var(--gutter);
+        }
+
+        .section-inner {
+          max-width: var(--container);
+          margin: 0 auto;
+        }
+
+        /* ── Grid system ── */
         .grid-3 {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
+          gap: var(--space-8);
         }
-        
+
         .grid-4 {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1.8rem;
+          gap: var(--space-6);
         }
 
         .grid-50-50 {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 4.5rem;
+          gap: var(--space-16);
           align-items: center;
         }
 
         .bento-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 2rem;
+          gap: var(--space-8);
           grid-auto-flow: dense;
         }
 
@@ -3426,7 +3421,30 @@ export default function App() {
         }
 
         .zoom-container:hover .zoom-img {
-          transform: scale(1.08) !important;
+          transform: scale(1.04) !important;
+          transition: transform 0.5s ease !important;
+        }
+
+        .zoom-img {
+          transition: transform 0.5s ease !important;
+        }
+
+        /* ── Nav link underline draw ── */
+        .nav-link-underline {
+          position: absolute;
+          bottom: 4px;
+          left: 20%;
+          right: 20%;
+          height: 2px;
+          background: var(--accent);
+          border-radius: 2px;
+          transform: scaleX(0);
+          transform-origin: center;
+          transition: transform 0.18s ease;
+        }
+        .nav-link-active .nav-link-underline,
+        .nav-link:hover .nav-link-underline {
+          transform: scaleX(1);
         }
 
         /* Hero split responsive */
@@ -3448,14 +3466,13 @@ export default function App() {
             grid-column: span 2 !important;
           }
           .grid-50-50 {
-            gap: 2.5rem !important;
+            gap: var(--space-8) !important;
           }
         }
 
         @media (max-width: 640px) {
           .grid-50-50 {
             grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
           }
           .bento-grid {
             grid-template-columns: 1fr !important;
@@ -3507,33 +3524,33 @@ export default function App() {
 
       {/* Footer */}
       <footer style={{
-        background: "#1e293b",
-        color: "#94a3b8",
+        background: "var(--secondary)",
+        color: "rgba(255,255,255,0.55)",
         textAlign: "center",
-        padding: "4rem 2rem",
-        fontSize: "0.85rem",
-        borderTop: `3px solid ${T.accent}`,
+        padding: "var(--space-16) var(--gutter)",
+        fontSize: "var(--text-sm)",
+        borderTop: `2px solid var(--accent)`,
         position: "relative",
         zIndex: 2,
       }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", flexDirection: "column", gap: "1.8rem" }}>
-          {/* Logo footer */}
+        <div style={{ maxWidth: "var(--container)", margin: "0 auto", display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <img
               src="/logo.png"
               alt="Easy China"
               onClick={() => goTo("accueil")}
-              style={{ height: 52, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)" }}
+              style={{ height: 44, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)" }}
             />
           </div>
-          <p style={{ fontSize: "0.82rem", letterSpacing: "0.3px", color: "#64748b" }}>
+          <p style={{ fontSize: "var(--text-xs)", letterSpacing: "0.3px", color: "rgba(255,255,255,0.4)" }}>
             {t("footer_copy")}
           </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
-            {[["accueil","nav_accueil"],["catalogue","nav_catalogue"],["realisations","nav_realisations"],["equipe","nav_equipe"],["admin","nav_admin"]].map(([k, tk]) => (
-              <span key={k} style={{ cursor: "pointer", color: "#94a3b8", transition: "color 0.2s", fontWeight: 500 }}
+          <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-8)", flexWrap: "wrap" }}>
+            {[["accueil","nav_accueil"],["catalogue","nav_catalogue"],["realisations","nav_realisations"],["equipe","nav_equipe"]].map(([k, tk]) => (
+              <span key={k}
+                style={{ cursor: "pointer", color: "rgba(255,255,255,0.55)", transition: "color 0.15s", fontWeight: 500 }}
                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
-                onMouseLeave={e => e.currentTarget.style.color = "#94a3b8"}
+                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.55)"}
                 onClick={() => goTo(k)}>{t(tk)}</span>
             ))}
           </div>
@@ -3542,6 +3559,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
