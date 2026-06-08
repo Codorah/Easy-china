@@ -1,0 +1,84 @@
+/* ── Easy China Design Tokens ───────────────────────────────────────────────
+   Single source of truth. No hardcoded hex in JSX — use these variables.
+   Warm African-modern palette: sand / clay / off-white + China red accent.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Self-hosted fonts */
+@import "@fontsource/syne/700.css";
+@import "@fontsource/syne/800.css";
+@import "@fontsource/plus-jakarta-sans/400.css";
+@import "@fontsource/plus-jakarta-sans/400-italic.css";
+@import "@fontsource/plus-jakarta-sans/500.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/700.css";
+
+:root {
+  /* ── Backgrounds ── */
+  --bg:          #fdfcf8;   /* warm off-white — page canvas */
+  --surface:     #ffffff;   /* card / panel */
+  --surface-alt: #f6f2ea;   /* sand — alternate sections */
+  --accent-soft: rgba(201, 48, 44, 0.07); /* accent tint for bg */
+
+  /* ── Text ── */
+  --text:   #1a1410;   /* warm near-black */
+  --muted:  #6b5e52;   /* warm brown-grey */
+
+  /* ── Border ── */
+  --border: #e6dfd2;   /* warm beige */
+
+  /* ── Accent — China red, the ONE true accent ── */
+  --accent:        #c9302c;
+  --accent-strong: #a82622;   /* hover / pressed */
+
+  /* ── Secondary — deep navy, used sparingly ── */
+  --secondary: #1a2f5e;
+
+  /* ── Typography — Modular scale 1.25 ratio, base 16px ── */
+  --font-display: "Syne", sans-serif;
+  --font-body:    "Plus Jakarta Sans", sans-serif;
+
+  --text-xs:   0.64rem;    /* 10.2px  */
+  --text-sm:   0.8rem;     /* 12.8px  */
+  --text-base: 1rem;       /* 16px    */
+  --text-md:   1.25rem;    /* 20px    */
+  --text-lg:   1.5625rem;  /* 25px    */
+  --text-xl:   1.953rem;   /* 31.25px */
+  --text-2xl:  2.441rem;   /* 39px    */
+  --text-3xl:  3.052rem;   /* 48.8px  */
+
+  /* ── Spacing ── */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-full: 999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:     0 1px 3px rgba(26,20,16,0.08), 0 1px 2px rgba(26,20,16,0.06);
+  --shadow-md:     0 4px 12px rgba(26,20,16,0.10), 0 2px 4px rgba(26,20,16,0.06);
+  --shadow-lg:     0 12px 32px rgba(26,20,16,0.12), 0 4px 8px rgba(26,20,16,0.06);
+  --shadow-accent: 0 6px 20px rgba(201,48,44,0.28);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

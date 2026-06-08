@@ -354,7 +354,7 @@ function MediaDisplay({ src, alt = "", style = {}, fallback }) {
             background: "rgba(255,255,255,0.92)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <Play size={18} color={T.gold} style={{ marginLeft: 3 }} />
+            <Play size={18} color={T.accent} style={{ marginLeft: 3 }} />
           </div>
         </div>
       </div>
@@ -362,9 +362,9 @@ function MediaDisplay({ src, alt = "", style = {}, fallback }) {
   }
   if (type === "doc") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: T.bgSection, gap: 8, ...style }}>
-        <FileText size={36} color={T.gold} />
-        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: T.gold, fontWeight: 600 }}>Ouvrir le document</a>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: T.surfaceAlt, gap: 8, ...style }}>
+        <FileText size={36} color={T.accent} />
+        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: T.accent, fontWeight: 600 }}>Ouvrir le document</a>
       </div>
     );
   }
@@ -395,7 +395,7 @@ const Img = ({ src, alt, style={} }) => {
         : <div style={{width:"100%",height:"100%",background:"#f8fafc",
             border:`1px solid ${T.border}`,
             display:"flex",alignItems:"center",justifyContent:"center",
-            color: T.gold,borderRadius:"inherit"}}>
+            color: T.accent,borderRadius:"inherit"}}>
             <Image size={32}/>
           </div>
       }
@@ -403,137 +403,67 @@ const Img = ({ src, alt, style={} }) => {
   );
 };
 
-// 2. Bouton Réutilisable Luxe
+// 2. Bouton Réutilisable
 function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled = false, ariaLabel }) {
-  const [ripples, setRipples] = useState([]);
-  const [isDown, setIsDown] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = (e) => {
-    if (disabled) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const id = Date.now() + Math.random();
-
-    setRipples((prev) => [...prev, { x, y, id }]);
-    setTimeout(() => {
-      setRipples((prev) => prev.filter((r) => r.id !== id));
-    }, 600);
-
-    if (onClick) onClick(e);
+  const base = {
+    border: "none",
+    borderRadius: "var(--radius-full)",
+    padding: "0.75rem 2rem",
+    fontSize: "var(--text-sm)",
+    fontWeight: 600,
+    fontFamily: "var(--font-body)",
+    letterSpacing: "0.02em",
+    cursor: disabled ? "not-allowed" : "pointer",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.5rem",
+    transition: "background 0.15s, box-shadow 0.15s, transform 0.15s",
+    transform: isHovered && !disabled ? "translateY(-1px)" : "translateY(0)",
+    opacity: disabled ? 0.55 : 1,
+    outline: "none",
+    userSelect: "none",
   };
 
-  const getBtnStyle = () => {
-    const base = {
-      position: "relative",
-      border: "none",
-      borderRadius: 40,
-      padding: "0.85rem 2.2rem",
-      fontSize: "0.88rem",
-      fontWeight: 700,
-      fontFamily: "'Plus Jakarta Sans', sans-serif",
-      letterSpacing: "0.5px",
-      cursor: disabled ? "not-allowed" : "pointer",
-      overflow: "hidden",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-      transform: isDown ? "scale(0.97)" : isHovered ? "translateY(-2px)" : "translateY(0)",
-      outline: "none",
-      userSelect: "none",
-      opacity: disabled ? 0.6 : 1
+  let variantStyle = {};
+  if (variant === "solid" || variant === "glow") {
+    variantStyle = {
+      background: isHovered && !disabled ? "var(--accent-strong)" : "var(--accent)",
+      color: "#fff",
+      boxShadow: isHovered && !disabled ? "var(--shadow-accent)" : "var(--shadow-sm)",
     };
-
-    if (variant === "solid") {
-      return {
-        ...base,
-        background: isHovered && !disabled
-          ? `linear-gradient(135deg, ${T.gold2}, #f44336)`
-          : `linear-gradient(135deg, #d63333, ${T.gold2})`,
-        color: "#fff",
-        boxShadow: isHovered && !disabled
-          ? `0 10px 32px rgba(201,48,44,0.45), 0 2px 8px rgba(201,48,44,0.2), inset 0 1px 0 rgba(255,255,255,0.18)`
-          : `0 5px 18px rgba(201,48,44,0.32), inset 0 1px 0 rgba(255,255,255,0.15)`,
-      };
-    } else if (variant === "outline") {
-      return {
-        ...base,
-        background: isHovered && !disabled ? "rgba(201,48,44,0.05)" : "transparent",
-        color: T.gold,
-        border: `2px solid ${T.gold}`,
-        boxShadow: isHovered && !disabled ? `0 0 22px rgba(201,48,44,0.14)` : "none",
-      };
-    } else if (variant === "ghost") {
-      return {
-        ...base,
-        background: isHovered && !disabled ? "rgba(15, 23, 42, 0.04)" : "transparent",
-        color: T.text,
-      };
-    } else if (variant === "glow") {
-      return {
-        ...base,
-        background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-        color: "#fff",
-        boxShadow: `0 0 25px rgba(201, 48, 44, 0.3)`,
-      };
-    } else if (variant === "white") {
-      return {
-        ...base,
-        background: isHovered && !disabled ? "#f8fafc" : "#ffffff",
-        color: T.gold,
-        boxShadow: isHovered && !disabled ? `0 8px 30px rgba(0,0,0,0.18)` : `0 4px 15px rgba(0,0,0,0.1)`,
-      };
-    }
-    return base;
-  };
+  } else if (variant === "outline") {
+    variantStyle = {
+      background: "transparent",
+      color: "var(--accent)",
+      border: "2px solid var(--accent)",
+    };
+  } else if (variant === "ghost") {
+    variantStyle = {
+      background: "transparent",
+      color: "var(--text)",
+    };
+  } else if (variant === "white") {
+    variantStyle = {
+      background: "#ffffff",
+      color: "var(--accent)",
+      boxShadow: "var(--shadow-sm)",
+    };
+  }
 
   return (
-    <div style={{ position: "relative", display: "inline-block" }}>
-      {variant === "glow" && !disabled && (
-        <div style={{
-          position: "absolute",
-          inset: -3,
-          borderRadius: 44,
-          background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-          filter: "blur(14px)",
-          opacity: isHovered ? 0.5 : 0.25,
-          animation: "pulseGlow 2.5s infinite ease-in-out",
-          pointerEvents: "none",
-          transition: "opacity 0.3s ease",
-        }} />
-      )}
-      <button
-        aria-label={ariaLabel}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => { setIsHovered(false); setIsDown(false); }}
-        onMouseDown={() => setIsDown(true)}
-        onMouseUp={() => setIsDown(false)}
-        onClick={handleClick}
-        style={{ ...getBtnStyle(), ...style }}
-        disabled={disabled}
-      >
-        {ripples.map((r) => (
-          <span
-            key={r.id}
-            style={{
-              position: "absolute",
-              left: r.x,
-              top: r.y,
-              width: 100,
-              height: 100,
-              borderRadius: "50%",
-              background: "rgba(255, 255, 255, 0.35)",
-              transform: "translate(-50%, -50%) scale(0)",
-              animation: "rippleAnim 0.6s linear",
-              pointerEvents: "none",
-            }}
-          />
-        ))}
-        {children}
-      </button>
-    </div>
+    <button
+      aria-label={ariaLabel}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={disabled ? undefined : onClick}
+      style={{ ...base, ...variantStyle, ...style }}
+      disabled={disabled}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -610,101 +540,6 @@ function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.6, s
   );
 }
 
-// 6. ParticleCanvas
-function ParticleCanvas({ color = "#c9302c", count = 50 }) {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationId;
-    let width = (canvas.width = canvas.offsetWidth);
-    let height = (canvas.height = canvas.offsetHeight);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = canvas.offsetWidth;
-      height = canvas.height = canvas.offsetHeight;
-    };
-    window.addEventListener("resize", handleResize);
-
-    const particles = [];
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        radius: Math.random() * 1.1 + 0.8,
-        alpha: Math.random() * 0.3 + 0.3,
-      });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      for (let i = 0; i < count; i++) {
-        const p1 = particles[i];
-        for (let j = i + 1; j < count; j++) {
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            const opacity = (1 - dist / 120) * 0.12;
-            ctx.strokeStyle = `rgba(201, 48, 44,${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-
-      for (let i = 0; i < count; i++) {
-        const p = particles[i];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(201, 48, 44,${p.alpha})`;
-        ctx.fill();
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-      }
-
-      animationId = requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId);
-    };
-  }, [color, count]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 1,
-      }}
-    />
-  );
-}
 
 // 7. SectionTitle
 function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
@@ -714,19 +549,19 @@ function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
         {eyebrow && (
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 10,
-            fontSize: "0.67rem", color: T.gold,
+            fontSize: "0.67rem", color: T.accent,
             letterSpacing: "3.5px", textTransform: "uppercase",
             fontWeight: 700, marginBottom: "1rem",
           }}>
             <span style={{
               display: "inline-block", width: 28, height: 1.5,
-              background: `linear-gradient(90deg, transparent, ${T.gold})`,
+              background: `linear-gradient(90deg, transparent, ${T.accent})`,
               borderRadius: 2,
             }}/>
             {eyebrow}
             <span style={{
               display: "inline-block", width: 28, height: 1.5,
-              background: `linear-gradient(90deg, ${T.gold}, transparent)`,
+              background: `linear-gradient(90deg, ${T.accent}, transparent)`,
               borderRadius: 2,
             }}/>
           </div>
@@ -746,8 +581,8 @@ function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
           justifyContent: centered ? "center" : "flex-start",
           alignItems: "center", gap: 5, marginBottom: subtitle ? "1.2rem" : 0,
         }}>
-          <div style={{ width: 38, height: 3.5, borderRadius: 3, background: `linear-gradient(90deg, ${T.gold}, ${T.gold2})` }}/>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, opacity: 0.85 }}/>
+          <div style={{ width: 38, height: 3.5, borderRadius: 3, background: `linear-gradient(90deg, ${T.accent}, ${T.accentStrong})` }}/>
+          <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.secondary, opacity: 0.85 }}/>
           <div style={{ width: 14, height: 3.5, borderRadius: 3, background: T.border }}/>
         </div>
         {subtitle && (
@@ -804,7 +639,7 @@ function Timeline({ items }) {
               width: 14,
               height: 14,
               borderRadius: "50%",
-              background: T.gold,
+              background: T.accent,
               border: `3px solid #fff`,
               transform: "translateX(-50%)",
               boxShadow: `0 0 0 3px rgba(201, 48, 44, 0.15)`,
@@ -817,7 +652,7 @@ function Timeline({ items }) {
                   <span style={{
                     fontSize: "1.2rem",
                     fontWeight: 800,
-                    color: T.gold,
+                    color: T.accent,
                     display: "block",
                     marginBottom: "0.4rem",
                     fontFamily: "'Syne', sans-serif"
@@ -854,7 +689,7 @@ function Testimonial({ quote, author, role, stars }) {
   return (
     <GlassCard tilt={true} style={{ padding: "2.2rem 2rem", display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
       <div>
-        <div style={{ fontSize: "2.8rem", color: T.gold, lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
+        <div style={{ fontSize: "2.8rem", color: T.accent, lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
         <p style={{ fontStyle: "italic", fontSize: "0.9rem", color: T.text, lineHeight: 1.65, marginBottom: "1.8rem" }}>
           {quote}
         </p>
@@ -862,7 +697,7 @@ function Testimonial({ quote, author, role, stars }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{
           width: 44, height: 44, borderRadius: "50%",
-          background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
+          background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
           border: `1.5px solid rgba(201, 48, 44, 0.2)`,
           display: "flex", alignItems: "center", justifyContent: "center",
           fontWeight: 800, color: "#fff", fontSize: "0.95rem"
@@ -872,9 +707,9 @@ function Testimonial({ quote, author, role, stars }) {
         <div>
           <h4 style={{ fontSize: "0.88rem", fontWeight: 700, color: T.text, margin: 0 }}>{author}</h4>
           <span style={{ fontSize: "0.72rem", color: T.muted, display: "block", marginTop: 2 }}>{role}</span>
-          <div style={{ color: T.gold, display: "flex", gap: 2, marginTop: 4 }}>
+          <div style={{ color: T.accent, display: "flex", gap: 2, marginTop: 4 }}>
             {Array.from({ length: 5 }).map((_, idx) => (
-              <Star key={idx} size={14} fill={idx < stars ? T.gold : "transparent"} color={T.gold} />
+              <Star key={idx} size={14} fill={idx < stars ? T.accent : "transparent"} color={T.accent} />
             ))}
           </div>
         </div>
@@ -925,7 +760,7 @@ function TestimonialCarousel() {
               height: 8,
               borderRadius: 4,
               border: "none",
-              background: active === i ? T.gold : T.border,
+              background: active === i ? T.accent : T.border,
               cursor: "pointer",
               transition: "all 0.3s ease",
             }}
@@ -972,10 +807,10 @@ function LangSwitcher() {
         style={{
           display: "flex", alignItems: "center", gap: 6,
           background: open ? "rgba(201,48,44,0.07)" : "transparent",
-          border: `1px solid ${open ? T.gold : T.border}`,
+          border: `1px solid ${open ? T.accent : T.border}`,
           borderRadius: 8, padding: "0.4rem 0.85rem",
           fontSize: "0.78rem", fontWeight: 600, cursor: "pointer",
-          color: open ? T.gold : T.muted, transition: "all 0.25s",
+          color: open ? T.accent : T.muted, transition: "all 0.25s",
           fontFamily: "'Plus Jakarta Sans', sans-serif",
         }}
       >
@@ -1001,7 +836,7 @@ function LangSwitcher() {
                 background: lang === l.code ? "rgba(201,48,44,0.06)" : "transparent",
                 border: "none", cursor: "pointer",
                 fontSize: "0.82rem", fontWeight: lang === l.code ? 700 : 500,
-                color: lang === l.code ? T.gold : T.text,
+                color: lang === l.code ? T.accent : T.text,
                 fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "background 0.2s",
               }}
               onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
@@ -1037,7 +872,7 @@ function FloatingNav({ pages, activePage, setPage }) {
       <div style={{
         position: "fixed", top: 0, left: 0,
         width: `${progress}%`, height: 3,
-        background: `linear-gradient(to right, ${T.gold}, ${T.gold2})`,
+        background: `linear-gradient(to right, ${T.accent}, ${T.accentStrong})`,
         zIndex: 1003, transition: "width 0.1s ease",
       }} />
 
@@ -1101,7 +936,7 @@ function FloatingNav({ pages, activePage, setPage }) {
             <button key={k} onClick={() => { setPage(k); setIsOpen(false); }}
               style={{
                 background: "none", border: "none", fontSize: "1.5rem",
-                fontWeight: 700, color: activePage === k ? T.gold : T.text,
+                fontWeight: 700, color: activePage === k ? T.accent : T.text,
                 cursor: "pointer", transition: "all 0.2s",
                 letterSpacing: "1px", fontFamily: "'Syne', sans-serif"
               }}
@@ -1126,7 +961,7 @@ function NavBtn({ label, active, onClick }) {
       style={{
         background: active ? "rgba(201, 48, 44, 0.07)" : hov ? "rgba(15, 23, 42, 0.04)" : "none",
         border: "none",
-        color: active ? T.gold : hov ? T.text : T.muted,
+        color: active ? T.accent : hov ? T.text : T.muted,
         cursor: "pointer",
         padding: "0.55rem 1.15rem",
         borderRadius: 8,
@@ -1145,7 +980,7 @@ function NavBtn({ label, active, onClick }) {
         left: active || hov ? "20%" : "50%",
         right: active || hov ? "20%" : "50%",
         height: 2,
-        background: T.gold,
+        background: T.accent,
         borderRadius: 2,
         transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
       }} />
@@ -1161,7 +996,7 @@ function Tag({ children }) {
       onMouseLeave={() => setHov(false)}
       style={{
         background: hov ? "rgba(201, 48, 44, 0.1)" : "rgba(201, 48, 44, 0.05)",
-        color: T.gold,
+        color: T.accent,
         border: `1px solid rgba(201, 48, 44, ${hov ? 0.35 : 0.18})`,
         padding: "0.45rem 1rem",
         borderRadius: 20,
@@ -1184,13 +1019,13 @@ function CityPill({ children }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: hov ? "rgba(201, 48, 44, 0.07)" : T.bgSection,
-        border: `1px solid ${hov ? T.gold : T.border}`,
+        background: hov ? "rgba(201, 48, 44, 0.07)" : T.surfaceAlt,
+        border: `1px solid ${hov ? T.accent : T.border}`,
         padding: "0.45rem 1.25rem",
         borderRadius: 30,
         fontSize: "0.8rem",
         fontWeight: 600,
-        color: hov ? T.gold : T.text,
+        color: hov ? T.accent : T.text,
         transform: hov ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hov ? "0 4px 15px rgba(201,48,44,0.1)" : "none",
         transition: "all 0.25s ease",
@@ -1208,10 +1043,10 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
   const baseStyle = {
     width: "100%",
     padding: "0.85rem 1.1rem",
-    border: `1.5px solid ${foc ? T.gold : T.border}`,
+    border: `1.5px solid ${foc ? T.accent : T.border}`,
     borderRadius: 10,
     fontSize: "0.88rem",
-    background: foc ? "#fff" : T.bgSection,
+    background: foc ? "#fff" : T.surfaceAlt,
     color: T.text,
     fontFamily: "'Plus Jakarta Sans', sans-serif",
     outline: "none",
@@ -1225,7 +1060,7 @@ function Field({ label, type = "text", value, onChange, placeholder, options, ro
         <label style={{
           display: "block",
           fontSize: "0.8rem",
-          color: T.gold,
+          color: T.accent,
           marginBottom: 6,
           fontWeight: 600,
           letterSpacing: "0.5px"
@@ -1475,7 +1310,7 @@ function HeroSection({ goTo }) {
     }}>
       {/* Left — Text Content */}
       <div style={{
-        background: `radial-gradient(ellipse at 90% 40%, rgba(201,48,44,0.055) 0%, transparent 60%), ${T.bgDeep}`,
+        background: `radial-gradient(ellipse at 90% 40%, rgba(201,48,44,0.055) 0%, transparent 60%), ${T.bg}`,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -1488,7 +1323,7 @@ function HeroSection({ goTo }) {
             gap: 8,
             background: "rgba(201, 48, 44, 0.07)",
             border: "1px solid rgba(201, 48, 44, 0.2)",
-            color: T.gold,
+            color: T.accent,
             fontSize: "0.72rem",
             padding: "0.45rem 1.1rem",
             borderRadius: 30,
@@ -1514,7 +1349,7 @@ function HeroSection({ goTo }) {
           EASY CHINA
           <br/>
           <span style={{
-            color: T.gold, fontFamily: "'Playfair Display','Syne',serif",
+            color: T.accent, fontFamily: "'Playfair Display','Syne',serif",
             fontStyle: "italic", fontWeight: 700, letterSpacing: "0px",
           }}>{t("hero_title2")}</span>
         </motion.h1>
@@ -1555,7 +1390,7 @@ function HeroSection({ goTo }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.65 + i * 0.08, duration: 0.5 }}
             >
-              <div style={{ fontSize: "1.9rem", fontWeight: 800, color: T.gold, fontFamily: "'Syne',sans-serif", lineHeight: 1 }}>
+              <div style={{ fontSize: "1.9rem", fontWeight: 800, color: T.accent, fontFamily: "'Syne',sans-serif", lineHeight: 1 }}>
                 <AnimatedCounter value={s.n} suffix={s.s} duration={2} />
               </div>
               <div style={{ fontSize: "0.7rem", color: T.muted, textTransform: "uppercase", letterSpacing: "1.2px", fontWeight: 600, marginTop: 4 }}>
@@ -1579,38 +1414,6 @@ function HeroSection({ goTo }) {
           background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.25) 100%)",
           zIndex: 1,
         }} />
-        {/* Floating info card */}
-        <div style={{
-          position: "absolute",
-          bottom: 36,
-          left: 32,
-          background: "rgba(255, 255, 255, 0.97)",
-          backdropFilter: "blur(12px)",
-          borderRadius: T.radius,
-          padding: "1.1rem 1.4rem",
-          zIndex: 2,
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
-        }}>
-          <div style={{
-            width: 42,
-            height: 42,
-            background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-            borderRadius: 11,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}>
-            <MapPin size={20} color="#fff" />
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: "0.88rem", color: T.text, lineHeight: 1.3 }}>{t("hero_offices")}</div>
-            <div style={{ fontSize: "0.75rem", color: T.muted, marginTop: 2 }}>{t("hero_cities")}</div>
-          </div>
-        </div>
         {/* Red accent ribbon */}
         <div style={{
           position: "absolute",
@@ -1618,7 +1421,7 @@ function HeroSection({ goTo }) {
           right: 0,
           width: 5,
           height: "100%",
-          background: `linear-gradient(to bottom, ${T.gold}, ${T.gold2})`,
+          background: `linear-gradient(to bottom, ${T.accent}, ${T.accentStrong})`,
           zIndex: 2,
         }} />
       </div>
@@ -1670,7 +1473,7 @@ function PageAccueil({ goTo }) {
                   <div style={{
                     position: "absolute", bottom: -20, left: "2rem",
                     width: 50, height: 50, borderRadius: 12,
-                    background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
+                    background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     boxShadow: "0 8px 20px rgba(201,48,44,0.3)",
                     color: "#fff",
@@ -1697,11 +1500,11 @@ function PageAccueil({ goTo }) {
       <ServicesComplementaires />
 
       {/* Tourisme & Business Section */}
-      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div className="grid-50-50" style={{ maxWidth: 1100, margin: "0 auto" }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div style={{ textAlign: "left" }}>
-              <div style={{ fontSize: "0.72rem", color: T.gold, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
+              <div style={{ fontSize: "0.72rem", color: T.accent, letterSpacing: "3px", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.8rem" }}>{t("tour_eyebrow")}</div>
               <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.5rem)", fontWeight: 800, color: T.text, lineHeight: 1.2, marginBottom: "1.5rem", fontFamily: "'Syne', sans-serif" }}>
                 {t("tour_title")}
               </h2>
@@ -1746,7 +1549,7 @@ function PageAccueil({ goTo }) {
       <SecteursSection />
 
       {/* Testimonials Section */}
-      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
@@ -1764,7 +1567,7 @@ function PageAccueil({ goTo }) {
                   <Img src={b.query} alt={b.title} style={{ borderRadius: "0px", height: "100%" }} />
                 </div>
                 <div style={{ padding: "2rem", textAlign: "left" }}>
-                  <h3 style={{ color: T.gold, marginBottom: "1rem", fontSize: "1.1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ color: T.accent, marginBottom: "1rem", fontSize: "1.1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
                     <span>{b.flag}</span> {b.title}
                   </h3>
                   {b.lines.map((l, j) => (
@@ -1779,7 +1582,7 @@ function PageAccueil({ goTo }) {
 
       {/* CTA Final */}
       <div style={{
-        background: `linear-gradient(135deg, ${T.gold} 0%, ${T.gold2} 60%, #b71c1c 100%)`,
+        background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
         padding: "7rem 2rem",
         textAlign: "center",
         position: "relative",
@@ -1824,7 +1627,7 @@ function PageAccueil({ goTo }) {
       </div>
 
       {/* Formulaire de Contact */}
-      <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+      <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
         <div style={{ maxWidth: 580, margin: "0 auto" }}>
           <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />
@@ -1849,7 +1652,7 @@ const PAYS_AFRIQUE = [
 function PaysCouverts() {
   useLang();
   return (
-    <div style={{ background: T.bgSection, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"5rem 2rem", position:"relative", zIndex:2 }}>
+    <div style={{ background: T.surfaceAlt, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"5rem 2rem", position:"relative", zIndex:2 }}>
       <SectionTitle eyebrow={t("pays_eyebrow")} title={t("pays_title")} subtitle={t("pays_subtitle")} />
       <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent:"center", maxWidth:1000, margin:"0 auto" }}>
         {PAYS_AFRIQUE.map((p) => (
@@ -1861,7 +1664,7 @@ function PaysCouverts() {
             fontSize:"0.82rem", fontWeight:600, color:T.text,
             transition:"all 0.25s",
           }}
-            onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.gold; e.currentTarget.style.color=T.gold; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.accent; e.currentTarget.style.color=T.accent; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
             onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.color=T.text; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
           >
             <span style={{fontSize:"1.2rem"}}>{p.flag}</span>
@@ -1870,7 +1673,7 @@ function PaysCouverts() {
         ))}
       </div>
       <div style={{ textAlign:"center", marginTop:"2.5rem" }}>
-        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(201,48,44,0.06)", border:`1px solid rgba(201,48,44,0.2)`, color:T.gold, borderRadius:30, padding:"0.5rem 1.4rem", fontSize:"0.8rem", fontWeight:700 }}>
+        <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(201,48,44,0.06)", border:`1px solid rgba(201,48,44,0.2)`, color:T.accent, borderRadius:30, padding:"0.5rem 1.4rem", fontSize:"0.8rem", fontWeight:700 }}>
           <Globe size={14}/> +15 pays · Livraison porte-à-porte
         </div>
       </div>
@@ -1959,7 +1762,7 @@ const SECTEURS = [
 function SecteursSection() {
   useLang();
   return (
-    <div style={{ background:T.bgSection, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"6rem 2rem", position:"relative", zIndex:2 }}>
+    <div style={{ background:T.surfaceAlt, borderTop:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}`, padding:"6rem 2rem", position:"relative", zIndex:2 }}>
       <SectionTitle eyebrow={t("sec_eyebrow")} title={t("sec_title")} subtitle={t("sec_subtitle")} />
       <div className="grid-4" style={{ maxWidth:1100, margin:"0 auto" }}>
         {SECTEURS.map((s, i) => (
@@ -1970,7 +1773,7 @@ function SecteursSection() {
               display:"flex", flexDirection:"column", gap:"0.8rem",
               cursor:"default", transition:"all 0.3s ease",
             }}
-              onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.gold; e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.boxShadow=`0 12px 32px rgba(201,48,44,0.1)`; }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor=T.accent; e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.boxShadow=`0 12px 32px rgba(201,48,44,0.1)`; }}
               onMouseLeave={e=>{ e.currentTarget.style.borderColor=T.border; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="none"; }}
             >
               <div style={{ fontSize:"2.2rem", lineHeight:1 }}>{s.emoji}</div>
@@ -2070,7 +1873,7 @@ function ServicesComplementaires() {
   ];
 
   return (
-    <div style={{ background: T.bgSection, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
+    <div style={{ background: T.surfaceAlt, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, padding: "6rem 2rem", position: "relative", zIndex: 2 }}>
       <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
       <div className="grid-4" style={{ maxWidth: 1100, margin: "0 auto" }}>
         {extras.map((s, i) => (
@@ -2120,7 +1923,7 @@ function FAQAccordion() {
       {faqs.map((faq, i) => (
         <ScrollReveal key={i} direction="up" delay={i * 0.05}>
           <div style={{
-            border: `1px solid ${open === i ? T.gold : T.border}`,
+            border: `1px solid ${open === i ? T.accent : T.border}`,
             borderRadius: T.radius,
             overflow: "hidden",
             background: "#fff",
@@ -2141,7 +1944,7 @@ function FAQAccordion() {
               </span>
               <span style={{
                 width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                background: open === i ? `linear-gradient(135deg, ${T.gold}, ${T.gold2})` : T.bgSection,
+                background: open === i ? `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})` : T.surfaceAlt,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 transition: "all 0.3s ease",
               }}>
@@ -2253,8 +2056,8 @@ function PageCatalogue({ articles }) {
                 key={c}
                 onClick={() => setSelectedCat(c)}
                 style={{
-                  background: isActive ? `linear-gradient(135deg, ${T.gold}, ${T.gold2})` : T.bgSection,
-                  border: `1px solid ${isActive ? T.gold : T.border}`,
+                  background: isActive ? `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})` : T.surfaceAlt,
+                  border: `1px solid ${isActive ? T.accent : T.border}`,
                   color: isActive ? "#fff" : T.muted,
                   padding: "0.6rem 1.5rem",
                   borderRadius: 30,
@@ -2289,8 +2092,8 @@ function PageCatalogue({ articles }) {
                   position: "absolute",
                   top: 12,
                   right: 12,
-                  background: `linear-gradient(135deg, ${T.gold}, ${T.gold2})`,
-                  color: T.bgDeep,
+                  background: `linear-gradient(135deg, ${T.accent}, ${T.accentStrong})`,
+                  color: T.bg,
                   fontSize: "0.7rem",
                   fontWeight: 800,
                   padding: "0.3rem 0.8rem",
@@ -2305,14 +2108,14 @@ function PageCatalogue({ articles }) {
                   left: 12,
                   background: "rgba(5, 8, 16, 0.75)",
                   backdropFilter: "blur(4px)",
-                  border: `1.5px solid ${T.gold}`,
+                  border: `1.5px solid ${T.accent}`,
                   width: 36,
                   height: 36,
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: T.gold
+                  color: T.accent
                 }}>
                   <Package size={18}/>
                 </div>
@@ -2323,7 +2126,7 @@ function PageCatalogue({ articles }) {
                   <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: T.text, marginBottom: "0.5rem" }}>
                     {a.titre}
                   </h3>
-                  <div style={{ color: T.gold, fontWeight: 800, fontSize: "1rem", marginBottom: "0.8rem" }}>
+                  <div style={{ color: T.accent, fontWeight: 800, fontSize: "1rem", marginBottom: "0.8rem" }}>
                     {a.prix}
                   </div>
                   <p style={{ fontSize: "0.85rem", color: T.muted, lineHeight: 1.5, marginBottom: "1.8rem" }}>
@@ -2408,7 +2211,7 @@ function PageRealisations({ realisations }) {
                         <span style={{
                           background: "rgba(201, 48, 44,0.08)",
                           border: `1px solid rgba(201, 48, 44,0.25)`,
-                          color: T.gold,
+                          color: T.accent,
                           fontSize: "0.68rem",
                           fontWeight: 700,
                           padding: "0.25rem 0.75rem",
@@ -2418,7 +2221,7 @@ function PageRealisations({ realisations }) {
                         }}>
                           {r.cat}
                         </span>
-                        <span style={{ color: T.gold }}>
+                        <span style={{ color: T.accent }}>
                           {r.cat === "Import" ? <Ship size={20}/> :
                            r.cat === "Études" ? <GraduationCap size={20}/> :
                            r.cat === "Formation" ? <Wrench size={20}/> :
@@ -2449,15 +2252,15 @@ function PageRealisations({ realisations }) {
                         paddingTop: "1.2rem",
                         marginTop: "1rem"
                       }}>
-                        <div style={{ color: T.gold, fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
+                        <div style={{ color: T.accent, fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
                         <p style={{ fontStyle: "italic", fontSize: "0.82rem", color: T.text, lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
                           {r.temoignage}
                         </p>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: T.gold }}>{r.client}</span>
-                          <span style={{ color: T.gold, display: "flex", gap: 1 }}>
+                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: T.accent }}>{r.client}</span>
+                          <span style={{ color: T.accent, display: "flex", gap: 1 }}>
                             {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
-                              <Star key={stIdx} size={11} fill={T.gold} color={T.gold} />
+                              <Star key={stIdx} size={11} fill={T.accent} color={T.accent} />
                             ))}
                           </span>
                         </div>
@@ -2473,7 +2276,7 @@ function PageRealisations({ realisations }) {
 
       <ScrollReveal direction="up" delay={0.1}>
         <GlassCard style={{
-          background: `linear-gradient(135deg, ${T.bgSection}, #fff)`,
+          background: `linear-gradient(135deg, ${T.surfaceAlt}, #fff)`,
           border: `1.5px solid ${T.border}`,
           padding: "3.5rem",
           textAlign: "center"
@@ -2502,7 +2305,7 @@ function PageEquipe({ equipe }) {
     <div style={{ padding: "8rem 2rem 6rem" }}>
       {/* Hero Banner */}
       <div style={{
-        background: `linear-gradient(135deg, ${T.gold} 0%, ${T.gold2} 60%, #b71c1c 100%)`,
+        background: `linear-gradient(135deg, ${T.accent} 0%, ${T.accentStrong} 60%, #b71c1c 100%)`,
         borderRadius: T.radius,
         padding: "4rem 3rem",
         textAlign: "center",
@@ -2559,7 +2362,7 @@ function PageEquipe({ equipe }) {
                             <span key={j} style={{
                               background: "rgba(201,48,44,0.06)",
                               border: "1px solid rgba(201,48,44,0.18)",
-                              color: T.gold,
+                              color: T.accent,
                               padding: "0.3rem 0.75rem",
                               borderRadius: 20,
                               fontSize: "0.72rem",
@@ -2574,20 +2377,20 @@ function PageEquipe({ equipe }) {
                     <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: "1.2rem", display: "flex", flexDirection: "column", gap: 10 }}>
                       {member.contact && (
                         <a href={`tel:${member.contact.replace(/\s/g, "")}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.color = T.gold}
+                          onMouseEnter={e => e.currentTarget.style.color = T.accent}
                           onMouseLeave={e => e.currentTarget.style.color = T.muted}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            <Phone size={13} color={T.gold} />
+                            <Phone size={13} color={T.accent} />
                           </span>
                           {member.contact}
                         </a>
                       )}
                       {member.email && (
                         <a href={`mailto:${member.email}`} style={{ display: "flex", alignItems: "center", gap: 10, color: T.muted, fontSize: "0.82rem", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                          onMouseEnter={e => e.currentTarget.style.color = T.gold}
+                          onMouseEnter={e => e.currentTarget.style.color = T.accent}
                           onMouseLeave={e => e.currentTarget.style.color = T.muted}>
                           <span style={{ width: 30, height: 30, background: "rgba(201,48,44,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                            <Mail size={13} color={T.gold} />
+                            <Mail size={13} color={T.accent} />
                           </span>
                           {member.email}
                         </a>
@@ -2674,7 +2477,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
 
   return (
     <div style={{ marginBottom: "1.1rem", textAlign: "left" }}>
-      <label style={{ fontSize: ".78rem", color: T.gold, fontWeight: 600, display: "block", marginBottom: 6 }}>
+      <label style={{ fontSize: ".78rem", color: T.accent, fontWeight: 600, display: "block", marginBottom: 6 }}>
         {label}
       </label>
       <div
@@ -2683,10 +2486,10 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         onDragLeave={() => setDrag(false)}
         onDrop={e => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
         style={{
-          border: `2px dashed ${drag ? T.gold : uploadErr ? "#e53935" : T.border}`,
+          border: `2px dashed ${drag ? T.accent : uploadErr ? "#e53935" : T.border}`,
           borderRadius: 12, padding: "1rem", textAlign: "center",
           cursor: uploading ? "wait" : "pointer",
-          background: drag ? "rgba(201,48,44,0.05)" : T.bgSection,
+          background: drag ? "rgba(201,48,44,0.05)" : T.surfaceAlt,
           transition: "all .2s", position: "relative", minHeight: 120,
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", gap: 8,
@@ -2694,7 +2497,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
       >
         {uploading ? (
           <>
-            <div style={{ width: 30, height: 30, border: `3px solid ${T.border}`, borderTop: `3px solid ${T.gold}`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
+            <div style={{ width: 30, height: 30, border: `3px solid ${T.border}`, borderTop: `3px solid ${T.accent}`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
             <p style={{ fontSize: ".8rem", color: T.muted, margin: 0 }}>Upload GitHub en cours…</p>
           </>
         ) : displaySrc ? (
@@ -2703,14 +2506,14 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
               <video src={displaySrc} controls style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8 }} preload="metadata" />
             ) : type === "doc" ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <FileText size={32} color={T.gold} />
-                <a href={displaySrc} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: ".78rem", color: T.gold }}>Ouvrir le fichier</a>
+                <FileText size={32} color={T.accent} />
+                <a href={displaySrc} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: ".78rem", color: T.accent }}>Ouvrir le fichier</a>
               </div>
             ) : (
               <img src={displaySrc} alt="preview" style={{ maxHeight: 160, maxWidth: "100%", borderRadius: 8, objectFit: "cover" }} />
             )}
             {uploading === false && objectUrl && (
-              <p style={{ fontSize: ".65rem", color: T.amber, margin: 0 }}>
+              <p style={{ fontSize: ".65rem", color: T.secondary, margin: 0 }}>
                 ✓ Déployé sur GitHub — visible après le prochain redéploiement Vercel (~2 min)
               </p>
             )}
@@ -2722,12 +2525,12 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         ) : (
           <>
             <div style={{ display: "flex", gap: 12, marginBottom: 4 }}>
-              <Image size={22} color={T.gold} opacity={0.7} />
-              <Film size={22} color={T.gold} opacity={0.7} />
-              <FileText size={22} color={T.gold} opacity={0.7} />
+              <Image size={22} color={T.accent} opacity={0.7} />
+              <Film size={22} color={T.accent} opacity={0.7} />
+              <FileText size={22} color={T.accent} opacity={0.7} />
             </div>
             <p style={{ fontSize: ".8rem", color: "#aaa", margin: 0 }}>
-              Glisse un fichier ici ou <span style={{ color: T.gold, fontWeight: 600 }}>clique pour choisir</span>
+              Glisse un fichier ici ou <span style={{ color: T.accent, fontWeight: 600 }}>clique pour choisir</span>
             </p>
             <p style={{ fontSize: ".7rem", color: "#bbb", margin: 0 }}>
               Images · Vidéos MP4/MOV/WEBM · PDF · Tous formats
@@ -2746,7 +2549,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         value={preview.startsWith("data:") ? "" : preview}
         onChange={e => { setObjectUrl(""); setPreview(e.target.value); onChange(e.target.value); }}
         placeholder="Ou colle une URL (image, vidéo YouTube, lien…)"
-        style={{ width: "100%", marginTop: 8, padding: ".6rem .9rem", border: `1.5px solid ${T.border}`, borderRadius: 8, fontSize: ".8rem", fontFamily: "inherit", outline: "none", background: T.bgSection, color: T.text }}
+        style={{ width: "100%", marginTop: 8, padding: ".6rem .9rem", border: `1.5px solid ${T.border}`, borderRadius: 8, fontSize: ".8rem", fontFamily: "inherit", outline: "none", background: T.surfaceAlt, color: T.text }}
       />
     </div>
   );
@@ -3066,14 +2869,14 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     const isLocked = lockoutTime > Date.now();
     return (
       <div style={{ padding: "10rem 2rem 8rem", display: "flex", justifyContent: "center" }}>
-        <GlassCard style={{ maxWidth: 450, width: "100%", padding: "3rem 2.5rem", border: `1.5px solid ${T.gold}` }}>
+        <GlassCard style={{ maxWidth: 450, width: "100%", padding: "3rem 2.5rem", border: `1.5px solid ${T.accent}` }}>
           <div style={{ textAlign: "center", marginBottom: "2rem" }}>
             <div style={{
               width: 60, height: 60, borderRadius: "50%",
               background: "rgba(201,48,44,0.1)",
               border: `1px solid ${T.border}`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 1rem", color: T.gold
+              margin: "0 auto 1rem", color: T.accent
             }}>
               <Lock size={26}/>
             </div>
@@ -3120,7 +2923,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     <div style={{ padding: "8rem 2rem 6rem", maxWidth: 1200, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "3rem" }}>
         <div style={{ textAlign: "left" }}>
-          <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.gold }}>
+          <h2 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "'Syne', sans-serif", color: T.accent }}>
             Espace Professionnel Administration
           </h2>
           <p style={{ color: T.muted, fontSize: "0.9rem" }}>
@@ -3137,8 +2940,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
         const cfg = {
           saving:    { bg: "rgba(234,179,8,0.08)",  border: "rgba(234,179,8,0.4)",  icon: <Clock size={20} color="#b45309"/>,       title: "⏳ Envoi en cours…",         body: "Vos modifications sont en cours d'envoi vers GitHub. Ne fermez pas cette page." },
           deploying: { bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.4)",  icon: <CheckCircle size={20} color="#16a34a"/>, title: "🚀 Déploiement lancé !",      body: "Les données ont été sauvegardées. Vercel redéploie le site — les visiteurs verront les changements dans ~2 minutes." },
-          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={T.gold}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
-          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={T.gold}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
+          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={T.accent}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
+          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={T.accent}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
         };
         const s = cfg[deployStatus] || cfg[null];
         return (
@@ -3207,7 +3010,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               {articles.map((art) => (
                 <div key={art.id} style={{
                   padding: "1rem",
-                  background: T.bgSection,
+                  background: T.surfaceAlt,
                   borderRadius: 10,
                   border: `1px solid ${T.border}`,
                   display: "flex",
@@ -3217,16 +3020,16 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                 }}>
                   <div style={{ textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: T.gold }}><Package size={18}/></span>
+                      <span style={{ color: T.accent }}><Package size={18}/></span>
                       <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{art.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: T.gold, fontWeight: 600 }}>{art.prix} · {art.cat}</span>
+                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{art.prix} · {art.cat}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditArticle(art)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
@@ -3311,7 +3114,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               {realisations.map((real) => (
                 <div key={real.id} style={{
                   padding: "1rem",
-                  background: T.bgSection,
+                  background: T.surfaceAlt,
                   borderRadius: 10,
                   border: `1px solid ${T.border}`,
                   display: "flex",
@@ -3321,7 +3124,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                 }}>
                   <div style={{ textAlign: "left" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: T.gold }}>
+                      <span style={{ color: T.accent }}>
                         {real.cat === "Import" ? <Ship size={18}/> :
                          real.cat === "Études" ? <GraduationCap size={18}/> :
                          real.cat === "Formation" ? <Wrench size={18}/> :
@@ -3329,13 +3132,13 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                       </span>
                       <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>{real.titre}</h4>
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: T.gold, fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
+                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
                   </div>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
                       aria-label="Modifier"
                       onClick={() => handleEditRealisation(real)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      style={{ background: "rgba(201, 48, 44,0.15)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                     >
                       <Edit2 size={14}/>
                     </button>
@@ -3408,7 +3211,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               {equipe.map((m) => (
                 <div key={m.id} style={{
                   padding: "1rem",
-                  background: T.bgSection,
+                  background: T.surfaceAlt,
                   borderRadius: 10,
                   border: `1px solid ${T.border}`,
                   display: "flex",
@@ -3427,11 +3230,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                   </div>
                   <div style={{ flex: 1, textAlign: "left" }}>
                     <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: T.text, margin: 0 }}>{m.nom}</h4>
-                    <span style={{ fontSize: "0.75rem", color: T.gold, fontWeight: 600 }}>{m.poste}</span>
+                    <span style={{ fontSize: "0.75rem", color: T.accent, fontWeight: 600 }}>{m.poste}</span>
                   </div>
                   <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
                     <button aria-label="Modifier" onClick={() => handleEditMembre(m)}
-                      style={{ background: "rgba(201,48,44,0.1)", color: T.gold, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      style={{ background: "rgba(201,48,44,0.1)", color: T.accent, border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
                       <Edit2 size={14}/>
                     </button>
                     <button aria-label="Supprimer" onClick={() => handleDeleteMembre(m.id)}
@@ -3532,7 +3335,7 @@ export default function App() {
     <div style={{
       fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
       minHeight: "100vh",
-      background: T.bgDeep,
+      background: T.bg,
       color: T.text,
       position: "relative",
       overflowX: "hidden"
@@ -3549,7 +3352,7 @@ export default function App() {
         }
         
         body {
-          background-color: ${T.bgDeep};
+          background-color: ${T.bg};
           color: ${T.text};
           font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
           overflow-x: hidden;
@@ -3564,12 +3367,12 @@ export default function App() {
         }
 
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: ${T.bgSection}; }
+        ::-webkit-scrollbar-track { background: ${T.surfaceAlt}; }
         ::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, ${T.gold}, ${T.amber});
+          background: linear-gradient(to bottom, ${T.accent}, ${T.secondary});
           border-radius: 6px;
         }
-        ::-webkit-scrollbar-thumb:hover { background: ${T.gold2}; }
+        ::-webkit-scrollbar-thumb:hover { background: ${T.accentStrong}; }
 
         @keyframes shimmer {
           0%   { background-position: 200% 0; }
@@ -3578,19 +3381,6 @@ export default function App() {
 
         @keyframes spin {
           to { transform: rotate(360deg); }
-        }
-
-        @keyframes pulseGlow {
-          0% { transform: scale(0.95); opacity: 0.45; }
-          50% { transform: scale(1.05); opacity: 0.75; }
-          100% { transform: scale(0.95); opacity: 0.45; }
-        }
-
-        @keyframes rippleAnim {
-          to {
-            transform: translate(-50%, -50%) scale(5);
-            opacity: 0;
-          }
         }
 
         @keyframes pageEnter {
@@ -3722,7 +3512,7 @@ export default function App() {
         textAlign: "center",
         padding: "4rem 2rem",
         fontSize: "0.85rem",
-        borderTop: `3px solid ${T.gold}`,
+        borderTop: `3px solid ${T.accent}`,
         position: "relative",
         zIndex: 2,
       }}>
@@ -3752,4 +3542,6 @@ export default function App() {
     </div>
   );
 }
+
+
 
