@@ -2679,6 +2679,17 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
   const [realImage, setRealImage] = useState("");
   const [editingRealId, setEditingRealId] = useState(null);
 
+  // Dashboard shell state
+  const [activeTab, setActiveTab] = useState("catalogue");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = useCallback((msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (lockoutTime > Date.now()) {
@@ -2719,12 +2730,12 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
   // CRUD Product Actions
   const handleSaveArticle = () => {
     if (!artNom || !artPrix || !artDesc) {
-      alert("Veuillez remplir tous les champs obligatoires du produit.");
+      showToast("Veuillez remplir tous les champs obligatoires.", "error");
       return;
     }
 
     if (artImage && !artImage.startsWith("https://") && !artImage.startsWith("data:")) {
-      alert("L'URL de l'image doit commencer par https:// ou être une photo importée.");
+      showToast("L'URL de l'image doit commencer par https:// ou être une photo importée.", "error");
       return;
     }
 
@@ -2757,6 +2768,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     setArtPrix("");
     setArtDesc("");
     setArtImage("");
+    showToast("Produit sauvegardé");
   };
 
   const handleEditArticle = (art) => {
@@ -2768,28 +2780,19 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     setEditingArtId(art.id);
   };
 
-  const handleDeleteArticle = (id) => {
-    if (window.confirm("Voulez-vous vraiment supprimer ce produit du catalogue ?")) {
-      setArticles((prev) => prev.filter((a) => a.id !== id));
-      if (editingArtId === id) {
-        setEditingArtId(null);
-        setArtNom("");
-        setArtPrix("");
-        setArtDesc("");
-        setArtImage("");
-      }
-    }
+  const handleDeleteArticle = (art) => {
+    setDeleteModal({ type: "article", id: art.id, label: art.titre });
   };
 
   // CRUD Realisations Actions
   const handleSaveRealisation = () => {
     if (!realNom || !realDesc) {
-      alert("Veuillez remplir les champs obligatoires de la réalisation.");
+      showToast("Veuillez remplir les champs obligatoires.", "error");
       return;
     }
 
     if (realImage && !realImage.startsWith("https://") && !realImage.startsWith("data:")) {
-      alert("L'URL de l'image doit commencer par https:// ou être une photo importée.");
+      showToast("L'URL de l'image doit commencer par https:// ou être une photo importée.", "error");
       return;
     }
 
@@ -2835,6 +2838,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     setRealClient("");
     setRealTemoignage("");
     setRealImage("");
+    showToast("Réalisation sauvegardée");
   };
 
   const handleEditRealisation = (r) => {
@@ -2848,19 +2852,29 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     setEditingRealId(r.id);
   };
 
-  const handleDeleteRealisation = (id) => {
-    if (window.confirm("Voulez-vous vraiment supprimer cette réalisation ?")) {
-      setRealisations((prev) => prev.filter((r) => r.id !== id));
+  const handleDeleteRealisation = (real) => {
+    setDeleteModal({ type: "realisation", id: real.id, label: real.titre });
+  };
+
+  const confirmDelete = useCallback(() => {
+    if (!deleteModal) return;
+    const { type, id } = deleteModal;
+    if (type === "article") {
+      setArticles(prev => prev.filter(a => a.id !== id));
+      if (editingId === id) { setEditingId(null); resetForm(); }
+    } else if (type === "realisation") {
+      setRealisations(prev => prev.filter(r => r.id !== id));
       if (editingRealId === id) {
         setEditingRealId(null);
-        setRealNom("");
-        setRealDesc("");
-        setRealClient("");
-        setRealTemoignage("");
-        setRealImage("");
+        setRealNom(""); setRealDesc(""); setRealClient(""); setRealTemoignage(""); setRealImage("");
       }
+    } else if (type === "membre") {
+      setEquipe(prev => prev.filter(m => m.id !== id));
+      if (editingMemId === id) resetMemForm();
     }
-  };
+    setDeleteModal(null);
+    showToast("Supprimé avec succès");
+  }, [deleteModal, editingId, editingRealId, editingMemId, showToast]);
 
   // CRUD Équipe Actions
   const resetMemForm = () => {
@@ -2871,11 +2885,11 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
 
   const handleSaveMembre = () => {
     if (!memNom || !memPoste) {
-      alert("Le nom et le poste sont obligatoires.");
+      showToast("Le nom et le poste sont obligatoires.", "error");
       return;
     }
     if (memImage && !memImage.startsWith("https://") && !memImage.startsWith("data:")) {
-      alert("L'URL de l'image doit commencer par https:// ou être une photo importée.");
+      showToast("L'URL de l'image doit commencer par https:// ou être une photo importée.", "error");
       return;
     }
     const cleanNom = sanitize(memNom).slice(0, 100);
@@ -2899,6 +2913,7 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
       }]);
     }
     resetMemForm();
+    showToast("Membre sauvegardé");
   };
 
   const handleEditMembre = (m) => {
@@ -2908,11 +2923,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
     setEditingMemId(m.id);
   };
 
-  const handleDeleteMembre = (id) => {
-    if (window.confirm("Supprimer ce membre de l'équipe ?")) {
-      setEquipe(prev => prev.filter(m => m.id !== id));
-      if (editingMemId === id) resetMemForm();
-    }
+  const handleDeleteMembre = (membre) => {
+    setDeleteModal({ type: "membre", id: membre.id, label: membre.nom });
   };
 
   if (!isAuthenticated) {
@@ -2970,334 +2982,332 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
   }
 
   return (
-    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "3rem" }}>
-        <div style={{ textAlign: "left" }}>
-          <h2 style={{ fontSize: "var(--text-2xl)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--accent)' }}>
-            Espace Professionnel Administration
-          </h2>
-          <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>
-            Gérez vos produits du catalogue en temps réel ainsi que les réalisations et témoignages clients de l'agence.
-          </p>
-        </div>
-        <GoldenBtn variant="outline" onClick={handleLogout}>
-          <LogOut size={16} style={{marginRight: 8}}/> Déconnexion
-        </GoldenBtn>
-      </div>
+    <div style={{ minHeight: "100vh", display: "flex", background: "var(--bg)", position: "relative" }}>
+      <style>{`
+        .adm-sidebar {
+          position: fixed; top: 0; left: 0; bottom: 0; width: 210px;
+          background: var(--surface); border-right: 1px solid var(--border);
+          display: flex; flex-direction: column; z-index: 50; transition: transform .25s;
+        }
+        .adm-main { margin-left: 210px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        .adm-overlay { display: none; }
+        @media (max-width: 767px) {
+          .adm-sidebar { transform: translateX(-100%); }
+          .adm-sidebar.open { transform: translateX(0); }
+          .adm-main { margin-left: 0; }
+          .adm-overlay { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 45; }
+          .adm-mobile-btn { display: flex !important; }
+        }
+        @media (min-width: 768px) {
+          .adm-mobile-btn { display: none !important; }
+          .adm-sidebar { transform: translateX(0) !important; }
+        }
+        .adm-nav-btn {
+          display: flex; align-items: center; gap: 10px;
+          padding: .65rem 1.1rem; border: none; background: transparent;
+          cursor: pointer; color: var(--muted); font-size: var(--text-sm);
+          font-weight: 600; border-radius: 8px; width: 100%; text-align: left;
+          transition: background .15s, color .15s;
+        }
+        .adm-nav-btn:hover { background: var(--surface-alt); color: var(--text); }
+        .adm-nav-btn.active { background: rgba(201,48,44,.12); color: var(--accent); }
+        .adm-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.8rem; }
+        .adm-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        @media (max-width: 900px) { .adm-split { grid-template-columns: 1fr; } }
+        .adm-list-item { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .85rem 1rem; background: var(--surface-alt); border-radius: 8px; border: 1px solid var(--border); }
+        .adm-icon-btn { border: none; border-radius: 6px; padding: .38rem .55rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity .15s; }
+        .adm-icon-btn:hover { opacity: .72; }
+        .adm-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .adm-modal { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 2rem; max-width: 420px; width: 100%; }
+        .adm-toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; padding: .85rem 1.4rem; border-radius: 10px; font-size: var(--text-sm); font-weight: 600; box-shadow: 0 4px 24px rgba(0,0,0,.2); display: flex; align-items: center; gap: 8px; }
+      `}</style>
 
-      {/* Deploy status banner */}
-      {(() => {
-        const cfg = {
-          saving:    { bg: "rgba(234,179,8,0.08)",  border: "rgba(234,179,8,0.4)",  icon: <Clock size={20} color="#b45309"/>,       title: "⏳ Envoi en cours…",         body: "Vos modifications sont en cours d'envoi vers GitHub. Ne fermez pas cette page." },
-          deploying: { bg: "rgba(34,197,94,0.08)",  border: "rgba(34,197,94,0.4)",  icon: <CheckCircle size={20} color="#16a34a"/>, title: "🚀 Déploiement lancé !",      body: "Les données ont été sauvegardées. Vercel redéploie le site — les visiteurs verront les changements dans ~2 minutes." },
-          error:     { bg: "rgba(201,48,44,0.06)",  border: "rgba(201,48,44,0.3)",  icon: <AlertCircle size={20} color={"var(--accent)"}/>, title: "⚠️ Erreur de sauvegarde",    body: "Impossible d'envoyer les données vers GitHub. Vérifiez que VITE_GITHUB_TOKEN est bien configuré dans Vercel." },
-          null:      { bg: GH_TOKEN ? "rgba(34,197,94,0.05)" : "rgba(201,48,44,0.05)", border: GH_TOKEN ? "rgba(34,197,94,0.25)" : "rgba(201,48,44,0.25)", icon: GH_TOKEN ? <CheckCircle size={20} color="#16a34a"/> : <AlertCircle size={20} color={"var(--accent)"}/>, title: GH_TOKEN ? "✅ Mode live activé" : "⚠️ Mode local uniquement", body: GH_TOKEN ? "Toutes vos modifications sont automatiquement sauvegardées et déployées sur le site public (~2 min)." : "VITE_GITHUB_TOKEN non configuré. Les modifications sont sauvegardées localement uniquement. Ajoutez le token dans Vercel → Settings → Environment Variables." },
-        };
-        const s = cfg[deployStatus] || cfg[null];
-        return (
-          <div style={{ background: s.bg, border: `1.5px solid ${s.border}`, borderRadius: "var(--radius-md)", padding: "1.2rem 1.6rem", marginBottom: "2.5rem", display: "flex", gap: 14, alignItems: "flex-start" }}>
-            <div style={{ flexShrink: 0, marginTop: 2 }}>{s.icon}</div>
+      {sidebarOpen && <div className="adm-overlay" onClick={() => setSidebarOpen(false)} />}
+
+      {/* ── SIDEBAR ── */}
+      <aside className={`adm-sidebar${sidebarOpen ? " open" : ""}`}>
+        <div style={{ padding: "1.3rem 1.1rem 1rem", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <ShieldCheck size={15} color="#fff" />
+            </div>
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: "var(--text-sm)", marginBottom: "0.3rem" }}>{s.title}</div>
-              <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", lineHeight: 1.6 }}>{s.body}</p>
+              <div style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--text)", lineHeight: 1.1 }}>Easy China</div>
+              <div style={{ fontSize: "10px", color: "var(--muted)", marginTop: 2 }}>Administration</div>
             </div>
           </div>
-        );
-      })()}
+        </div>
+        <nav style={{ padding: ".9rem .65rem", flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
+          {[
+            { id: "catalogue",    icon: <Package size={15}/>,       label: "Catalogue" },
+            { id: "realisations", icon: <ClipboardList size={15}/>, label: "Réalisations" },
+            { id: "equipe",       icon: <Users size={15}/>,         label: "Équipe" },
+          ].map(({ id, icon, label }) => (
+            <button key={id} className={`adm-nav-btn${activeTab === id ? " active" : ""}`}
+              onClick={() => { setActiveTab(id); setSidebarOpen(false); }}>
+              {icon} {label}
+            </button>
+          ))}
+        </nav>
+        <div style={{ padding: ".8rem .65rem 1.2rem", borderTop: "1px solid var(--border)" }}>
+          <button className="adm-nav-btn" onClick={handleLogout} style={{ color: "var(--accent)" }}>
+            <LogOut size={15} /> Déconnexion
+          </button>
+        </div>
+      </aside>
 
-      <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
-        {/* CATALOGUE CRUD PANEL */}
-        <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            {editingArtId ? "✏️ Modifier le Produit" : "➕ Ajouter au Catalogue"}
-          </h3>
-          <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
-          
-          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field label="Prix (ou indicatif) *" value={artPrix} onChange={setArtPrix} placeholder="Ex: À partir de 1,200 USD" />
-            <Field
-              label="Catégorie"
-              value={artCat}
-              onChange={setArtCat}
-              options={["Machines", "Électronique", "Textile", "Import général", "Alimentaire", "Autre"]}
-            />
+      {/* ── MAIN ── */}
+      <div className="adm-main">
+        {/* Top bar */}
+        <header style={{ position: "sticky", top: 0, zIndex: 40, background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: ".8rem 1.6rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+          <button className="adm-icon-btn adm-mobile-btn" onClick={() => setSidebarOpen(s => !s)}
+            style={{ background: "var(--surface-alt)", color: "var(--text)", display: "none" }}>
+            <Menu size={18} />
+          </button>
+          <div style={{ flex: 1, fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text)" }}>
+            {activeTab === "catalogue" ? "Catalogue" : activeTab === "realisations" ? "Réalisations" : "Équipe"}
           </div>
+          {(() => {
+            const pills = {
+              saving:    { color: "#b45309", bg: "rgba(234,179,8,.12)",  label: "Envoi…" },
+              deploying: { color: "#15803d", bg: "rgba(34,197,94,.12)",  label: "Déployé ✓" },
+              error:     { color: "var(--accent)", bg: "rgba(201,48,44,.1)", label: "Erreur" },
+            };
+            const p = pills[deployStatus] || (GH_TOKEN
+              ? { color: "#15803d", bg: "rgba(34,197,94,.1)", label: "Live" }
+              : { color: "#b45309", bg: "rgba(234,179,8,.1)", label: "Local" });
+            return <span style={{ fontSize: "11px", fontWeight: 700, color: p.color, background: p.bg, padding: "3px 11px", borderRadius: 20, flexShrink: 0 }}>{p.label}</span>;
+          })()}
+        </header>
 
-          <MediaUpload value={artImage} onChange={setArtImage} label="Photo / Vidéo du produit" />
+        {/* Content */}
+        <main style={{ padding: "2rem", maxWidth: 1100, width: "100%", margin: "0 auto" }}>
 
-          <Field label="Description & Spécifications *" value={artDesc} onChange={setArtDesc} placeholder="Détails du produit, capacité..." rows={3} />
-          
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <GoldenBtn variant="solid" onClick={handleSaveArticle} style={{ flex: 1 }}>
-              {editingArtId ? "Enregistrer" : "Ajouter le Produit"}
-            </GoldenBtn>
-            {editingArtId && (
-              <GoldenBtn
-                variant="ghost"
-                onClick={() => {
-                  setEditingArtId(null);
-                  setArtNom("");
-                  setArtPrix("");
-                  setArtDesc("");
-                  setArtImage("");
-                }}
-              >
-                Annuler
-              </GoldenBtn>
-            )}
-          </div>
-        </GlassCard>
-
-        {/* CATALOGUE LIST VIEW */}
-        <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            Produits du Catalogue ({articles.length})
-          </h3>
-          {articles.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucun produit dans le catalogue.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {articles.map((art) => (
-                <div key={art.id} style={{
-                  padding: "1rem",
-                  background: 'var(--surface-alt)',
-                  borderRadius: 10,
-                  border: `1px solid var(--border)`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "1rem"
-                }}>
-                  <div style={{ textAlign: "left" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: 'var(--accent)' }}><Package size={18}/></span>
-                      <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, margin: 0 }}>{art.titre}</h4>
-                    </div>
-                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{art.prix} · {art.cat}</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <button
-                      aria-label="Modifier"
-                      onClick={() => handleEditArticle(art)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                      <Edit2 size={14}/>
-                    </button>
-                    <button
-                      aria-label="Supprimer"
-                      onClick={() => handleDeleteArticle(art.id)}
-                      style={{ background: "rgba(233, 30, 140, 0.15)", color: 'var(--danger)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                      <Trash2 size={14}/>
-                    </button>
-                  </div>
+          {/* ── CATALOGUE ── */}
+          {activeTab === "catalogue" && (
+            <div className="adm-split">
+              <div className="adm-card">
+                <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                  {editingArtId ? "Modifier le Produit" : "Ajouter au Catalogue"}
+                </h3>
+                <Field label="Titre du Produit *" value={artNom} onChange={setArtNom} placeholder="Ex: Machine de Presse à Vapeur" />
+                <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <Field label="Prix *" value={artPrix} onChange={setArtPrix} placeholder="À partir de 1 200 USD" />
+                  <Field label="Catégorie" value={artCat} onChange={setArtCat} options={["Machines", "Électronique", "Textile", "Import général", "Alimentaire", "Autre"]} />
                 </div>
-              ))}
-            </div>
-          )}
-        </GlassCard>
-      </div>
-
-      <div style={{ height: "4rem" }} />
-
-      <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
-        {/* REALISATIONS CRUD PANEL */}
-        <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            {editingRealId ? "✏️ Modifier la Réalisation" : "➕ Ajouter une Réalisation"}
-          </h3>
-          <Field label="Titre de la Réalisation *" value={realNom} onChange={setRealNom} placeholder="Ex: Livraison d'un Conteneur de 40 pieds" />
-          
-          <Field label="Nom Client / Fonction" value={realClient} onChange={setRealClient} placeholder="Ex: Mme Ablavi T., Importatrice" />
-          
-          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field
-              label="Catégorie"
-              value={realCat}
-              onChange={setRealCat}
-              options={["Import", "Études", "Formation", "Visa", "Tourisme"]}
-            />
-            <Field
-              label="Note Étoiles"
-              value={realStars}
-              onChange={setRealStars}
-              options={["5", "4", "3", "2", "1"]}
-            />
-          </div>
-
-          <MediaUpload value={realImage} onChange={setRealImage} label="Photo / Vidéo de la réalisation" />
-
-          <Field label="Descriptif / Récit de Réussite *" value={realDesc} onChange={setRealDesc} placeholder="Comment cela a été réalisé (logistique, délais, réussite)..." rows={2} />
-          <Field label="Témoignage Client" value={realTemoignage} onChange={setRealTemoignage} placeholder="Citation directe du client..." rows={2} />
-
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <GoldenBtn variant="solid" onClick={handleSaveRealisation} style={{ flex: 1 }}>
-              {editingRealId ? "Enregistrer" : "Ajouter la Réalisation"}
-            </GoldenBtn>
-            {editingRealId && (
-              <GoldenBtn
-                variant="ghost"
-                onClick={() => {
-                  setEditingRealId(null);
-                  setRealNom("");
-                  setRealDesc("");
-                  setRealClient("");
-                  setRealTemoignage("");
-                  setRealImage("");
-                }}
-              >
-                Annuler
-              </GoldenBtn>
-            )}
-          </div>
-        </GlassCard>
-
-        {/* REALISATIONS LIST VIEW */}
-        <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            Réalisations Clients ({realisations.length})
-          </h3>
-          {realisations.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucune réalisation enregistrée.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {realisations.map((real) => (
-                <div key={real.id} style={{
-                  padding: "1rem",
-                  background: 'var(--surface-alt)',
-                  borderRadius: 10,
-                  border: `1px solid var(--border)`,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "1rem"
-                }}>
-                  <div style={{ textAlign: "left" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ color: 'var(--accent)' }}>
-                        {real.cat === "Import" ? <Ship size={18}/> :
-                         real.cat === "Études" ? <GraduationCap size={18}/> :
-                         real.cat === "Formation" ? <Wrench size={18}/> :
-                         <FileCheck size={18}/>}
-                      </span>
-                      <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, margin: 0 }}>{real.titre}</h4>
-                    </div>
-                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{real.cat} · {real.client || "Client Anonyme"} ({real.stars} ★)</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <button
-                      aria-label="Modifier"
-                      onClick={() => handleEditRealisation(real)}
-                      style={{ background: "rgba(201, 48, 44,0.15)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                      <Edit2 size={14}/>
-                    </button>
-                    <button
-                      aria-label="Supprimer"
-                      onClick={() => handleDeleteRealisation(real.id)}
-                      style={{ background: "rgba(233, 30, 140, 0.15)", color: 'var(--danger)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                      <Trash2 size={14}/>
-                    </button>
-                  </div>
+                <MediaUpload value={artImage} onChange={setArtImage} label="Photo / Vidéo du produit" />
+                <Field label="Description & Spécifications *" value={artDesc} onChange={setArtDesc} placeholder="Détails, capacité, dimensions..." rows={3} />
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <GoldenBtn variant="solid" onClick={handleSaveArticle} style={{ flex: 1 }}>
+                    {editingArtId ? "Enregistrer" : "Ajouter le Produit"}
+                  </GoldenBtn>
+                  {editingArtId && (
+                    <GoldenBtn variant="ghost" onClick={() => { setEditingArtId(null); setArtNom(""); setArtPrix(""); setArtDesc(""); setArtImage(""); }}>
+                      Annuler
+                    </GoldenBtn>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-        </GlassCard>
-      </div>
-
-      <div style={{ height: "4rem" }} />
-
-      {/* ─── ÉQUIPE CRUD ─── */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h3 style={{ fontSize: "1.4rem", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "0.4rem" }}>
-          👥 Gestion de l'Équipe
-        </h3>
-        <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Ajoutez, modifiez ou retirez des membres de la page Équipe publique.</p>
-      </div>
-
-      <div className="grid-50-50" style={{ alignItems: "flex-start", gap: "2.5rem" }}>
-        {/* ÉQUIPE FORM */}
-        <GlassCard style={{ padding: "2.2rem" }}>
-          <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            {editingMemId ? "✏️ Modifier le Membre" : "➕ Ajouter un Membre"}
-          </h3>
-          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field label="Nom Complet *" value={memNom} onChange={setMemNom} placeholder="Ex: Jean Koffi" />
-            <Field label="Poste / Rôle *" value={memPoste} onChange={setMemPoste} placeholder="Ex: Directeur Général" />
-          </div>
-          <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <Field label="Téléphone" value={memContact} onChange={setMemContact} placeholder="+228 90 00 00 00" />
-            <Field label="Email" type="email" value={memEmail} onChange={setMemEmail} placeholder="nom@easychina.com" />
-          </div>
-          <Field
-            label="Spécialités (séparées par des virgules)"
-            value={memSpecialites}
-            onChange={setMemSpecialites}
-            placeholder="Import & Logistique, Visas, Négociation"
-          />
-          <Field label="Biographie *" value={memBio} onChange={setMemBio} placeholder="Parcours, expertise, années d'expérience..." rows={4} />
-          <MediaUpload value={memImage} onChange={setMemImage} label="Photo du membre" />
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <GoldenBtn variant="solid" onClick={handleSaveMembre} style={{ flex: 1 }}>
-              {editingMemId ? "Enregistrer les modifications" : "Ajouter à l'Équipe"}
-            </GoldenBtn>
-            {editingMemId && (
-              <GoldenBtn variant="ghost" onClick={resetMemForm}>Annuler</GoldenBtn>
-            )}
-          </div>
-        </GlassCard>
-
-        {/* ÉQUIPE LIST */}
-        <GlassCard style={{ padding: "2.2rem", maxHeight: "650px", overflowY: "auto" }}>
-          <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: 'var(--text)', marginBottom: "1.5rem", textAlign: "left" }}>
-            Membres de l'Équipe ({equipe.length})
-          </h3>
-          {equipe.length === 0 ? (
-            <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)" }}>Aucun membre enregistré.</p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {equipe.map((m) => (
-                <div key={m.id} style={{
-                  padding: "1rem",
-                  background: 'var(--surface-alt)',
-                  borderRadius: 10,
-                  border: `1px solid var(--border)`,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem"
-                }}>
-                  {/* Mini photo */}
-                  <div style={{ width: 48, height: 48, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: "var(--border)" }}>
-                    {m.image ? (
-                      <img src={m.image} alt={m.nom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Users size={20} color={"var(--muted)"} />
+              </div>
+              <div className="adm-card" style={{ maxHeight: 620, overflowY: "auto" }}>
+                <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                  Produits ({articles.length})
+                </h3>
+                {articles.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--muted)" }}>
+                    <Package size={38} style={{ opacity: .25, marginBottom: "1rem", display: "block", margin: "0 auto 1rem" }} />
+                    <p style={{ fontSize: "var(--text-sm)" }}>Aucun produit. Commencez par en ajouter un.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
+                    {articles.map((art) => (
+                      <div key={art.id} className="adm-list-item">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 700, fontSize: "var(--text-sm)", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{art.titre}</div>
+                          <div style={{ fontSize: "var(--text-xs)", color: "var(--accent)", fontWeight: 600, marginTop: 2 }}>{art.prix} · {art.cat}</div>
+                        </div>
+                        <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
+                          <button className="adm-icon-btn" aria-label="Modifier" onClick={() => handleEditArticle(art)} style={{ background: "rgba(201,48,44,.12)", color: "var(--accent)" }}><Edit2 size={13}/></button>
+                          <button className="adm-icon-btn" aria-label="Supprimer" onClick={() => handleDeleteArticle(art)} style={{ background: "rgba(180,0,0,.1)", color: "#e53935" }}><Trash2 size={13}/></button>
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                  <div style={{ flex: 1, textAlign: "left" }}>
-                    <h4 style={{ fontSize: "var(--text-base)", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{m.nom}</h4>
-                    <span style={{ fontSize: "var(--text-xs)", color: 'var(--accent)', fontWeight: 600 }}>{m.poste}</span>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                    <button aria-label="Modifier" onClick={() => handleEditMembre(m)}
-                      style={{ background: "rgba(201,48,44,0.1)", color: 'var(--accent)', border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
-                      <Edit2 size={14}/>
-                    </button>
-                    <button aria-label="Supprimer" onClick={() => handleDeleteMembre(m.id)}
-                      style={{ background: "rgba(180,0,0,0.1)", color: "#e53935", border: "none", borderRadius: 6, padding: "0.4rem 0.6rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
-                      <Trash2 size={14}/>
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           )}
-        </GlassCard>
+
+          {/* ── RÉALISATIONS ── */}
+          {activeTab === "realisations" && (
+            <div className="adm-split">
+              <div className="adm-card">
+                <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                  {editingRealId ? "Modifier la Réalisation" : "Ajouter une Réalisation"}
+                </h3>
+                <Field label="Titre de la Réalisation *" value={realNom} onChange={setRealNom} placeholder="Ex: Livraison d'un Conteneur de 40 pieds" />
+                <Field label="Nom Client / Fonction" value={realClient} onChange={setRealClient} placeholder="Ex: Mme Ablavi T., Importatrice" />
+                <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <Field label="Catégorie" value={realCat} onChange={setRealCat} options={["Import", "Études", "Formation", "Visa", "Tourisme"]} />
+                  <Field label="Note Étoiles" value={realStars} onChange={setRealStars} options={["5", "4", "3", "2", "1"]} />
+                </div>
+                <MediaUpload value={realImage} onChange={setRealImage} label="Photo / Vidéo de la réalisation" />
+                <Field label="Descriptif / Récit *" value={realDesc} onChange={setRealDesc} placeholder="Comment cela a été réalisé..." rows={2} />
+                <Field label="Témoignage Client" value={realTemoignage} onChange={setRealTemoignage} placeholder="Citation directe du client..." rows={2} />
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <GoldenBtn variant="solid" onClick={handleSaveRealisation} style={{ flex: 1 }}>
+                    {editingRealId ? "Enregistrer" : "Ajouter la Réalisation"}
+                  </GoldenBtn>
+                  {editingRealId && (
+                    <GoldenBtn variant="ghost" onClick={() => { setEditingRealId(null); setRealNom(""); setRealDesc(""); setRealClient(""); setRealTemoignage(""); setRealImage(""); }}>
+                      Annuler
+                    </GoldenBtn>
+                  )}
+                </div>
+              </div>
+              <div className="adm-card" style={{ maxHeight: 620, overflowY: "auto" }}>
+                <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                  Réalisations ({realisations.length})
+                </h3>
+                {realisations.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--muted)" }}>
+                    <ClipboardList size={38} style={{ opacity: .25, display: "block", margin: "0 auto 1rem" }} />
+                    <p style={{ fontSize: "var(--text-sm)" }}>Aucune réalisation. Ajoutez-en une.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
+                    {realisations.map((real) => (
+                      <div key={real.id} className="adm-list-item">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 700, fontSize: "var(--text-sm)", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{real.titre}</div>
+                          <div style={{ fontSize: "var(--text-xs)", color: "var(--accent)", fontWeight: 600, marginTop: 2 }}>{real.cat} · {real.client || "Client Anonyme"} · {real.stars || 5} ★</div>
+                        </div>
+                        <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
+                          <button className="adm-icon-btn" aria-label="Modifier" onClick={() => handleEditRealisation(real)} style={{ background: "rgba(201,48,44,.12)", color: "var(--accent)" }}><Edit2 size={13}/></button>
+                          <button className="adm-icon-btn" aria-label="Supprimer" onClick={() => handleDeleteRealisation(real)} style={{ background: "rgba(180,0,0,.1)", color: "#e53935" }}><Trash2 size={13}/></button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── ÉQUIPE ── */}
+          {activeTab === "equipe" && (
+            <div className="adm-split">
+              <div className="adm-card">
+                <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                  {editingMemId ? "Modifier le Membre" : "Ajouter un Membre"}
+                </h3>
+                <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <Field label="Nom Complet *" value={memNom} onChange={setMemNom} placeholder="Ex: Jean Koffi" />
+                  <Field label="Poste / Rôle *" value={memPoste} onChange={setMemPoste} placeholder="Ex: Directeur Général" />
+                </div>
+                <div className="form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <Field label="Téléphone" value={memContact} onChange={setMemContact} placeholder="+228 90 00 00 00" />
+                  <Field label="Email" type="email" value={memEmail} onChange={setMemEmail} placeholder="nom@easychina.com" />
+                </div>
+                <Field label="Spécialités (séparées par des virgules)" value={memSpecialites} onChange={setMemSpecialites} placeholder="Import & Logistique, Visas, Négociation" />
+                <Field label="Biographie" value={memBio} onChange={setMemBio} placeholder="Parcours, expertise, années d'expérience..." rows={3} />
+                <MediaUpload value={memImage} onChange={setMemImage} label="Photo du membre" />
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <GoldenBtn variant="solid" onClick={handleSaveMembre} style={{ flex: 1 }}>
+                    {editingMemId ? "Enregistrer les modifications" : "Ajouter à l'Équipe"}
+                  </GoldenBtn>
+                  {editingMemId && <GoldenBtn variant="ghost" onClick={resetMemForm}>Annuler</GoldenBtn>}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                {editingMemId && (memNom || memPoste) && (
+                  <div className="adm-card" style={{ background: "rgba(201,48,44,.04)", border: "1.5px solid rgba(201,48,44,.2)" }}>
+                    <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--accent)", letterSpacing: ".08em", textTransform: "uppercase", marginBottom: ".8rem" }}>Aperçu</div>
+                    <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+                      <div style={{ width: 52, height: 52, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: "var(--border)" }}>
+                        {memImage
+                          ? <img src={memImage} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><Users size={20} color="var(--muted)" /></div>}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: "var(--text-base)", color: "var(--text)" }}>{memNom || "—"}</div>
+                        <div style={{ fontSize: "var(--text-sm)", color: "var(--accent)", fontWeight: 600 }}>{memPoste || "—"}</div>
+                        {memBio && <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)", marginTop: 4, lineHeight: 1.5 }}>{memBio.slice(0, 120)}{memBio.length > 120 ? "…" : ""}</div>}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="adm-card" style={{ maxHeight: 560, overflowY: "auto" }}>
+                  <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, fontFamily: "var(--font-display)", color: "var(--text)", marginBottom: "1.4rem" }}>
+                    Membres ({equipe.length})
+                  </h3>
+                  {equipe.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--muted)" }}>
+                      <Users size={38} style={{ opacity: .25, display: "block", margin: "0 auto 1rem" }} />
+                      <p style={{ fontSize: "var(--text-sm)" }}>Aucun membre. Ajoutez-en un.</p>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: ".7rem" }}>
+                      {equipe.map((m) => (
+                        <div key={m.id} className="adm-list-item">
+                          <div style={{ width: 38, height: 38, borderRadius: 10, overflow: "hidden", flexShrink: 0, background: "var(--border)" }}>
+                            {m.image
+                              ? <img src={m.image} alt={m.nom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><Users size={16} color="var(--muted)" /></div>}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 700, fontSize: "var(--text-sm)", color: "var(--text)" }}>{m.nom}</div>
+                            <div style={{ fontSize: "var(--text-xs)", color: "var(--accent)", fontWeight: 600, marginTop: 2 }}>{m.poste}</div>
+                          </div>
+                          <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
+                            <button className="adm-icon-btn" aria-label="Modifier" onClick={() => handleEditMembre(m)} style={{ background: "rgba(201,48,44,.12)", color: "var(--accent)" }}><Edit2 size={13}/></button>
+                            <button className="adm-icon-btn" aria-label="Supprimer" onClick={() => handleDeleteMembre(m)} style={{ background: "rgba(180,0,0,.1)", color: "#e53935" }}><Trash2 size={13}/></button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+        </main>
       </div>
+
+      {/* ── DELETE MODAL ── */}
+      {deleteModal && (
+        <div className="adm-modal-backdrop" onClick={() => setDeleteModal(null)}>
+          <div className="adm-modal" onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "1.2rem" }}>
+              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(201,48,44,.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Trash2 size={18} color="var(--accent)" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: "var(--text-base)", color: "var(--text)" }}>Confirmer la suppression</div>
+                <div style={{ fontSize: "var(--text-sm)", color: "var(--muted)", marginTop: 3 }}>Cette action est irréversible.</div>
+              </div>
+            </div>
+            <div style={{ background: "var(--surface-alt)", borderRadius: 8, padding: ".7rem 1rem", marginBottom: "1.5rem", fontSize: "var(--text-sm)", color: "var(--text)", fontWeight: 600, border: "1px solid var(--border)" }}>
+              {deleteModal.label}
+            </div>
+            <div style={{ display: "flex", gap: ".75rem", justifyContent: "flex-end" }}>
+              <GoldenBtn variant="ghost" onClick={() => setDeleteModal(null)}>Annuler</GoldenBtn>
+              <GoldenBtn variant="solid" onClick={confirmDelete} style={{ background: "rgba(201,48,44,.9)", borderColor: "transparent" }}>
+                Supprimer
+              </GoldenBtn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── TOAST ── */}
+      {toast && (
+        <div className="adm-toast" style={{ background: toast.type === "error" ? "rgba(180,0,0,.95)" : "rgba(22,163,74,.95)", color: "#fff" }}>
+          {toast.type === "error" ? <AlertCircle size={15}/> : <CheckCircle size={15}/>}
+          {toast.msg}
+        </div>
+      )}
     </div>
   );
 }
