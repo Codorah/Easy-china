@@ -1,5 +1,6 @@
 import type { Dict } from "@/lib/i18n";
 import { SectionHeader } from "./SectionHeader";
+import { ScrollReveal } from "@/components/client/ScrollReveal";
 
 const WA_COMMERCIAL = "+22890000001";
 const waLink = (num: string, msg: string) =>
@@ -33,30 +34,34 @@ export function ServicesSection({ t }: Props) {
   return (
     <section className="section-py" aria-labelledby="services-heading">
       <div className="container-base">
-        <SectionHeader eyebrow={t.svc_eyebrow} title={t.svc_title} subtitle={t.svc_subtitle} />
+        <ScrollReveal direction="up" delay={0}>
+          <SectionHeader eyebrow={t.svc_eyebrow} title={t.svc_title} subtitle={t.svc_subtitle} />
+        </ScrollReveal>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" role="list">
-          {services.map((s) => (
-            <li key={s.name} className="card overflow-hidden flex flex-col group">
-              <div className="h-44 overflow-hidden relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" aria-hidden loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" aria-hidden />
-                <div className="absolute bottom-0 left-6 translate-y-1/2 w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center text-white bg-[var(--color-accent)] shadow-[var(--shadow-accent)]">
-                  {s.icon}
+          {services.map((s, i) => (
+            <li key={s.name}>
+              <ScrollReveal direction="up" delay={0.06 + i * 0.07} className="card overflow-hidden flex flex-col group h-full">
+                <div className="h-44 overflow-hidden relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={s.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" aria-hidden loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" aria-hidden />
+                  <div className="absolute bottom-0 left-6 translate-y-1/2 w-12 h-12 rounded-[var(--radius-md)] flex items-center justify-center text-white bg-[var(--color-accent)] shadow-[var(--shadow-accent)]">
+                    {s.icon}
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col flex-1 p-6 pt-9">
-                <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)] mb-2">{s.name}</h3>
-                <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] flex-1 mb-5">{s.desc}</p>
-                <a
-                  href={waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite en savoir plus sur : "${s.name}".`)}
-                  target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[var(--color-accent)] font-semibold text-[var(--text-sm)] hover:gap-2 transition-all"
-                >
-                  {t.svc_learn}
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </a>
-              </div>
+                <div className="flex flex-col flex-1 p-6 pt-9">
+                  <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)] mb-2">{s.name}</h3>
+                  <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] flex-1 mb-5">{s.desc}</p>
+                  <a
+                    href={waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite en savoir plus sur : "${s.name}".`)}
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[var(--color-accent)] font-semibold text-[var(--text-sm)] hover:gap-2 transition-all"
+                  >
+                    {t.svc_learn}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </a>
+                </div>
+              </ScrollReveal>
             </li>
           ))}
         </ul>

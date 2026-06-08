@@ -1,5 +1,6 @@
 import type { Dict } from "@/lib/i18n";
 import { SectionHeader } from "./SectionHeader";
+import { ScrollReveal } from "@/components/client/ScrollReveal";
 
 const WA_COMMERCIAL = "+22890000001";
 const waLink = (num: string, msg: string) =>
@@ -30,18 +31,22 @@ export function PremiumSection({ t }: Props) {
   return (
     <section className="section-alt section-py" aria-labelledby="premium-heading">
       <div className="container-base">
-        <SectionHeader eyebrow={t.prem_eyebrow} title={t.prem_title} subtitle={t.prem_subtitle} />
+        <ScrollReveal direction="up" delay={0}>
+          <SectionHeader eyebrow={t.prem_eyebrow} title={t.prem_title} subtitle={t.prem_subtitle} />
+        </ScrollReveal>
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
-          {items.map((item) => (
-            <li key={item.title} className="card p-6 relative overflow-visible flex flex-col gap-4">
-              <div className="absolute -top-3 left-5 px-3 py-1 rounded-[var(--radius-full)] text-white font-bold uppercase text-[var(--text-xs)] tracking-[0.06em] bg-[var(--color-accent)] shadow-[var(--shadow-accent)]">
-                {item.tag}
-              </div>
-              <div className="w-14 h-14 rounded-[var(--radius-md)] flex items-center justify-center text-[var(--color-accent)] mt-4 bg-[var(--color-accent-soft)] border border-[rgba(201,48,44,0.2)]">
-                {item.icon}
-              </div>
-              <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)]">{item.title}</h3>
-              <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] flex-1">{item.desc}</p>
+          {items.map((item, i) => (
+            <li key={item.title}>
+              <ScrollReveal direction="up" delay={0.06 + i * 0.09} className="card p-6 relative overflow-visible flex flex-col gap-4 h-full">
+                <div className="absolute -top-3 left-5 px-3 py-1 rounded-[var(--radius-full)] text-white font-bold uppercase text-[var(--text-xs)] tracking-[0.06em] bg-[var(--color-accent)] shadow-[var(--shadow-accent)]">
+                  {item.tag}
+                </div>
+                <div className="w-14 h-14 rounded-[var(--radius-md)] flex items-center justify-center text-[var(--color-accent)] mt-4 bg-[var(--color-accent-soft)] border border-[rgba(201,48,44,0.2)]">
+                  {item.icon}
+                </div>
+                <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)]">{item.title}</h3>
+                <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)] flex-1">{item.desc}</p>
+              </ScrollReveal>
             </li>
           ))}
         </ul>

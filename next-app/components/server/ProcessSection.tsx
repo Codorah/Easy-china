@@ -1,5 +1,6 @@
 import type { Dict } from "@/lib/i18n";
 import { SectionHeader } from "./SectionHeader";
+import { ScrollReveal } from "@/components/client/ScrollReveal";
 
 interface Props { t: Dict }
 
@@ -14,19 +15,23 @@ export function ProcessSection({ t }: Props) {
   return (
     <section className="section-py" aria-labelledby="process-heading">
       <div className="container-base">
-        <SectionHeader eyebrow={t.proc_eyebrow} title={t.proc_title} subtitle={t.proc_subtitle} />
+        <ScrollReveal direction="up" delay={0}>
+          <SectionHeader eyebrow={t.proc_eyebrow} title={t.proc_title} subtitle={t.proc_subtitle} />
+        </ScrollReveal>
         <div className="relative">
           <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" aria-hidden />
           <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((s) => (
-            <li key={s.n} className="flex flex-col items-center text-center gap-4">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center font-display font-extrabold text-white text-[var(--text-md)] bg-[var(--color-accent)] shadow-[var(--shadow-accent)] shrink-0">
-                {s.n}
-              </div>
-              <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)]">{s.title}</h3>
-              <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)]">{s.desc}</p>
-            </li>
-          ))}
+            {steps.map((s, i) => (
+              <li key={s.n}>
+                <ScrollReveal direction="up" delay={0.06 + i * 0.1} className="flex flex-col items-center text-center gap-4">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center font-display font-extrabold text-white text-[var(--text-md)] bg-[var(--color-accent)] shadow-[var(--shadow-accent)] shrink-0">
+                    {s.n}
+                  </div>
+                  <h3 className="font-display font-bold text-[var(--color-text)] text-[var(--text-md)]">{s.title}</h3>
+                  <p className="text-[var(--color-muted)] text-[var(--text-sm)] leading-[var(--leading-body)]">{s.desc}</p>
+                </ScrollReveal>
+              </li>
+            ))}
           </ol>
         </div>
       </div>
