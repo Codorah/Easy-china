@@ -49,10 +49,10 @@ export function PageAccueil({ goTo }) {
       <PaysCouverts />
 
       {/* Services Grid */}
-      <div className="py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)]">
+      <div className="py-24 lg:py-32 px-6 lg:px-12">
         <div className="max-w-container mx-auto">
           <SectionTitle eyebrow={t("svc_eyebrow")} title={t("svc_title")} subtitle={t("svc_subtitle")} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {services.map((s, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 0.08}>
                 <GlassCard tilt className="h-full flex flex-col p-0 overflow-hidden">
@@ -86,7 +86,7 @@ export function PageAccueil({ goTo }) {
       <ServicesComplementaires />
 
       {/* Tourisme & Business Section */}
-      <div className="bg-surface-alt border-t border-b border-border py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] relative z-[2]">
+      <div className="bg-surface-alt border-t border-b border-border py-24 lg:py-32 px-6 lg:px-12 relative z-[2]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-container mx-auto">
           <ScrollReveal direction="left" delay={0.1}>
             <div className="text-left">
@@ -137,7 +137,7 @@ export function PageAccueil({ goTo }) {
       </div>
 
       {/* Timeline Section */}
-      <div className="py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] relative z-[2]">
+      <div className="py-24 lg:py-32 px-6 lg:px-12 relative z-[2]">
         <SectionTitle eyebrow={t("hist_eyebrow")} title={t("hist_title")} subtitle={t("hist_subtitle")} />
         <Timeline items={historyItems} />
       </div>
@@ -145,7 +145,7 @@ export function PageAccueil({ goTo }) {
       <SecteursSection />
 
       {/* Testimonials Section */}
-      <div className="bg-surface-alt border-t border-b border-border py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] relative z-[2]">
+      <div className="bg-surface-alt border-t border-b border-border py-24 lg:py-32 px-6 lg:px-12 relative z-[2]">
         <SectionTitle eyebrow={t("test_eyebrow")} title={t("test_title")} subtitle={t("test_subtitle")} />
         <TestimonialCarousel />
       </div>
@@ -153,7 +153,7 @@ export function PageAccueil({ goTo }) {
       <PremiumServices />
 
       {/* Bureaux Section */}
-      <div className="py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] max-w-container mx-auto relative z-[2]">
+      <div className="py-24 lg:py-32 px-6 lg:px-12 max-w-container mx-auto relative z-[2]">
         <SectionTitle eyebrow={t("off_eyebrow")} title={t("off_title")} />
 
         {/* Decorative photo banner */}
@@ -186,7 +186,7 @@ export function PageAccueil({ goTo }) {
       {/* CTA Final */}
       <div className={cn(
         "bg-gradient-to-br from-secondary via-[#0f1f40] to-accent-strong",
-        "py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)]",
+        "py-32 lg:py-40 px-6 lg:px-12",
         "text-center relative overflow-hidden z-[2]"
       )}>
         {/* Decorative elements */}
@@ -230,13 +230,13 @@ export function PageAccueil({ goTo }) {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] max-w-[860px] mx-auto relative z-[2]">
+      <div className="py-24 lg:py-32 px-6 lg:px-12 max-w-[860px] mx-auto relative z-[2]">
         <SectionTitle eyebrow={t("faq_eyebrow")} title={t("faq_title")} subtitle={t("faq_subtitle")} />
         <FAQAccordion />
       </div>
 
       {/* Formulaire de Contact */}
-      <div className="bg-surface-alt border-t border-border py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)] relative z-[2]">
+      <div className="bg-surface-alt border-t border-border py-24 lg:py-32 px-6 lg:px-12 relative z-[2]">
         <div className="max-w-[580px] mx-auto">
           <SectionTitle eyebrow={t("form_eyebrow")} title={t("form_title")} subtitle={t("form_subtitle")} />
           <ContactForm />

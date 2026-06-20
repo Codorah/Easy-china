@@ -14,7 +14,7 @@ export function PageEquipe({ equipe }) {
   const DEFAULT_IMG = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=500&h=600&q=80";
 
   return (
-    <div className="py-[clamp(64px,10vw,112px)] px-[clamp(20px,5vw,48px)]">
+    <div className="py-24 lg:py-32 px-[clamp(20px,5vw,48px)]">
       {/* Hero Banner */}
       <div className={cn(
         "bg-gradient-to-br from-accent via-accent-strong to-[#b71c1c]",
@@ -48,7 +48,7 @@ export function PageEquipe({ equipe }) {
                 <GlassCard tilt={true} className="p-0 overflow-hidden h-full flex flex-col">
                   {/* Photo */}
                   <div className="h-[300px] relative shrink-0">
-                    <Img src={member.image || DEFAULT_IMG} alt={member.nom} className="h-full rounded-none" />
+                    <Img src={member.image || DEFAULT_IMG} alt={member.nom} className="h-full rounded-none object-top" />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/65" />
                     {/* Name overlay on photo */}
                     <div className="absolute bottom-[18px] left-[22px] right-[22px] z-[2]">
@@ -79,7 +79,10 @@ export function PageEquipe({ equipe }) {
                     <div className="border-t border-border pt-5 flex flex-col gap-2.5">
                       {member.contact && (
                         <a href={`tel:${member.contact.replace(/\s/g, "")}`}
-                          className="flex items-center gap-2.5 text-muted text-sm no-underline font-medium hover:text-accent transition-colors">
+                          className={cn(
+                            "flex items-center gap-2.5 text-muted text-sm no-underline font-medium",
+                            "hover:text-accent duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                          )}>
                           <span className="w-[30px] h-[30px] bg-accent-soft rounded-sm flex items-center justify-center shrink-0">
                             <Phone size={13} className="text-accent" />
                           </span>
@@ -88,7 +91,10 @@ export function PageEquipe({ equipe }) {
                       )}
                       {member.email && (
                         <a href={`mailto:${member.email}`}
-                          className="flex items-center gap-2.5 text-muted text-sm no-underline font-medium hover:text-accent transition-colors">
+                          className={cn(
+                            "flex items-center gap-2.5 text-muted text-sm no-underline font-medium",
+                            "hover:text-accent duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                          )}>
                           <span className="w-[30px] h-[30px] bg-accent-soft rounded-sm flex items-center justify-center shrink-0">
                             <Mail size={13} className="text-accent" />
                           </span>
@@ -97,7 +103,10 @@ export function PageEquipe({ equipe }) {
                       )}
                       <GoldenBtn variant="outline"
                         onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour, je souhaite contacter ${member.nom} (${member.poste}) d'Easy China.`))}
-                        className="w-full mt-1">
+                        className={cn(
+                          "w-full mt-1",
+                          "duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                        )}>
                         <MessageCircle size={14} className="mr-1.5" /> {t("eq_contact")}
                       </GoldenBtn>
                     </div>

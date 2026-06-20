@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
 import { useScrollReveal } from "@/components/primitives/ScrollReveal";
+import { cn } from "@/lib/utils";
 
 // Inline hook — will be moved to @/hooks later
 function useCountUp(target, duration = 2, isTriggered = true) {
@@ -40,13 +41,20 @@ function useCountUp(target, duration = 2, isTriggered = true) {
   return count;
 }
 
-export function AnimatedCounter({ value, suffix = "+", duration = 2.5 }) {
+export function AnimatedCounter({ value, suffix = "+", duration = 2.5, className = "" }) {
   const [ref, isVisible] = useScrollReveal({ once: true, threshold: 0.1 });
   const count = useCountUp(value, duration, isVisible);
 
   return (
-    <span ref={ref} className="inline-block">
-      {count}{suffix}
+    <span
+      ref={ref}
+      className={cn(
+        "inline-block tabular-nums font-display font-bold tracking-tight",
+        className
+      )}
+    >
+      {count}
+      {suffix}
     </span>
   );
 }

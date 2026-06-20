@@ -1,14 +1,20 @@
 // @ts-nocheck
 import { cn } from "@/lib/utils";
 
-const inputClasses =
-  "w-full border border-border rounded-lg px-4 py-3 text-sm font-body text-text bg-surface-alt focus:ring-2 focus:ring-accent/30 focus:border-accent focus:bg-white outline-none transition-all duration-200";
+const inputClasses = cn(
+  "w-full rounded-xl bg-white/60 border border-border/60 px-4 py-3.5 text-sm font-body text-text",
+  "shadow-[0_8px_30px_rgba(26,20,16,0.08)]",
+  "focus:ring-2 focus:ring-accent/20 focus:border-accent focus:bg-white",
+  "outline-none",
+  "transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]",
+  "placeholder:text-muted/50"
+);
 
 export function Field({ label, type = "text", value, onChange, placeholder, options, rows }) {
   return (
     <div className="mb-5 text-left">
       {label && (
-        <label className="block text-sm text-accent mb-1.5 font-semibold tracking-wide">
+        <label className="block text-xs font-semibold text-accent tracking-wide uppercase mb-2">
           {label}
         </label>
       )}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Clock, MessageCircle } from "lucide-react";
 import { t, useLang } from "@/i18n";
 import { WA_COMMERCIAL, waLink } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { Field } from "@/components/primitives/Field";
 import { GoldenBtn } from "@/components/primitives/GoldenBtn";
 import { GlassCard } from "@/components/primitives/GlassCard";
@@ -29,7 +30,7 @@ export function ContactForm() {
   };
 
   return (
-    <GlassCard className="p-8 sm:p-10 w-full border-[1.5px] border-border">
+    <GlassCard className="p-10 sm:p-12 w-full border-2 border-border">
       <input type="text" value={honey} onChange={e => setHoney(e.target.value)}
         className="hidden" tabIndex={-1} autoComplete="off" />
       <Field label={t("form_name")} value={f.nom} onChange={v => setF(p => ({ ...p, nom: v }))} placeholder={t("form_ph_name")} />
@@ -37,7 +38,11 @@ export function ContactForm() {
       <Field label={t("form_service")} value={f.service} onChange={v => setF(p => ({ ...p, service: v }))}
         options={["Import & Logistique", "Université & Études", "Formation Professionnelle", "Assistance Visa", "Tourisme & Business"]} />
       <Field label={t("form_msg")} value={f.msg} onChange={v => setF(p => ({ ...p, msg: v }))} placeholder={t("form_ph_msg")} rows={4} />
-      <GoldenBtn variant="solid" onClick={send} disabled={isSending} className="w-full justify-center mt-4">
+      <GoldenBtn variant="solid" onClick={send} disabled={isSending}
+        className={cn(
+          "w-full justify-center mt-4",
+          "duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+        )}>
         {isSending ? <Clock size={18} className="mr-2" /> : <MessageCircle size={18} className="mr-2" />}
         {isSending ? t("form_sending") : t("form_btn")}
       </GoldenBtn>

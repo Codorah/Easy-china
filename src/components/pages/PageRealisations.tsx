@@ -44,7 +44,7 @@ export function PageRealisations({ realisations }) {
           <Img src="/assets/1000073491.jpg" alt="" className="h-full w-full object-cover rounded-none" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px]" />
-        <div className="relative z-[2] text-center px-[clamp(20px,5vw,48px)]">
+        <div className="relative z-[2] text-center px-6 lg:px-12">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="text-xs text-white/60 tracking-[0.18em] uppercase font-bold mb-2.5">
               {t("real_eyebrow")}
@@ -56,7 +56,7 @@ export function PageRealisations({ realisations }) {
         </div>
       </div>
 
-      <div className="py-12 px-[clamp(20px,5vw,48px)] pb-[clamp(64px,10vw,112px)] max-w-container mx-auto">
+      <div className="py-24 lg:py-32 px-6 lg:px-12 max-w-container mx-auto">
         <p className="text-center text-muted text-sm max-w-[60ch] mx-auto mb-8 leading-[1.7]">
           {t("real_subtitle")}
         </p>
@@ -78,7 +78,7 @@ export function PageRealisations({ realisations }) {
                 style={{ ...bentoStyle }}
                 className={isLarge ? "bento-card-large" : "bento-card"}
               >
-                <GlassCard tilt className="h-full p-0 overflow-hidden border border-border">
+                <GlassCard tilt className="h-full p-0 overflow-hidden border border-border transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]">
                   <div className="flex flex-col h-full">
                     <div className={cn(
                       "zoom-container relative shrink-0",

@@ -138,43 +138,95 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-secondary text-white/55 text-sm border-t-2 border-accent relative z-[2] overflow-hidden">
+      <footer className="bg-secondary text-white/50 text-sm relative z-[2] overflow-hidden pt-24 pb-12">
         {/* Top gradient line */}
-        <div className="h-1 bg-gradient-to-r from-accent via-accent-strong to-accent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
 
-        <div className="max-w-container mx-auto px-[clamp(20px,5vw,48px)] pt-16 pb-8">
-          {/* Main grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-            {/* Brand column */}
-            <div>
+        <div className="max-w-container mx-auto px-[clamp(20px,5vw,48px)] pt-16">
+          {/* Main grid -- 12-col */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+            {/* Brand column -- 5 cols */}
+            <div className="md:col-span-5">
               <img
                 src="/logo.png"
                 alt="Easy China"
                 onClick={() => goTo("accueil")}
                 className="h-12 w-auto object-contain cursor-pointer brightness-0 invert mb-6"
               />
-              <p className="text-white/50 leading-[1.7] text-sm max-w-[36ch] mb-6">
+              <p className="text-white/40 text-sm leading-relaxed max-w-[38ch] mb-8">
                 Votre partenaire de confiance pour l'import depuis la Chine, les
-                études universitaires et les services de visa.
+                {" "}études universitaires et les services de visa.
               </p>
+
+              {/* WhatsApp -- double-bezel */}
               <a
                 href={waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite des informations.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(
-                  "inline-flex items-center gap-2",
-                  "bg-[#25D366] text-white font-semibold",
-                  "py-2.5 px-5 rounded-full text-xs",
-                  "no-underline",
-                  "hover:shadow-lg hover:-translate-y-0.5 transition-all"
-                )}
+                className="inline-block p-0.5 rounded-full bg-[#25D366]/20 no-underline hover:-translate-y-0.5 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
               >
-                <MessageCircle size={14} /> WhatsApp
+                <span className="rounded-full bg-[#25D366] px-5 py-2.5 inline-flex items-center gap-2 text-white font-semibold text-xs">
+                  <MessageCircle size={14} /> WhatsApp
+                </span>
               </a>
+
+              {/* Newsletter */}
+              <div className="mt-10">
+                <h4 className="text-white font-bold text-sm mb-2 tracking-[0.08em] uppercase">
+                  Newsletter
+                </h4>
+                <p className="text-white/40 text-sm mb-4">
+                  Recevez nos offres exclusives
+                </p>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const input = e.target.querySelector("input");
+                    if (input?.value) {
+                      window.open(
+                        waLink(
+                          WA_COMMERCIAL,
+                          `Bonjour, je souhaite m'inscrire à la newsletter avec l'email : ${input.value}`
+                        )
+                      );
+                      input.value = "";
+                    }
+                  }}
+                  className="flex gap-3 max-w-md"
+                >
+                  <input
+                    type="email"
+                    placeholder="votre@email.com"
+                    required
+                    className={cn(
+                      "flex-1 px-5 py-2.5 rounded-full",
+                      "bg-white/[0.08] border border-white/10",
+                      "text-white text-sm placeholder:text-white/30",
+                      "outline-none focus:border-accent/50 focus:bg-white/[0.12]",
+                      "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                    )}
+                  />
+                  <button
+                    type="submit"
+                    className={cn(
+                      "group px-5 py-2.5 rounded-full",
+                      "bg-gradient-to-r from-accent to-accent-strong",
+                      "text-white text-sm font-semibold",
+                      "hover:shadow-lg hover:-translate-y-0.5",
+                      "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      "cursor-pointer border-0",
+                      "inline-flex items-center gap-2"
+                    )}
+                  >
+                    <Send size={14} />
+                    S'inscrire
+                  </button>
+                </form>
+              </div>
             </div>
 
-            {/* Navigation column */}
-            <div>
+            {/* Navigation column -- 3 cols */}
+            <div className="md:col-span-3">
               <h4 className="text-white font-bold text-sm mb-6 tracking-[0.08em] uppercase">
                 Navigation
               </h4>
@@ -187,7 +239,11 @@ export default function App() {
                 ].map(([k, label]) => (
                   <span
                     key={k}
-                    className="cursor-pointer text-white/50 font-medium hover:text-white hover:pl-1.5 transition-all"
+                    className={cn(
+                      "cursor-pointer text-white/40 font-medium",
+                      "hover:text-white hover:translate-x-1",
+                      "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                    )}
                     onClick={() => goTo(k)}
                   >
                     {label}
@@ -196,21 +252,21 @@ export default function App() {
               </div>
             </div>
 
-            {/* Contact column */}
-            <div>
+            {/* Contact column -- 4 cols */}
+            <div className="md:col-span-4">
               <h4 className="text-white font-bold text-sm mb-6 tracking-[0.08em] uppercase">
                 Contact
               </h4>
               <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2.5 text-white/55">
+                <div className="flex items-center gap-3 text-white/50">
                   <Mail size={14} className="text-accent shrink-0" />
                   <span>services@easychina.online</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-white/55">
+                <div className="flex items-center gap-3 text-white/50">
                   <Phone size={14} className="text-accent shrink-0" />
                   <span>+228 90 61 92 88</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-white/55">
+                <div className="flex items-center gap-3 text-white/50">
                   <MapPin size={14} className="text-accent shrink-0" />
                   <span>Guangzhou · Yiwu · Lomé</span>
                 </div>
@@ -218,55 +274,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* Newsletter Section */}
-          <div className="border-t border-white/10 pt-8 mb-8">
-            <h4 className="text-white font-bold text-sm mb-2 tracking-[0.08em] uppercase">
-              Newsletter
-            </h4>
-            <p className="text-white/50 text-sm mb-4">
-              Recevez nos offres exclusives
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const input = e.target.querySelector("input");
-                if (input?.value) {
-                  window.open(waLink(WA_COMMERCIAL, `Bonjour, je souhaite m'inscrire à la newsletter avec l'email : ${input.value}`));
-                  input.value = "";
-                }
-              }}
-              className="flex gap-3 max-w-md"
-            >
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                required
-                className={cn(
-                  "flex-1 px-4 py-2.5 rounded-full",
-                  "bg-white/10 border border-white/15",
-                  "text-white text-sm placeholder:text-white/30",
-                  "outline-none focus:border-accent/50 focus:bg-white/[0.12]",
-                  "transition-all"
-                )}
-              />
-              <button
-                type="submit"
-                className={cn(
-                  "px-5 py-2.5 rounded-full",
-                  "bg-gradient-to-r from-accent to-accent-strong",
-                  "text-white text-sm font-semibold",
-                  "hover:shadow-accent hover:-translate-y-0.5",
-                  "transition-all cursor-pointer border-0",
-                  "flex items-center gap-2"
-                )}
-              >
-                <Send size={14} /> S'inscrire
-              </button>
-            </form>
-          </div>
-
           {/* Bottom bar */}
-          <div className="border-t border-white/10 pt-6 flex justify-between items-center flex-wrap gap-4">
+          <div className="border-t border-white/[0.06] mt-16 pt-6 flex justify-between items-center flex-wrap gap-4">
             <p className="text-xs text-white/35 m-0">
               {t("footer_copy")}
             </p>

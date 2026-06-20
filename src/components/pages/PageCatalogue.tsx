@@ -38,7 +38,7 @@ export function PageCatalogue({ articles }) {
           <Img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&h=400&q=70" alt="" className="h-full w-full object-cover rounded-none" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px]" />
-        <div className="relative z-[2] text-center px-[clamp(20px,5vw,48px)]">
+        <div className="relative z-[2] text-center px-6 lg:px-12">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="text-xs text-white/60 tracking-[0.18em] uppercase font-bold mb-2.5">
               {t("cat_eyebrow")}
@@ -50,7 +50,7 @@ export function PageCatalogue({ articles }) {
         </div>
       </div>
 
-      <div className="py-12 px-[clamp(20px,5vw,48px)] pb-[clamp(64px,10vw,112px)] max-w-container mx-auto">
+      <div className="py-24 lg:py-32 px-6 lg:px-12 max-w-container mx-auto">
         <p className="text-center text-muted text-sm max-w-[60ch] mx-auto mb-8 leading-[1.7]">
           {t("cat_subtitle")}
         </p>
@@ -61,20 +61,29 @@ export function PageCatalogue({ articles }) {
             {categories.map((c) => {
               const isActive = selectedCat === c;
               return (
-                <button
-                  type="button"
+                <span
                   key={c}
-                  onClick={() => setSelectedCat(c)}
                   className={cn(
-                    "px-6 py-2.5 rounded-full text-sm font-semibold",
-                    "cursor-pointer transition-all duration-200",
+                    "p-0.5 rounded-full transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]",
                     isActive
-                      ? "bg-gradient-to-br from-accent to-accent-strong border border-accent text-white shadow-accent -translate-y-0.5"
-                      : "bg-surface-alt border border-border text-muted hover:text-text hover:border-accent/30"
+                      ? "bg-accent/10 ring-1 ring-accent/30"
+                      : "bg-black/[0.02] ring-1 ring-black/[0.04]"
                   )}
                 >
-                  {c}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCat(c)}
+                    className={cn(
+                      "px-6 py-2.5 rounded-full text-sm font-semibold",
+                      "cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      isActive
+                        ? "bg-gradient-to-br from-accent to-accent-strong border border-accent text-white shadow-accent -translate-y-0.5"
+                        : "bg-surface-alt border border-border text-muted hover:text-text hover:border-accent/30"
+                    )}
+                  >
+                    {c}
+                  </button>
+                </span>
               );
             })}
           </div>
@@ -84,7 +93,7 @@ export function PageCatalogue({ articles }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredArticles.map((a, i) => (
             <ScrollReveal key={a.id} direction="up" delay={i * 0.06}>
-              <GlassCard tilt className="h-full p-0 overflow-hidden border border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+              <GlassCard tilt className="h-full p-0 overflow-hidden border border-border transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:shadow-lg hover:-translate-y-1">
                 {/* Image with layered overlays */}
                 <div className="zoom-container h-[220px] relative">
                   <MediaDisplay
