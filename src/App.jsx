@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { t, useLang, changeLang, LANGS } from "./i18n";
+import { supabase } from "./supabase";
 import {
   Ship, GraduationCap, Wrench, FileCheck, Globe, MapPin,
   Phone, Mail, ArrowRight, Send, Lock, LogOut, Plus,
@@ -14,7 +15,7 @@ import {
 
 // ─── DESIGN TOKEN BRIDGE ─────────────────────────────────────────────────────
 // CSS vars are the source of truth (src/tokens.css).
-// T gives JSX access to those vars as strings — no hardcoded hex here.
+// T gives JSX access to those vars as strings -- no hardcoded hex here.
 const T = {
   bg:           "var(--bg)",
   surface:      "var(--surface)",
@@ -35,96 +36,43 @@ const WA_COMMERCIAL = "+8619876105148";
 const WA_TRANSITAIRE = "+8619876105148";
 const ADMIN_HASH = import.meta.env.VITE_ADMIN_HASH || "6e5349233f2be8ca69d702d25710ca05a515f608ce9f340512774f6c167ec3cb";
 
-const GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-const GH_OWNER = "Codorah";
-const GH_REPO  = "Easy-china";
-
-function toBase64Unicode(str) {
-  const bytes = new TextEncoder().encode(str);
-  let binary = "";
-  bytes.forEach(b => (binary += String.fromCharCode(b)));
-  return btoa(binary);
-}
-
-async function ghCommit(filepath, data) {
-  if (!GH_TOKEN) return false;
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${filepath}`;
-  const headers = {
-    Authorization: `Bearer ${GH_TOKEN}`,
-    Accept: "application/vnd.github+json",
-    "Content-Type": "application/json",
-  };
-  const getRes = await fetch(url, { headers });
-  if (!getRes.ok) return false;
-  const { sha } = await getRes.json();
-  const putRes = await fetch(url, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify({
-      message: `data: update ${filepath.split("/").pop()} via admin`,
-      content: toBase64Unicode(JSON.stringify(data, null, 2)),
-      sha,
-    }),
-  });
-  return putRes.ok;
-}
-
-async function ghUploadMedia(file) {
-  if (!GH_TOKEN) return null;
+async function sbUploadMedia(file) {
+  if (!supabase) return null;
   const ext = file.name.split(".").pop().toLowerCase();
   const slug = `${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
   const filename = `${slug}.${ext}`;
-  const filepath = `public/media/${filename}`;
-  const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${filepath}`;
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const b64 = e.target.result.split(",")[1];
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${GH_TOKEN}`,
-          Accept: "application/vnd.github+json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: `media: upload ${file.name}`,
-          content: b64,
-        }),
-      });
-      resolve(res.ok ? `/media/${filename}` : null);
-    };
-    reader.onerror = () => resolve(null);
-    reader.readAsDataURL(file);
-  });
+  const { error } = await supabase.storage.from("media").upload(filename, file);
+  if (error) return null;
+  const { data } = supabase.storage.from("media").getPublicUrl(filename);
+  return data?.publicUrl || null;
 }
 
 const waLink = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 
 const UNSPLASH = {
-  "Import général": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80",
-  "Électronique":   "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&h=400&q=80",
-  "Textile":        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=400&q=80",
-  "Machines":       "https://images.unsplash.com/photo-1565715101539-8cca2c24bf0f?auto=format&fit=crop&w=600&h=400&q=80",
+  "Import général": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80",
+  "Électronique":   "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=400&q=80",
+  "Textile":        "https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=600&h=400&q=80",
+  "Machines":       "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&h=400&q=80",
   "Alimentaire":    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&h=400&q=80",
-  "Autre":          "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=600&h=400&q=80",
+  "Autre":          "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=600&h=400&q=80",
 };
 
 const UNSPLASH_REAL = {
-  "Import":    "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=600&h=400&q=80",
-  "Études":    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&h=400&q=80",
-  "Visa":      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&h=400&q=80",
-  "Formation": "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=600&h=400&q=80",
-  "Tourisme":  "https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=600&h=400&q=80",
+  "Import":    "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80",
+  "Études":    "https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=600&h=400&q=80",
+  "Visa":      "https://images.unsplash.com/photo-1436491865332-7a61a109db05?auto=format&fit=crop&w=600&h=400&q=80",
+  "Formation": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=400&q=80",
+  "Tourisme":  "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=600&h=400&q=80",
 };
 
 // ─── SEED DEFAULT DATA ───────────────────────────────────────────────────────
 const DEFAULT_ARTICLES = [
-  { id: "1", titre: "Machines de Pressing Industriel", prix: "À partir de 1,200 USD", desc: "Sourcing et livraison de lignes de lavage, séchage et repassage haut de gamme.", cat: "Machines", image: "" },
-  { id: "2", titre: "Lignes d'Éclairage LED Connectées", prix: "À partir de 450 USD", desc: "Matériel d'éclairage LED haute puissance et basse consommation pour chantiers professionnels.", cat: "Électronique", image: "" },
-  { id: "3", titre: "Textile de Lin & Soie Premium", prix: "À partir de 3 USD / m", desc: "Importation directe de rouleaux de textiles nobles depuis les meilleurs tisseurs de Zhejiang.", cat: "Textile", image: "" },
-  { id: "4", titre: "Automates de Conditionnement Alimentaire", prix: "À partir de 2,400 USD", desc: "Machines de scellage, emballage et étiquetage de précision pour le secteur agroalimentaire.", cat: "Machines", image: "" },
-  { id: "5", titre: "Pompes Solaires Agricoles Haute Efficacité", prix: "À partir de 800 USD", desc: "Systèmes d'irrigation alimentés par énergie solaire, idéaux pour les exploitations agricoles.", cat: "Import général", image: "" }
+  { id: "1", titre: "Machines de Pressing Industriel", prix: "À partir de 1,200 USD", desc: "Sourcing et livraison de lignes de lavage, séchage et repassage haut de gamme.", cat: "Machines", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "2", titre: "Lignes d'Éclairage LED Connectées", prix: "À partir de 450 USD", desc: "Matériel d'éclairage LED haute puissance et basse consommation pour chantiers professionnels.", cat: "Électronique", image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "3", titre: "Textile de Lin & Soie Premium", prix: "À partir de 3 USD / m", desc: "Importation directe de rouleaux de textiles nobles depuis les meilleurs tisseurs de Zhejiang.", cat: "Textile", image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "4", titre: "Automates de Conditionnement Alimentaire", prix: "À partir de 2,400 USD", desc: "Machines de scellage, emballage et étiquetage de précision pour le secteur agroalimentaire.", cat: "Machines", image: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "5", titre: "Pompes Solaires Agricoles Haute Efficacité", prix: "À partir de 800 USD", desc: "Systèmes d'irrigation alimentés par énergie solaire, idéaux pour les exploitations agricoles.", cat: "Import général", image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80" }
 ];
 
 const DEFAULT_EQUIPE = [
@@ -161,10 +109,10 @@ const DEFAULT_EQUIPE = [
 ];
 
 const DEFAULT_REALISATIONS = [
-  { id: "1", titre: "Importation de 12 Tonnes de Textile", cat: "Import", desc: "Sourcing minutieux, contrôle qualité en usine et acheminement maritime sécurisé jusqu'au port de Lomé.", client: "Mme Ablavi T.", temoignage: "Easy China a pris en charge toute la chaîne logistique et les douanes. Zéro tracas, service parfait !", stars: "5", image: "" },
-  { id: "2", titre: "15 Bourses Complètes en Ingénierie", cat: "Études", desc: "Accompagnement administratif, dépôt de dossier consulaire et admission de 15 brillants étudiants à Pékin.", client: "M. Koffi L.", temoignage: "Grâce à leur expertise, mon fils a intégré Tsinghua avec une bourse d'excellence gouvernementale.", stars: "5", image: "" },
-  { id: "3", titre: "Lancement d'une Blanchisserie Moderne", cat: "Formation", desc: "Livraison, configuration technique de pressing industriel et cycle complet de formation des équipes à Lomé.", client: "M. Kodjo A.", temoignage: "Les machines importées sont d'une efficacité incroyable. Le support technique est irréprochable.", stars: "5", image: "" },
-  { id: "4", titre: "Délégation d'Affaires - Visas Express", cat: "Visa", desc: "Montage des dossiers consulaires et obtention accélérée de visas d'affaires pour une visite d'usine à Guangzhou.", client: "M. Yao K.", temoignage: "Visa obtenu en moins de 10 jours ouvrés. Notre mission commerciale en Chine a été une réussite totale.", stars: "5", image: "" }
+  { id: "1", titre: "Importation de 12 Tonnes de Textile", cat: "Import", desc: "Sourcing minutieux, contrôle qualité en usine et acheminement maritime sécurisé jusqu'au port de Lomé.", client: "Mme Ablavi T.", temoignage: "Easy China a pris en charge toute la chaîne logistique et les douanes. Zéro tracas, service parfait !", stars: "5", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "2", titre: "15 Bourses Complètes en Ingénierie", cat: "Études", desc: "Accompagnement administratif, dépôt de dossier consulaire et admission de 15 brillants étudiants à Pékin.", client: "M. Koffi L.", temoignage: "Grâce à leur expertise, mon fils a intégré Tsinghua avec une bourse d'excellence gouvernementale.", stars: "5", image: "https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "3", titre: "Lancement d'une Blanchisserie Moderne", cat: "Formation", desc: "Livraison, configuration technique de pressing industriel et cycle complet de formation des équipes à Lomé.", client: "M. Kodjo A.", temoignage: "Les machines importées sont d'une efficacité incroyable. Le support technique est irréprochable.", stars: "5", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=400&q=80" },
+  { id: "4", titre: "Délégation d'Affaires - Visas Express", cat: "Visa", desc: "Montage des dossiers consulaires et obtention accélérée de visas d'affaires pour une visite d'usine à Guangzhou.", client: "M. Yao K.", temoignage: "Visa obtenu en moins de 10 jours ouvrés. Notre mission commerciale en Chine a été une réussite totale.", stars: "5", image: "https://images.unsplash.com/photo-1436491865332-7a61a109db05?auto=format&fit=crop&w=600&h=400&q=80" }
 ];
 
 // Helper functions
@@ -471,7 +419,7 @@ function GoldenBtn({ children, variant = "solid", onClick, style = {}, disabled 
   );
 }
 
-// 3. Card — consistent surface with token-based hover lift
+// 3. Card -- consistent surface with token-based hover lift
 function GlassCard({ children, tilt = true, style = {}, className = "" }) {
   return (
     <motion.div
@@ -512,7 +460,7 @@ function AnimatedCounter({ value, suffix = "+", duration = 2.5 }) {
   );
 }
 
-// 5. Scroll Reveal — fade + 14px translate, once, reduced-motion safe
+// 5. Scroll Reveal -- fade + 14px translate, once, reduced-motion safe
 function ScrollReveal({ children, delay = 0, direction = "up", duration = 0.5, style = {}, className = "" }) {
   const [ref, isVisible] = useScrollReveal({ once: true, threshold: 0.1 });
 
@@ -676,7 +624,7 @@ function Testimonial({ quote, author, role, stars }) {
   return (
     <GlassCard tilt={true} style={{ padding: "2.2rem 2rem", display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
       <div>
-        <div style={{ fontSize: "2.8rem", color: 'var(--accent)', lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>“</div>
+        <div style={{ fontSize: "2.8rem", color: 'var(--accent)', lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>"</div>
         <p style={{ fontStyle: "italic", fontSize: "var(--text-sm)", color: 'var(--text)', lineHeight: 1.65, marginBottom: "1.8rem" }}>
           {quote}
         </p>
@@ -963,7 +911,7 @@ function NavBtn({ label, active, onClick }) {
       }}
     >
       {label}
-      {/* Underline — scaleX draw, GPU-composited */}
+      {/* Underline -- scaleX draw, GPU-composited */}
       <span style={{
         position: "absolute",
         bottom: 6,
@@ -1283,7 +1231,7 @@ function SEOHead({ page }) {
 
 // ─── PAGES & SECTIONS ────────────────────────────────────────────────────────
 
-// 1. Section Hero — Split Layout
+// 1. Section Hero -- Split Layout
 function HeroSection({ goTo }) {
   useLang();
   const heroStats = [
@@ -1299,7 +1247,7 @@ function HeroSection({ goTo }) {
       minHeight: "100vh",
       overflow: "hidden",
     }}>
-      {/* Left — Text Content */}
+      {/* Left -- Text Content */}
       <div className="hero-text-panel" style={{
         background: "var(--bg)",
         display: "flex",
@@ -1371,7 +1319,7 @@ function HeroSection({ goTo }) {
           transition={{ delay: 0.44, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: "flex", gap: "var(--space-3)", flexWrap: "wrap", marginBottom: "var(--space-12)" }}
         >
-          <GoldenBtn variant="solid" onClick={() => goTo("catalogue")}>
+          <GoldenBtn variant="solid" className="animate-pulse-glow" onClick={() => goTo("catalogue")}>
             <Package size={16}/> {t("hero_cta1")}
           </GoldenBtn>
           <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite obtenir des informations sur vos services."))}>
@@ -1380,21 +1328,26 @@ function HeroSection({ goTo }) {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.58, duration: 0.6 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.58, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{
             display: "flex",
-            gap: "var(--space-12)",
+            gap: 0,
             paddingTop: "var(--space-6)",
             borderTop: "1px solid var(--border)",
             flexWrap: "wrap",
           }}
         >
           {heroStats.map((s, i) => (
-            <div key={i}>
+            <div key={i} style={{
+              flex: 1, minWidth: 100,
+              paddingRight: "var(--space-8)",
+              borderRight: i < heroStats.length - 1 ? "1px solid var(--border)" : "none",
+              marginRight: i < heroStats.length - 1 ? "var(--space-8)" : 0,
+            }}>
               <div style={{
-                fontSize: "var(--text-xl)",
+                fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
                 fontWeight: 700,
                 color: "var(--accent)",
                 fontFamily: "var(--font-display)",
@@ -1408,7 +1361,7 @@ function HeroSection({ goTo }) {
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 fontWeight: 600,
-                marginTop: "var(--space-1)",
+                marginTop: "var(--space-2)",
               }}>
                 {s.l}
               </div>
@@ -1417,19 +1370,77 @@ function HeroSection({ goTo }) {
         </motion.div>
       </div>
 
-      {/* Right — Image Panel */}
+      {/* Right -- Image Panel */}
       <div className="hero-image-panel" style={{ position: "relative", overflow: "hidden", minHeight: "100vh" }}>
-        <Img
-          src="https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=1200&h=1400&q=80"
-          alt="Shanghai skyline"
-          style={{ borderRadius: 0, height: "100%", width: "100%", objectFit: "cover" }}
-        />
+        <motion.div
+          initial={{ scale: 1.12, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <Img
+            src="https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1200&h=1400&q=80"
+            alt="Conteneurs d'import-export au port"
+            style={{ borderRadius: 0, height: "100%", width: "100%", objectFit: "cover" }}
+          />
+        </motion.div>
         <div style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(to right, rgba(253,252,248,0.12) 0%, rgba(0,0,0,0.18) 100%)",
-          zIndex: 1,
+          position: "absolute", inset: 0, zIndex: 1,
+          background: "linear-gradient(135deg, rgba(253,252,248,0.25) 0%, rgba(201,48,44,0.08) 40%, rgba(26,47,94,0.35) 100%)",
         }} />
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 1,
+          background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 40%)",
+        }} />
+        {/* Floating decorative badge */}
+        <motion.div
+          className="animate-float"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9, duration: 0.7 }}
+          style={{
+            position: "absolute", bottom: "12%", left: "8%", zIndex: 2,
+            background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)",
+            borderRadius: "var(--radius-md)", padding: "1rem 1.4rem",
+            boxShadow: "var(--shadow-lg)", display: "flex", alignItems: "center", gap: 12,
+          }}
+        >
+          <div style={{
+            width: 42, height: 42, borderRadius: "50%",
+            background: "linear-gradient(135deg, var(--accent), var(--accent-strong))",
+            display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
+          }}>
+            <Ship size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--text)" }}>+500 imports</div>
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>livrés avec succès</div>
+          </div>
+        </motion.div>
+        <motion.div
+          className="animate-float-delay"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.7 }}
+          style={{
+            position: "absolute", top: "18%", right: "8%", zIndex: 2,
+            background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)",
+            borderRadius: "var(--radius-md)", padding: "1rem 1.4rem",
+            boxShadow: "var(--shadow-lg)", display: "flex", alignItems: "center", gap: 12,
+          }}
+        >
+          <div style={{
+            width: 42, height: 42, borderRadius: "50%",
+            background: "linear-gradient(135deg, var(--secondary), #2a4a8a)",
+            display: "flex", alignItems: "center", justifyContent: "center", color: "#fff",
+          }}>
+            <GraduationCap size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--text)" }}>15+ universités</div>
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>partenaires en Chine</div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -1453,8 +1464,8 @@ function PageAccueil({ goTo }) {
   ];
 
   const officesList = [
-    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "services@easychina.online", "+86 198 7610 5148"] },
-    { flag: "🇨🇳", title: "Guangzhou Permanent", query: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
+    { flag: "🇹🇬", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Quartier Hédzranawoé, Lomé, Togo", "services@easychina.online", "+86 198 7610 5148"] },
+    { flag: "🇨🇳", title: "Guangzhou Permanent", query: "https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
   ];
 
   return (
@@ -1526,7 +1537,7 @@ function PageAccueil({ goTo }) {
           <ScrollReveal direction="right" delay={0.2}>
             <GlassCard tilt={true} style={{ padding: "2.5rem", textAlign: "center", background: "rgba(201, 48, 44,0.02)" }}>
               <div style={{ height: 250, marginBottom: "2rem", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
-                <Img src="https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=800&h=600&q=80" alt="guangzhou market" style={{ height: "100%" }} />
+                <Img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=800&h=600&q=80" alt="Canton Tower Guangzhou" style={{ height: "100%" }} />
               </div>
               <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
                 {["🇨🇳 Guangzhou", "🇨🇳 Yiwu", "🇹🇬 Lomé", "🇨🇮 Abidjan", "🇸🇳 Dakar"].map(c => (
@@ -1583,40 +1594,65 @@ function PageAccueil({ goTo }) {
 
       {/* CTA Final */}
       <div style={{
-        background: `linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 60%, #b71c1c 100%)`,
+        background: `linear-gradient(135deg, var(--secondary) 0%, #0f1f40 50%, var(--accent-strong) 100%)`,
         padding: "var(--space-section) var(--gutter)",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
         zIndex: 2,
       }}>
-        {/* Geometric decorations */}
-        <div style={{
-          position: "absolute", left: "-5%", top: "-30%",
-          width: 450, height: 450, borderRadius: "50%",
-          background: "rgba(255,255,255,0.06)", pointerEvents: "none"
+        {/* Decorative elements */}
+        <div className="animate-float" style={{
+          position: "absolute", left: "-8%", top: "-25%",
+          width: 500, height: 500, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,48,44,0.15) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+        <div className="animate-float-delay" style={{
+          position: "absolute", right: "-6%", bottom: "-20%",
+          width: 400, height: 400, borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,48,44,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
         }} />
         <div style={{
-          position: "absolute", right: "-5%", bottom: "-30%",
-          width: 350, height: 350, borderRadius: "50%",
-          background: "rgba(255,255,255,0.06)", pointerEvents: "none"
+          position: "absolute", inset: 0,
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          pointerEvents: "none",
         }} />
 
         <div style={{ position: "relative", zIndex: 3, maxWidth: 650, margin: "0 auto" }}>
           <ScrollReveal direction="up" delay={0.1}>
-            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "1.5rem", fontFamily: "var(--font-display)", color: "#fff" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+              padding: "0.4rem 1rem", borderRadius: "var(--radius-full)",
+              fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.7)",
+              fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase",
+              marginBottom: "var(--space-6)",
+            }}>
+              <Zap size={12} /> Commencez maintenant
+            </div>
+          </ScrollReveal>
+          <ScrollReveal direction="up" delay={0.15}>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 700, marginBottom: "1.5rem", fontFamily: "var(--font-display)", color: "#fff", lineHeight: 1.15 }}>
               {t("cta_title")}
             </h2>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
-            <p style={{ color: "rgba(255,255,255,0.82)", fontSize: "var(--text-base)", lineHeight: 1.75, marginBottom: "3rem" }}>
+            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "var(--text-base)", lineHeight: 1.75, marginBottom: "2.5rem", maxWidth: "50ch", margin: "0 auto 2.5rem" }}>
               {t("cta_subtitle")}
             </p>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.3}>
-            <GoldenBtn variant="white" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour, je souhaite démarrer un projet d'importation/études avec Easy China."))}>
-              <TrendingUp size={18} style={{marginRight: 8}}/> {t("cta_btn")}
-            </GoldenBtn>
+            <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-3)", flexWrap: "wrap" }}>
+              <GoldenBtn variant="white" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour, je souhaite démarrer un projet d'importation/études avec Easy China."))}>
+                <TrendingUp size={18} style={{marginRight: 8}}/> {t("cta_btn")}
+              </GoldenBtn>
+              <GoldenBtn variant="outline" onClick={() => goTo("catalogue")} style={{ borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}>
+                <Package size={16} style={{marginRight: 6}}/> Voir le catalogue
+              </GoldenBtn>
+            </div>
           </ScrollReveal>
         </div>
       </div>
@@ -1656,21 +1692,24 @@ function PaysCouverts() {
     <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
       <SectionTitle eyebrow={t("pays_eyebrow")} title={t("pays_title")} subtitle={t("pays_subtitle")} />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", justifyContent: "center", maxWidth: "var(--container)", margin: "0 auto" }}>
-        {PAYS_AFRIQUE.map((p) => (
-          <div key={p.name} style={{
-            display:"flex", alignItems:"center", gap:8,
-            background:"#fff", border:`1px solid var(--border)`,
-            borderRadius:40, padding:"0.55rem 1.2rem",
-            boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
-            fontSize:"0.82rem", fontWeight:600, color:"var(--text)",
-            transition:"color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-          }}
-            onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--accent)"; e.currentTarget.style.color="var(--accent)"; e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow=`0 6px 20px rgba(201,48,44,0.12)`; }}
-            onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.color="var(--text)"; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; }}
-          >
-            <span style={{fontSize:"1.2rem"}}>{p.flag}</span>
-            {p.name}
-          </div>
+        {PAYS_AFRIQUE.map((p, i) => (
+          <ScrollReveal key={p.name} direction="up" delay={i * 0.04}>
+            <div style={{
+              display:"flex", alignItems:"center", gap:8,
+              background:"#fff", border:`1px solid var(--border)`,
+              borderRadius:40, padding:"0.55rem 1.2rem",
+              boxShadow:"0 2px 8px rgba(0,0,0,0.05)",
+              fontSize:"0.82rem", fontWeight:600, color:"var(--text)",
+              cursor: "default",
+              transition:"color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
+            }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--accent)"; e.currentTarget.style.color="var(--accent)"; e.currentTarget.style.transform="translateY(-3px) scale(1.04)"; e.currentTarget.style.boxShadow=`0 8px 24px rgba(201,48,44,0.15)`; e.currentTarget.style.background="var(--accent-soft)"; }}
+              onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.color="var(--text)"; e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.05)"; e.currentTarget.style.background="#fff"; }}
+            >
+              <span style={{fontSize:"1.2rem"}}>{p.flag}</span>
+              {p.name}
+            </div>
+          </ScrollReveal>
         ))}
       </div>
       <div style={{ textAlign:"center", marginTop:"2.5rem" }}>
@@ -1682,7 +1721,7 @@ function PaysCouverts() {
   );
 }
 
-// ─── PROCESSUS 4 ÉTAPES — Horizontal timeline ────────────────────────────────
+// ─── PROCESSUS 4 ÉTAPES -- Horizontal timeline ────────────────────────────────
 function ProcessusSection() {
   useLang();
   const steps = [
@@ -2083,12 +2122,33 @@ function PageCatalogue({ articles }) {
   }, [articles, selectedCat]);
 
   return (
-    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
-      <SectionTitle
-        eyebrow={t("cat_eyebrow")}
-        title={t("cat_title")}
-        subtitle={t("cat_subtitle")}
-      />
+    <div>
+      {/* Hero banner for catalogue */}
+      <div style={{
+        position: "relative", height: "clamp(180px, 28vw, 280px)", overflow: "hidden",
+        background: "linear-gradient(135deg, var(--secondary) 0%, #0f1f40 60%, var(--accent-strong) 100%)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
+          <Img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&h=400&q=70" alt="" style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: 0 }} />
+        </div>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 var(--gutter)" }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.6)", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.6rem" }}>
+              {t("cat_eyebrow")}
+            </div>
+            <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#fff", fontFamily: "var(--font-display)", lineHeight: 1.2 }}>
+              {t("cat_title")}
+            </h1>
+          </motion.div>
+        </div>
+      </div>
+
+      <div style={{ padding: "var(--space-12) var(--gutter) var(--space-section)", maxWidth: "var(--container)", margin: "0 auto" }}>
+      <p style={{ textAlign: "center", color: "var(--muted)", fontSize: "var(--text-sm)", maxWidth: "60ch", margin: "0 auto var(--space-8)", lineHeight: 1.7 }}>
+        {t("cat_subtitle")}
+      </p>
 
       {/* Category Filter Pills */}
       <ScrollReveal direction="up" delay={0.1}>
@@ -2129,81 +2189,76 @@ function PageCatalogue({ articles }) {
       {/* Products Grid */}
       <div className="grid-3">
         {filteredArticles.map((a, i) => (
-          <ScrollReveal key={a.id} direction="up" delay={i * 0.05}>
-            <GlassCard style={{ height: "100%", padding: 0, overflow: "hidden" }}>
-              <div className="zoom-container" style={{ height: 200, position: "relative" }}>
+          <ScrollReveal key={a.id} direction="up" delay={i * 0.06}>
+            <GlassCard tilt style={{ height: "100%", padding: 0, overflow: "hidden", border: "1px solid var(--border)", transition: "transform 0.3s, box-shadow 0.3s" }}>
+              {/* Image with layered overlays */}
+              <div className="zoom-container" style={{ height: 220, position: "relative" }}>
                 <MediaDisplay
                   src={a.image}
                   fallback={UNSPLASH[a.cat] || UNSPLASH["Autre"]}
                   alt={a.titre}
                   style={{ height: "100%", borderRadius: "0px" }}
                 />
+                {/* Gradient overlay */}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,20,16,0.7) 0%, rgba(26,20,16,0.1) 40%, transparent 70%)", zIndex: 1 }} />
+                {/* Category badge */}
                 <div style={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
-                  color: "var(--bg)",
-                  fontSize: "var(--text-xs)",
-                  fontWeight: 700,
-                  padding: "0.3rem 0.8rem",
-                  borderRadius: 20,
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                  position: "absolute", top: 14, right: 14, zIndex: 2,
+                  background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)",
+                  color: "var(--accent)", fontSize: "var(--text-xs)", fontWeight: 700,
+                  padding: "0.35rem 0.9rem", borderRadius: 20,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.12)", letterSpacing: "0.04em",
                 }}>
                   {a.cat}
                 </div>
+                {/* Price overlay on image */}
                 <div style={{
-                  position: "absolute",
-                  bottom: 12,
-                  left: 12,
-                  background: "rgba(5, 8, 16, 0.75)",
-                  backdropFilter: "blur(4px)",
-                  border: `1.5px solid var(--accent)`,
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: 'var(--accent)'
+                  position: "absolute", bottom: 14, left: 14, zIndex: 2,
+                  display: "flex", alignItems: "center", gap: 10,
                 }}>
-                  <Package size={18}/>
+                  <div style={{
+                    background: "linear-gradient(135deg, var(--accent), var(--accent-strong))",
+                    color: "#fff", fontSize: "var(--text-sm)", fontWeight: 700,
+                    padding: "0.5rem 1rem", borderRadius: "var(--radius-sm)",
+                    boxShadow: "var(--shadow-accent)",
+                  }}>
+                    {a.prix}
+                  </div>
                 </div>
               </div>
 
-              <div style={{ padding: "1.8rem", display: "flex", flexDirection: "column", height: "calc(100% - 200px)", justifyContent: "space-between" }}>
+              {/* Content */}
+              <div style={{ padding: "1.6rem", display: "flex", flexDirection: "column", height: "calc(100% - 220px)", justifyContent: "space-between" }}>
                 <div style={{ textAlign: "left" }}>
-                  <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, color: 'var(--text)', marginBottom: "0.5rem" }}>
+                  <h3 style={{ fontSize: "var(--text-md)", fontWeight: 700, color: "var(--text)", marginBottom: "0.6rem", lineHeight: 1.3 }}>
                     {a.titre}
                   </h3>
-                  <div style={{ color: 'var(--accent)', fontWeight: 700, fontSize: "var(--text-base)", marginBottom: "0.8rem" }}>
-                    {a.prix}
-                  </div>
-                  <p style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.5, marginBottom: "1.8rem" }}>
+                  <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.6, marginBottom: "1.5rem" }}>
                     {a.desc}
                   </p>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10 }}>
                   <GoldenBtn
                     variant="solid"
                     onClick={() => window.open(waLink(WA_COMMERCIAL, `Bonjour Easy China, je souhaite passer commande pour le produit "${a.titre}" au prix de "${a.prix}".`))}
-                    style={{ width: "100%" }}
+                    style={{ flex: 1 }}
                   >
-                    <Package size={18} style={{marginRight: 8}}/> Commander
+                    <Package size={16}/> Commander
                   </GoldenBtn>
                   <GoldenBtn
                     variant="outline"
                     onClick={() => window.open(waLink(WA_TRANSITAIRE, `Bonjour Easy China, je souhaite obtenir des informations douanières et logistiques pour l'importation de : "${a.titre}".`))}
-                    style={{ width: "100%" }}
+                    style={{ flex: 1 }}
                   >
-                    <Ship size={18} style={{marginRight: 8}}/> Service Transitaire
+                    <Ship size={16}/> Transitaire
                   </GoldenBtn>
                 </div>
               </div>
             </GlassCard>
           </ScrollReveal>
         ))}
+      </div>
       </div>
     </div>
   );
@@ -2213,12 +2268,33 @@ function PageCatalogue({ articles }) {
 function PageRealisations({ realisations }) {
   useLang();
   return (
-    <div style={{ padding: "var(--space-section) var(--gutter)", maxWidth: "var(--container)", margin: "0 auto" }}>
-      <SectionTitle
-        eyebrow={t("real_eyebrow")}
-        title={t("real_title")}
-        subtitle={t("real_subtitle")}
-      />
+    <div>
+      {/* Hero banner for réalisations */}
+      <div style={{
+        position: "relative", height: "clamp(180px, 28vw, 280px)", overflow: "hidden",
+        background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 50%, var(--secondary) 100%)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.15 }}>
+          <Img src="https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=1400&h=400&q=70" alt="" style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: 0 }} />
+        </div>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 var(--gutter)" }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.6)", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.6rem" }}>
+              {t("real_eyebrow")}
+            </div>
+            <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#fff", fontFamily: "var(--font-display)", lineHeight: 1.2 }}>
+              {t("real_title")}
+            </h1>
+          </motion.div>
+        </div>
+      </div>
+
+      <div style={{ padding: "var(--space-12) var(--gutter) var(--space-section)", maxWidth: "var(--container)", margin: "0 auto" }}>
+      <p style={{ textAlign: "center", color: "var(--muted)", fontSize: "var(--text-sm)", maxWidth: "60ch", margin: "0 auto var(--space-8)", lineHeight: 1.7 }}>
+        {t("real_subtitle")}
+      </p>
 
       {/* Bento Grid */}
       <div className="bento-grid" style={{ marginBottom: "4rem" }}>
@@ -2233,87 +2309,57 @@ function PageRealisations({ realisations }) {
               style={{ ...bentoStyle }}
               className={isLarge ? "bento-card-large" : "bento-card"}
             >
-              <GlassCard style={{ height: "100%", padding: 0, overflow: "hidden" }}>
-                <div style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%"
-                }}>
-                  {/* Visual Image Banner for larger items */}
-                  {isLarge && (
-                    <div style={{ height: 160, position: "relative" }}>
-                      <MediaDisplay
-                        src={r.image}
-                        fallback={UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"]}
-                        alt={r.titre}
-                        style={{ borderRadius: "0px", height: "100%" }}
-                      />
-                      <div style={{
-                        position: "absolute", inset: 0,
-                        background: "linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.7))"
-                      }} />
+              <GlassCard tilt style={{ height: "100%", padding: 0, overflow: "hidden", border: "1px solid var(--border)" }}>
+                <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                  <div className="zoom-container" style={{ height: isLarge ? 180 : 140, position: "relative", flexShrink: 0 }}>
+                    <MediaDisplay
+                      src={r.image}
+                      fallback={UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"]}
+                      alt={r.titre}
+                      style={{ borderRadius: "0px", height: "100%" }}
+                    />
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,20,16,0.65) 0%, transparent 60%)" }} />
+                    <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2, display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{
+                        background: "rgba(255,255,255,0.9)", backdropFilter: "blur(6px)",
+                        color: "var(--accent)", fontSize: "var(--text-xs)", fontWeight: 700,
+                        padding: "0.3rem 0.75rem", borderRadius: 20,
+                        textTransform: "uppercase", letterSpacing: "0.04em",
+                      }}>
+                        {r.cat}
+                      </span>
                     </div>
-                  )}
+                    <div style={{ position: "absolute", bottom: 10, right: 12, zIndex: 2, display: "flex", gap: 2 }}>
+                      {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
+                        <Star key={stIdx} size={12} fill="#fbbf24" color="#fbbf24" />
+                      ))}
+                    </div>
+                  </div>
 
-                  <div style={{ padding: "2rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div style={{ padding: "1.4rem 1.6rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContext: "space-between", marginBottom: "0.8rem", justifyContent: "space-between" }}>
-                        <span style={{
-                          background: "rgba(201, 48, 44,0.08)",
-                          border: `1px solid rgba(201, 48, 44,0.25)`,
-                          color: 'var(--accent)',
-                          fontSize: "var(--text-xs)",
-                          fontWeight: 700,
-                          padding: "0.25rem 0.75rem",
-                          borderRadius: 20,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.03em"
-                        }}>
-                          {r.cat}
-                        </span>
-                        <span style={{ color: 'var(--accent)' }}>
-                          {r.cat === "Import" ? <Ship size={20}/> :
-                           r.cat === "Études" ? <GraduationCap size={20}/> :
-                           r.cat === "Formation" ? <Wrench size={20}/> :
-                           <FileCheck size={20}/>}
-                        </span>
-                      </div>
-
                       <h3 style={{
-                        fontSize: isLarge ? "1.3rem" : "1.05rem",
-                        fontWeight: 700,
-                        color: 'var(--text)',
-                        lineHeight: 1.25,
-                        marginBottom: "0.6rem",
-                        fontFamily: "var(--font-display)",
-                        textAlign: "left"
+                        fontSize: isLarge ? "1.2rem" : "1rem",
+                        fontWeight: 700, color: "var(--text)", lineHeight: 1.3,
+                        marginBottom: "0.5rem", fontFamily: "var(--font-display)", textAlign: "left",
                       }}>
                         {r.titre}
                       </h3>
-                      <p style={{ fontSize: "var(--text-sm)", color: 'var(--muted)', lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "left" }}>
+                      <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.6, marginBottom: "1rem", textAlign: "left" }}>
                         {r.desc}
                       </p>
                     </div>
 
-                    {/* Testimonial Quote inside Bento Box */}
                     {r.temoignage && (
                       <div style={{
-                        borderTop: `1px solid var(--border)`,
-                        paddingTop: "1.2rem",
-                        marginTop: "1rem"
+                        background: "var(--accent-soft)", borderRadius: "var(--radius-sm)",
+                        padding: "1rem 1.1rem", position: "relative",
                       }}>
-                        <div style={{ color: 'var(--accent)', fontSize: "1.8rem", height: 16, lineHeight: 0.1, fontFamily: "serif", opacity: 0.3, marginBottom: "0.4rem", textAlign: "left" }}>“</div>
-                        <p style={{ fontStyle: "italic", fontSize: "var(--text-sm)", color: 'var(--text)', lineHeight: 1.5, marginBottom: "0.8rem", textAlign: "left" }}>
+                        <div style={{ color: "var(--accent)", fontSize: "2rem", lineHeight: 0.8, fontFamily: "serif", opacity: 0.25, position: "absolute", top: 6, left: 10 }}>&ldquo;</div>
+                        <p style={{ fontStyle: "italic", fontSize: "var(--text-xs)", color: "var(--text)", lineHeight: 1.5, marginBottom: "0.5rem", textAlign: "left", paddingLeft: 12 }}>
                           {r.temoignage}
                         </p>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: 'var(--accent)' }}>{r.client}</span>
-                          <span style={{ color: 'var(--accent)', display: "flex", gap: 1 }}>
-                            {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
-                              <Star key={stIdx} size={11} fill={"var(--accent)"} color={"var(--accent)"} />
-                            ))}
-                          </span>
-                        </div>
+                        <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: "var(--accent)", paddingLeft: 12 }}>&mdash; {r.client}</span>
                       </div>
                     )}
                   </div>
@@ -2342,6 +2388,7 @@ function PageRealisations({ realisations }) {
           </GoldenBtn>
         </GlassCard>
       </ScrollReveal>
+      </div>
     </div>
   );
 }
@@ -2495,24 +2542,23 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
     const blob = URL.createObjectURL(file);
     setObjectUrl(blob);
 
-    if (GH_TOKEN) {
+    if (supabase) {
       setUploading(true);
-      const ghUrl = await ghUploadMedia(file);
+      const publicUrl = await sbUploadMedia(file);
       setUploading(false);
-      if (ghUrl) {
-        setPreview(ghUrl);
-        onChange(ghUrl);
+      if (publicUrl) {
+        setPreview(publicUrl);
+        onChange(publicUrl);
       } else {
-        setUploadErr("Erreur d'upload GitHub. Vérifiez le token dans Vercel.");
+        setUploadErr("Erreur d'upload. Vérifiez la configuration Supabase.");
         setObjectUrl("");
       }
     } else if (isImage) {
-      // Fallback: base64 for images only when no token
       const reader = new FileReader();
       reader.onload = e => { setPreview(e.target.result); onChange(e.target.result); };
       reader.readAsDataURL(file);
     } else {
-      setUploadErr("Pour les vidéos et fichiers, configurez VITE_GITHUB_TOKEN dans Vercel → Settings → Environment Variables.");
+      setUploadErr("Configurez VITE_SUPABASE_ANON_KEY dans Vercel → Settings → Environment Variables.");
       setObjectUrl("");
     }
   };
@@ -2548,7 +2594,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
         {uploading ? (
           <>
             <div style={{ width: 30, height: 30, border: `3px solid var(--border)`, borderTop: `3px solid var(--accent)`, borderRadius: "50%", animation: "spin .75s linear infinite" }} />
-            <p style={{ fontSize: ".8rem", color: 'var(--muted)', margin: 0 }}>Upload GitHub en cours…</p>
+            <p style={{ fontSize: ".8rem", color: 'var(--muted)', margin: 0 }}>Upload en cours…</p>
           </>
         ) : displaySrc ? (
           <>
@@ -2564,7 +2610,7 @@ const MediaUpload = ({ value, onChange, label = "Photo / Vidéo" }) => {
             )}
             {uploading === false && objectUrl && (
               <p style={{ fontSize: ".65rem", color: 'var(--secondary)', margin: 0 }}>
-                ✓ Déployé sur GitHub — visible après le prochain redéploiement Vercel (~2 min)
+                ✓ Fichier uploadé avec succès
               </p>
             )}
             <button type="button" onClick={clear}
@@ -3064,14 +3110,14 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
               deploying: { color: "#15803d", bg: "rgba(34,197,94,.12)",  label: "Déployé ✓" },
               error:     { color: "var(--accent)", bg: "rgba(201,48,44,.1)", label: "Erreur" },
             };
-            const p = pills[deployStatus] || (GH_TOKEN
+            const p = pills[deployStatus] || (supabase
               ? { color: "#15803d", bg: "rgba(34,197,94,.1)", label: "Live" }
               : { color: "#b45309", bg: "rgba(234,179,8,.1)", label: "Local" });
             return <span style={{ fontSize: "11px", fontWeight: 700, color: p.color, background: p.bg, padding: "3px 11px", borderRadius: 20, flexShrink: 0 }}>{p.label}</span>;
           })()}
         </header>
 
-        {/* Mobile tab strip — visible only on small screens */}
+        {/* Mobile tab strip -- visible only on small screens */}
         <div className="adm-tab-strip" style={{ display: "none" }}>
           {[
             { id: "catalogue",    icon: <Package size={14}/>,       label: "Catalogue" },
@@ -3241,8 +3287,8 @@ function PageAdmin({ articles, setArticles, realisations, setRealisations, equip
                           : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><Users size={20} color="var(--muted)" /></div>}
                       </div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: "var(--text-base)", color: "var(--text)" }}>{memNom || "—"}</div>
-                        <div style={{ fontSize: "var(--text-sm)", color: "var(--accent)", fontWeight: 600 }}>{memPoste || "—"}</div>
+                        <div style={{ fontWeight: 700, fontSize: "var(--text-base)", color: "var(--text)" }}>{memNom || "--"}</div>
+                        <div style={{ fontSize: "var(--text-sm)", color: "var(--accent)", fontWeight: 600 }}>{memPoste || "--"}</div>
                         {memBio && <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)", marginTop: 4, lineHeight: 1.5 }}>{memBio.slice(0, 120)}{memBio.length > 120 ? "…" : ""}</div>}
                       </div>
                     </div>
@@ -3333,29 +3379,31 @@ export default function App() {
   const [equipe,       setEquipeState]       = useState(DEFAULT_EQUIPE);
   const [deployStatus, setDeployStatus]      = useState(null); // null | 'saving' | 'deploying' | 'error'
 
-  // Load live data from /public/data JSON files served by Vercel
   useEffect(() => {
+    if (!supabase) return;
     const load = async () => {
       try {
-        const [cr, rr, er] = await Promise.all([
-          fetch(`/data/catalogue.json?t=${Date.now()}`),
-          fetch(`/data/realisations.json?t=${Date.now()}`),
-          fetch(`/data/equipe.json?t=${Date.now()}`),
+        const [ar, rr, er] = await Promise.all([
+          supabase.from("articles").select("*").order("id"),
+          supabase.from("realisations").select("*").order("id"),
+          supabase.from("equipe").select("*").order("id"),
         ]);
-        if (cr.ok) { const d = await cr.json(); if (d?.length) setArticlesState(d); }
-        if (rr.ok) { const d = await rr.json(); if (d?.length) setRealisationsState(d); }
-        if (er.ok) { const d = await er.json(); if (d?.length) setEquipeState(d); }
+        if (ar.data?.length) setArticlesState(ar.data);
+        if (rr.data?.length) setRealisationsState(rr.data);
+        if (er.data?.length) setEquipeState(er.data);
       } catch {}
     };
     load();
   }, []);
 
-  const doGhSave = useCallback(async (filepath, data) => {
-    if (!GH_TOKEN) return;
+  const sbSync = useCallback(async (table, data) => {
+    if (!supabase) return;
     setDeployStatus("saving");
-    const ok = await ghCommit(filepath, data);
-    setDeployStatus(ok ? "deploying" : "error");
-    if (ok) setTimeout(() => setDeployStatus(null), 150000);
+    const ids = data.map(r => r.id);
+    await supabase.from(table).delete().not("id", "in", `(${ids.join(",")})`);
+    const { error } = await supabase.from(table).upsert(data, { onConflict: "id" });
+    setDeployStatus(error ? "error" : "deploying");
+    if (!error) setTimeout(() => setDeployStatus(null), 3000);
   }, []);
 
   const setArticles = useCallback((v) => {
@@ -3364,8 +3412,8 @@ export default function App() {
       captured = typeof v === "function" ? v(prev) : v;
       return captured;
     });
-    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/catalogue.json", captured); }, 0);
-  }, [doGhSave]);
+    setTimeout(() => { if (captured !== undefined) sbSync("articles", captured); }, 0);
+  }, [sbSync]);
 
   const setRealisations = useCallback((v) => {
     let captured;
@@ -3373,8 +3421,8 @@ export default function App() {
       captured = typeof v === "function" ? v(prev) : v;
       return captured;
     });
-    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/realisations.json", captured); }, 0);
-  }, [doGhSave]);
+    setTimeout(() => { if (captured !== undefined) sbSync("realisations", captured); }, 0);
+  }, [sbSync]);
 
   const setEquipe = useCallback((v) => {
     let captured;
@@ -3382,8 +3430,8 @@ export default function App() {
       captured = typeof v === "function" ? v(prev) : v;
       return captured;
     });
-    setTimeout(() => { if (captured !== undefined) doGhSave("public/data/equipe.json", captured); }, 0);
-  }, [doGhSave]);
+    setTimeout(() => { if (captured !== undefined) sbSync("equipe", captured); }, 0);
+  }, [sbSync]);
 
   useEffect(() => {
     document.documentElement.lang = "fr";
@@ -3556,6 +3604,17 @@ export default function App() {
           }
         }
 
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: var(--space-8) !important;
+            text-align: center;
+          }
+          .footer-grid p { margin-left: auto; margin-right: auto; }
+          .footer-grid div:nth-child(2) span,
+          .footer-grid div:nth-child(3) > div > div { justify-content: center; }
+        }
+
         @media (max-width: 640px) {
           .grid-50-50 {
             grid-template-columns: 1fr !important;
@@ -3612,33 +3671,100 @@ export default function App() {
       <footer style={{
         background: "var(--secondary)",
         color: "rgba(255,255,255,0.55)",
-        textAlign: "center",
-        padding: "var(--space-16) var(--gutter)",
+        padding: "0",
         fontSize: "var(--text-sm)",
         borderTop: `2px solid var(--accent)`,
         position: "relative",
         zIndex: 2,
+        overflow: "hidden",
       }}>
-        <div style={{ maxWidth: "var(--container)", margin: "0 auto", display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <img
-              src="/logo.png"
-              alt="Easy China"
-              onClick={() => goTo("accueil")}
-              style={{ height: 44, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)" }}
-            />
+        {/* Decorative accent line */}
+        <div style={{ height: 3, background: "linear-gradient(90deg, var(--accent), var(--accent-strong), var(--accent))" }} />
+
+        <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "var(--space-16) var(--gutter) var(--space-8)" }}>
+          {/* Top row: 3 columns */}
+          <div className="footer-grid" style={{
+            display: "grid",
+            gridTemplateColumns: "1.4fr 1fr 1fr",
+            gap: "var(--space-12)",
+            marginBottom: "var(--space-12)",
+          }}>
+            {/* Col 1: Brand */}
+            <div>
+              <img
+                src="/logo.png" alt="Easy China"
+                onClick={() => goTo("accueil")}
+                style={{ height: 48, width: "auto", objectFit: "contain", cursor: "pointer", filter: "brightness(0) invert(1)", marginBottom: "var(--space-6)" }}
+              />
+              <p style={{ color: "rgba(255,255,255,0.5)", lineHeight: 1.7, fontSize: "var(--text-sm)", maxWidth: "36ch", marginBottom: "var(--space-6)" }}>
+                Votre partenaire de confiance pour l'import depuis la Chine, les études universitaires et les services de visa.
+              </p>
+              <a
+                href={waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite des informations.")}
+                target="_blank" rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "#25D366", color: "#fff", fontWeight: 600,
+                  padding: "0.6rem 1.2rem", borderRadius: "var(--radius-full)",
+                  fontSize: "var(--text-xs)", textDecoration: "none",
+                  transition: "transform 0.15s, box-shadow 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(37,211,102,0.35)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                <MessageCircle size={14} /> WhatsApp
+              </a>
+            </div>
+
+            {/* Col 2: Navigation */}
+            <div>
+              <h4 style={{ color: "#fff", fontWeight: 700, fontSize: "var(--text-sm)", marginBottom: "var(--space-6)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Navigation</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+                {[["accueil","Accueil"],["catalogue","Catalogue"],["realisations","Réalisations"],["equipe","Notre Équipe"]].map(([k, label]) => (
+                  <span key={k}
+                    style={{ cursor: "pointer", color: "rgba(255,255,255,0.5)", transition: "color 0.15s, padding-left 0.15s", fontWeight: 500, paddingLeft: 0 }}
+                    onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.paddingLeft = "6px"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; e.currentTarget.style.paddingLeft = "0"; }}
+                    onClick={() => goTo(k)}>{label}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 3: Contact */}
+            <div>
+              <h4 style={{ color: "#fff", fontWeight: 700, fontSize: "var(--text-sm)", marginBottom: "var(--space-6)", letterSpacing: "0.08em", textTransform: "uppercase" }}>Contact</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
+                  <Mail size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                  <span>services@easychina.online</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
+                  <Phone size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                  <span>+86 198 7610 5148</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
+                  <MapPin size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                  <span>Guangzhou · Yiwu · Lomé</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <p style={{ fontSize: "var(--text-xs)", letterSpacing: "0.02em", color: "rgba(255,255,255,0.4)" }}>
-            {t("footer_copy")}
-          </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-8)", flexWrap: "wrap" }}>
-            {[["accueil","nav_accueil"],["catalogue","nav_catalogue"],["realisations","nav_realisations"],["equipe","nav_equipe"]].map(([k, tk]) => (
-              <span key={k}
-                style={{ cursor: "pointer", color: "rgba(255,255,255,0.55)", transition: "color 0.15s", fontWeight: 500 }}
-                onMouseEnter={e => e.currentTarget.style.color = "#fff"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.55)"}
-                onClick={() => goTo(k)}>{t(tk)}</span>
-            ))}
+
+          {/* Bottom bar */}
+          <div style={{
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            paddingTop: "var(--space-6)",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            flexWrap: "wrap", gap: "var(--space-4)",
+          }}>
+            <p style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.35)", margin: 0 }}>
+              {t("footer_copy")}
+            </p>
+            <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
+              {["🇹🇬","🇨🇳","🇨🇮","🇸🇳","🇨🇲"].map(f => (
+                <span key={f} style={{ fontSize: "1.1rem" }}>{f}</span>
+              ))}
+            </div>
           </div>
         </div>
       </footer>

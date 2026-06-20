@@ -14,17 +14,17 @@
 
 :root {
   /* ── Backgrounds ── */
-  --bg:          #fdfcf8;
-  --surface:     #ffffff;
-  --surface-alt: #f6f2ea;
-  --accent-soft: rgba(201, 48, 44, 0.07);
+  --bg:          #faf5f0;
+  --surface:     #fdf8f4;
+  --surface-alt: #f3ece3;
+  --accent-soft: rgba(201, 48, 44, 0.08);
 
   /* ── Text ── */
   --text:  #1a1410;
   --muted: #6b5e52;
 
   /* ── Border ── */
-  --border: #e6dfd2;
+  --border: #e8ddd0;
 
   /* ── Accent — China red, the ONE accent ── */
   --accent:        #c9302c;
@@ -124,6 +124,45 @@ p {
 .grid-3 p, .grid-4 p, .grid-50-50 p, .bento-grid p {
   max-width: none;
 }
+
+/* ── Keyframe animations ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 48, 44, 0.4); }
+  50% { box-shadow: 0 0 20px 6px rgba(201, 48, 44, 0.15); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  30% { transform: translate(1%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  70% { transform: translate(3%, 1%); }
+  90% { transform: translate(2%, -1%); }
+}
+
+@keyframes counter-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-float { animation: float 5s ease-in-out infinite; }
+.animate-float-delay { animation: float 5s ease-in-out 1.5s infinite; }
+.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
 
 /* ── prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
