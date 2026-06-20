@@ -13,9 +13,11 @@ import { Img } from "@/components/primitives/Img";
 
 // Fallback photos from user's assets
 const FALLBACK_PHOTOS = [
-  "/assets/1000073489.jpg",
-  "/assets/1000073490.jpg",
-  "/assets/1000073491.jpg",
+  "/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png",
+  "/assets/Gemini_Generated_Image_k2dyogk2dyogk2dy.png",
+  "/assets/Gemini_Generated_Image_tkorddtkorddtkor.png",
+  "/assets/Gemini_Generated_Image_wfcn48wfcn48wfcn.png",
+  "/assets/Gemini_Generated_Image_g3jhl3g3jhl3g3jh.png",
 ];
 
 // Bento coordinate mapping

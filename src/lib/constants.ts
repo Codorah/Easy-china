@@ -11,28 +11,28 @@ export const waLink = (num: string, msg: string): string =>
 
 export const UNSPLASH: Record<string, string> = {
   "Import général":
-    "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_xwx9mvxwx9mvxwx9.png",
   "Électronique":
-    "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_d3s4kfd3s4kfd3s4.png",
   "Textile":
-    "https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_w9yn2pw9yn2pw9yn.png",
   "Machines":
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png",
   "Alimentaire":
-    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_xmd7nxxmd7nxxmd7.png",
   "Autre":
-    "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_g3jhl3g3jhl3g3jh.png",
 };
 
 export const UNSPLASH_REAL: Record<string, string> = {
   "Import":
-    "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png",
   "Études":
-    "https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_k2dyogk2dyogk2dy.png",
   "Visa":
-    "https://images.unsplash.com/photo-1436491865332-7a61a109db05?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_wfcn48wfcn48wfcn.png",
   "Formation":
-    "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_tkorddtkorddtkor.png",
   "Tourisme":
-    "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?auto=format&fit=crop&w=600&h=400&q=80",
+    "/assets/Gemini_Generated_Image_73jgmh73jgmh73jg.png",
 };

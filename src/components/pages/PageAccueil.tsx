@@ -38,7 +38,7 @@ export function PageAccueil({ goTo }) {
   ];
 
   const officesList = [
-    { flag: "\u{1F1F9}\u{1F1EC}", title: "Easy China Lomé", query: "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=800&h=400&q=80", lines: ["Lomé, Togo", "WhatsApp: +228 90 61 92 88 / +228 99 51 37 18", "services@easychina.online"] },
+    { flag: "\u{1F1F9}\u{1F1EC}", title: "Easy China Lomé", query: "/assets/Gemini_Generated_Image_c0wh7gc0wh7gc0wh.png", lines: ["Lomé, Togo", "WhatsApp: +228 90 61 92 88 / +228 99 51 37 18", "services@easychina.online"] },
     { flag: "\u{1F1E8}\u{1F1F3}", title: "Guangzhou Permanent", query: "/assets/1000073490.jpg", lines: ["Guangzhou CBD & Yiwu City", "Sourcing direct, inspection logistique", "Présence physique permanente"] }
   ];
 

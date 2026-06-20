@@ -147,7 +147,7 @@ export function HeroSection({ goTo }) {
           className="h-full w-full"
         >
           <Img
-            src="https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=1200&h=1400&q=80"
+            src="/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png"
             alt="Conteneurs d'import-export au port"
             className="w-full h-full object-cover rounded-none"
           />

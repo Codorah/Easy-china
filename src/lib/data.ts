@@ -10,7 +10,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     desc: "Sourcing et livraison de lignes de lavage, séchage et repassage haut de gamme.",
     cat: "Machines",
     image:
-      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png",
   },
   {
     id: "2",
@@ -19,7 +19,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     desc: "Matériel d'éclairage LED haute puissance et basse consommation pour chantiers professionnels.",
     cat: "Électronique",
     image:
-      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_d3s4kfd3s4kfd3s4.png",
   },
   {
     id: "3",
@@ -28,7 +28,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     desc: "Importation directe de rouleaux de textiles nobles depuis les meilleurs tisseurs de Zhejiang.",
     cat: "Textile",
     image:
-      "https://images.unsplash.com/photo-1558171813-4c088753af8f?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_w9yn2pw9yn2pw9yn.png",
   },
   {
     id: "4",
@@ -37,7 +37,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     desc: "Machines de scellage, emballage et étiquetage de précision pour le secteur agroalimentaire.",
     cat: "Machines",
     image:
-      "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_xmd7nxxmd7nxxmd7.png",
   },
   {
     id: "5",
@@ -46,7 +46,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     desc: "Systèmes d'irrigation alimentés par énergie solaire, idéaux pour les exploitations agricoles.",
     cat: "Import général",
     image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_xwx9mvxwx9mvxwx9.png",
   },
 ];
 
@@ -86,7 +86,7 @@ export const DEFAULT_REALISATIONS: Realisation[] = [
       "Easy China a pris en charge toute la chaîne logistique et les douanes. Zéro tracas, service parfait !",
     stars: "5",
     image:
-      "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_g3jhl3g3jhl3g3jh.png",
   },
   {
     id: "2",
@@ -98,7 +98,7 @@ export const DEFAULT_REALISATIONS: Realisation[] = [
       "Grâce à leur expertise, mon fils a intégré Tsinghua avec une bourse d'excellence gouvernementale.",
     stars: "5",
     image:
-      "https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_k2dyogk2dyogk2dy.png",
   },
   {
     id: "3",
@@ -110,7 +110,7 @@ export const DEFAULT_REALISATIONS: Realisation[] = [
       "Les machines importées sont d'une efficacité incroyable. Le support technique est irréprochable.",
     stars: "5",
     image:
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_tkorddtkorddtkor.png",
   },
   {
     id: "4",
@@ -122,6 +122,6 @@ export const DEFAULT_REALISATIONS: Realisation[] = [
       "Visa obtenu en moins de 10 jours ouvrés. Notre mission commerciale en Chine a été une réussite totale.",
     stars: "5",
     image:
-      "https://images.unsplash.com/photo-1436491865332-7a61a109db05?auto=format&fit=crop&w=600&h=400&q=80",
+      "/assets/Gemini_Generated_Image_wfcn48wfcn48wfcn.png",
   },
 ];

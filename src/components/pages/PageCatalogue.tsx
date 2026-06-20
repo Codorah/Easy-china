@@ -35,7 +35,7 @@ export function PageCatalogue({ articles }) {
         "flex items-center justify-center"
       )}>
         <div className="absolute inset-0 opacity-[0.12]">
-          <Img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&h=400&q=70" alt="" className="h-full w-full object-cover rounded-none" />
+          <Img src="/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png" alt="" className="h-full w-full object-cover rounded-none" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px]" />
         <div className="relative z-[2] text-center px-6 lg:px-12">
