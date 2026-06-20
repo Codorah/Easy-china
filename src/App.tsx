@@ -1,14 +1,16 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback } from "react";
-import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, Send } from "lucide-react";
 import { t, useLang } from "./i18n";
 import { supabase } from "./supabase";
 import { WA_COMMERCIAL, waLink } from "@/lib/constants";
 import { DEFAULT_ARTICLES, DEFAULT_EQUIPE, DEFAULT_REALISATIONS } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 import { SEOHead } from "@/components/seo/SEOHead";
 import { FloatingNav } from "@/components/layout/FloatingNav";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 import { PageAccueil } from "@/components/pages/PageAccueil";
 import { PageCatalogue } from "@/components/pages/PageCatalogue";
 import { PageRealisations } from "@/components/pages/PageRealisations";
@@ -111,20 +113,11 @@ export default function App() {
   }, []);
 
   return (
-    <div
-      style={{
-        fontFamily: "var(--font-body)",
-        minHeight: "100vh",
-        background: "var(--bg)",
-        color: "var(--text)",
-        position: "relative",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="font-body min-h-screen bg-bg text-text relative overflow-x-hidden">
       <SEOHead page={page} />
       <FloatingNav pages={pagesList} activePage={page} setPage={goTo} />
 
-      <main style={{ position: "relative", zIndex: 1 }}>
+      <main className="relative z-[1]">
         <PageTransition pageKey={page}>
           {page === "accueil" && <PageAccueil goTo={goTo} />}
           {page === "catalogue" && <PageCatalogue articles={articles} />}
@@ -145,63 +138,22 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer
-        style={{
-          background: "var(--secondary)",
-          color: "rgba(255,255,255,0.55)",
-          padding: "0",
-          fontSize: "var(--text-sm)",
-          borderTop: "2px solid var(--accent)",
-          position: "relative",
-          zIndex: 2,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            height: 3,
-            background: "linear-gradient(90deg, var(--accent), var(--accent-strong), var(--accent))",
-          }}
-        />
-        <div
-          style={{
-            maxWidth: "var(--container)",
-            margin: "0 auto",
-            padding: "var(--space-16) var(--gutter) var(--space-8)",
-          }}
-        >
-          <div
-            className="footer-grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1.4fr 1fr 1fr",
-              gap: "var(--space-12)",
-              marginBottom: "var(--space-12)",
-            }}
-          >
+      <footer className="bg-secondary text-white/55 text-sm border-t-2 border-accent relative z-[2] overflow-hidden">
+        {/* Top gradient line */}
+        <div className="h-1 bg-gradient-to-r from-accent via-accent-strong to-accent" />
+
+        <div className="max-w-container mx-auto px-[clamp(20px,5vw,48px)] pt-16 pb-8">
+          {/* Main grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            {/* Brand column */}
             <div>
               <img
                 src="/logo.png"
                 alt="Easy China"
                 onClick={() => goTo("accueil")}
-                style={{
-                  height: 48,
-                  width: "auto",
-                  objectFit: "contain",
-                  cursor: "pointer",
-                  filter: "brightness(0) invert(1)",
-                  marginBottom: "var(--space-6)",
-                }}
+                className="h-12 w-auto object-contain cursor-pointer brightness-0 invert mb-6"
               />
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.5)",
-                  lineHeight: 1.7,
-                  fontSize: "var(--text-sm)",
-                  maxWidth: "36ch",
-                  marginBottom: "var(--space-6)",
-                }}
-              >
+              <p className="text-white/50 leading-[1.7] text-sm max-w-[36ch] mb-6">
                 Votre partenaire de confiance pour l'import depuis la Chine, les
                 études universitaires et les services de visa.
               </p>
@@ -209,46 +161,24 @@ export default function App() {
                 href={waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite des informations.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  background: "#25D366",
-                  color: "#fff",
-                  fontWeight: 600,
-                  padding: "0.6rem 1.2rem",
-                  borderRadius: "var(--radius-full)",
-                  fontSize: "var(--text-xs)",
-                  textDecoration: "none",
-                  transition: "transform 0.15s, box-shadow 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                  e.currentTarget.style.boxShadow = "0 4px 14px rgba(37,211,102,0.35)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+                className={cn(
+                  "inline-flex items-center gap-2",
+                  "bg-[#25D366] text-white font-semibold",
+                  "py-2.5 px-5 rounded-full text-xs",
+                  "no-underline",
+                  "hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                )}
               >
                 <MessageCircle size={14} /> WhatsApp
               </a>
             </div>
 
+            {/* Navigation column */}
             <div>
-              <h4
-                style={{
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "var(--text-sm)",
-                  marginBottom: "var(--space-6)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                }}
-              >
+              <h4 className="text-white font-bold text-sm mb-6 tracking-[0.08em] uppercase">
                 Navigation
               </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+              <div className="flex flex-col gap-3">
                 {[
                   ["accueil", "Accueil"],
                   ["catalogue", "Catalogue"],
@@ -257,21 +187,7 @@ export default function App() {
                 ].map(([k, label]) => (
                   <span
                     key={k}
-                    style={{
-                      cursor: "pointer",
-                      color: "rgba(255,255,255,0.5)",
-                      transition: "color 0.15s, padding-left 0.15s",
-                      fontWeight: 500,
-                      paddingLeft: 0,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "#fff";
-                      e.currentTarget.style.paddingLeft = "6px";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "rgba(255,255,255,0.5)";
-                      e.currentTarget.style.paddingLeft = "0";
-                    }}
+                    className="cursor-pointer text-white/50 font-medium hover:text-white hover:pl-1.5 transition-all"
                     onClick={() => goTo(k)}
                   >
                     {label}
@@ -280,53 +196,83 @@ export default function App() {
               </div>
             </div>
 
+            {/* Contact column */}
             <div>
-              <h4
-                style={{
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "var(--text-sm)",
-                  marginBottom: "var(--space-6)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                }}
-              >
+              <h4 className="text-white font-bold text-sm mb-6 tracking-[0.08em] uppercase">
                 Contact
               </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
-                  <Mail size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2.5 text-white/55">
+                  <Mail size={14} className="text-accent shrink-0" />
                   <span>services@easychina.online</span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
-                  <Phone size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                <div className="flex items-center gap-2.5 text-white/55">
+                  <Phone size={14} className="text-accent shrink-0" />
                   <span>+228 90 61 92 88</span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.55)" }}>
-                  <MapPin size={14} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                <div className="flex items-center gap-2.5 text-white/55">
+                  <MapPin size={14} className="text-accent shrink-0" />
                   <span>Guangzhou · Yiwu · Lomé</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div
-            style={{
-              borderTop: "1px solid rgba(255,255,255,0.1)",
-              paddingTop: "var(--space-6)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: "var(--space-4)",
-            }}
-          >
-            <p style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.35)", margin: 0 }}>
+          {/* Newsletter Section */}
+          <div className="border-t border-white/10 pt-8 mb-8">
+            <h4 className="text-white font-bold text-sm mb-2 tracking-[0.08em] uppercase">
+              Newsletter
+            </h4>
+            <p className="text-white/50 text-sm mb-4">
+              Recevez nos offres exclusives
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const input = e.target.querySelector("input");
+                if (input?.value) {
+                  window.open(waLink(WA_COMMERCIAL, `Bonjour, je souhaite m'inscrire à la newsletter avec l'email : ${input.value}`));
+                  input.value = "";
+                }
+              }}
+              className="flex gap-3 max-w-md"
+            >
+              <input
+                type="email"
+                placeholder="votre@email.com"
+                required
+                className={cn(
+                  "flex-1 px-4 py-2.5 rounded-full",
+                  "bg-white/10 border border-white/15",
+                  "text-white text-sm placeholder:text-white/30",
+                  "outline-none focus:border-accent/50 focus:bg-white/[0.12]",
+                  "transition-all"
+                )}
+              />
+              <button
+                type="submit"
+                className={cn(
+                  "px-5 py-2.5 rounded-full",
+                  "bg-gradient-to-r from-accent to-accent-strong",
+                  "text-white text-sm font-semibold",
+                  "hover:shadow-accent hover:-translate-y-0.5",
+                  "transition-all cursor-pointer border-0",
+                  "flex items-center gap-2"
+                )}
+              >
+                <Send size={14} /> S'inscrire
+              </button>
+            </form>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-white/10 pt-6 flex justify-between items-center flex-wrap gap-4">
+            <p className="text-xs text-white/35 m-0">
               {t("footer_copy")}
             </p>
-            <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "center" }}>
-              {["🇹🇬", "🇨🇳", "🇨🇮", "🇸🇳", "🇨🇲"].map((f) => (
-                <span key={f} style={{ fontSize: "1.1rem" }}>
+            <div className="flex gap-3 items-center">
+              {["\u{1F1F9}\u{1F1EC}", "\u{1F1E8}\u{1F1F3}", "\u{1F1E8}\u{1F1EE}", "\u{1F1F8}\u{1F1F3}", "\u{1F1E8}\u{1F1F2}"].map((f) => (
+                <span key={f} className="text-lg">
                   {f}
                 </span>
               ))}
@@ -334,6 +280,8 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      <CookieBanner />
     </div>
   );
 }

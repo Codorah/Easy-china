@@ -1,79 +1,41 @@
 // @ts-nocheck
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 import { GlassCard } from "@/components/primitives/GlassCard";
+import { cn } from "@/lib/utils";
 
 export function Timeline({ items }) {
   return (
-    <div className="timeline-container" style={{
-      position: "relative",
-      maxWidth: 900,
-      margin: "0 auto",
-      padding: "2rem 0",
-    }}>
-      <div className="timeline-line" style={{
-        position: "absolute",
-        left: "50%",
-        top: 0,
-        bottom: 0,
-        width: 2,
-        background: `linear-gradient(to bottom, transparent, rgba(201, 48, 44, 0.25) 15%, rgba(201, 48, 44, 0.25) 85%, transparent)`,
-        transform: "translateX(-50%)",
-      }} />
+    <div className="relative max-w-[900px] mx-auto py-8">
+      <div
+        className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2"
+        style={{ background: "linear-gradient(to bottom, transparent, rgba(201, 48, 44, 0.25) 15%, rgba(201, 48, 44, 0.25) 85%, transparent)" }}
+      />
+
+      <img src="/assets/1000073489.jpg" alt="" className="absolute -left-16 top-20 w-28 h-28 rounded-xl object-cover opacity-[0.08] rotate-[-6deg] pointer-events-none hidden lg:block" />
+      <img src="/assets/1000073491.jpg" alt="" className="absolute -right-16 bottom-20 w-24 h-24 rounded-xl object-cover opacity-[0.08] rotate-[6deg] pointer-events-none hidden lg:block" />
 
       {items.map((item, index) => {
         const isLeft = index % 2 === 0;
         return (
           <div
             key={index}
-            className="timeline-item"
-            style={{
-              display: "flex",
-              justifyContent: isLeft ? "flex-start" : "flex-end",
-              position: "relative",
-              marginBottom: "3.2rem",
-              width: "100%",
-            }}
+            className={cn(
+              "flex relative mb-[3.2rem] w-full",
+              isLeft ? "justify-start" : "justify-end"
+            )}
           >
-            <div className="timeline-dot" style={{
-              position: "absolute",
-              left: "50%",
-              top: 24,
-              width: 14,
-              height: 14,
-              borderRadius: "50%",
-              background: "var(--accent)",
-              border: `3px solid #fff`,
-              transform: "translateX(-50%)",
-              boxShadow: `0 0 0 3px rgba(201, 48, 44, 0.15)`,
-              zIndex: 3,
-            }} />
+            <div className="absolute left-1/2 top-6 w-3.5 h-3.5 rounded-full bg-accent border-[3px] border-white -translate-x-1/2 shadow-[0_0_0_3px_rgba(201,48,44,0.15)] z-[3]" />
 
-            <div className="timeline-card-wrapper" style={{ width: "45%" }}>
+            <div className="w-[45%]">
               <ScrollReveal direction={isLeft ? "left" : "right"} delay={index * 0.08}>
-                <GlassCard tilt={true} style={{ padding: "1.8rem" }}>
-                  <span style={{
-                    fontSize: "var(--text-md)",
-                    fontWeight: 700,
-                    color: 'var(--accent)',
-                    display: "block",
-                    marginBottom: "0.4rem",
-                    fontFamily: "var(--font-display)"
-                  }}>
+                <GlassCard tilt={true} className="p-7">
+                  <span className="text-md font-bold text-accent block mb-1 font-display">
                     {item.year}
                   </span>
-                  <h4 style={{
-                    color: 'var(--text)',
-                    fontSize: "var(--text-base)",
-                    fontWeight: 700,
-                    marginBottom: "0.5rem",
-                  }}>
+                  <h4 className="text-text text-base font-bold mb-2">
                     {item.title}
                   </h4>
-                  <p style={{
-                    color: 'var(--muted)',
-                    fontSize: "var(--text-sm)",
-                    lineHeight: 1.6,
-                  }}>
+                  <p className="text-muted text-sm leading-relaxed">
                     {item.desc}
                   </p>
                 </GlassCard>

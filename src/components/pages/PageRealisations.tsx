@@ -3,12 +3,20 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { t, useLang } from "@/i18n";
 import { WA_COMMERCIAL, UNSPLASH_REAL, waLink } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 import { SectionTitle } from "@/components/primitives/SectionTitle";
 import { GlassCard } from "@/components/primitives/GlassCard";
 import { GoldenBtn } from "@/components/primitives/GoldenBtn";
 import { MediaDisplay } from "@/components/primitives/MediaDisplay";
 import { Img } from "@/components/primitives/Img";
+
+// Fallback photos from user's assets
+const FALLBACK_PHOTOS = [
+  "/assets/1000073489.jpg",
+  "/assets/1000073490.jpg",
+  "/assets/1000073491.jpg",
+];
 
 // Bento coordinate mapping
 const getBentoStyle = (index) => {
@@ -27,124 +35,127 @@ export function PageRealisations({ realisations }) {
   return (
     <div>
       {/* Hero banner for realisations */}
-      <div style={{
-        position: "relative", height: "clamp(180px, 28vw, 280px)", overflow: "hidden",
-        background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 50%, var(--secondary) 100%)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
-        <div style={{ position: "absolute", inset: 0, opacity: 0.15 }}>
-          <Img src="https://images.unsplash.com/photo-1523050854058-8df90110c476?auto=format&fit=crop&w=1400&h=400&q=70" alt="" style={{ height: "100%", width: "100%", objectFit: "cover", borderRadius: 0 }} />
+      <div className={cn(
+        "relative h-[clamp(180px,28vw,280px)] overflow-hidden",
+        "bg-gradient-to-br from-accent via-accent-strong to-secondary",
+        "flex items-center justify-center"
+      )}>
+        <div className="absolute inset-0 opacity-[0.15]">
+          <Img src="/assets/1000073491.jpg" alt="" className="h-full w-full object-cover rounded-none" />
         </div>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "0 var(--gutter)" }}>
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:20px_20px]" />
+        <div className="relative z-[2] text-center px-[clamp(20px,5vw,48px)]">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div style={{ fontSize: "var(--text-xs)", color: "rgba(255,255,255,0.6)", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, marginBottom: "0.6rem" }}>
+            <div className="text-xs text-white/60 tracking-[0.18em] uppercase font-bold mb-2.5">
               {t("real_eyebrow")}
             </div>
-            <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 700, color: "#fff", fontFamily: "var(--font-display)", lineHeight: 1.2 }}>
+            <h1 className="text-[clamp(1.8rem,4vw,2.8rem)] font-bold text-white font-display leading-tight">
               {t("real_title")}
             </h1>
           </motion.div>
         </div>
       </div>
 
-      <div style={{ padding: "var(--space-12) var(--gutter) var(--space-section)", maxWidth: "var(--container)", margin: "0 auto" }}>
-      <p style={{ textAlign: "center", color: "var(--muted)", fontSize: "var(--text-sm)", maxWidth: "60ch", margin: "0 auto var(--space-8)", lineHeight: 1.7 }}>
-        {t("real_subtitle")}
-      </p>
+      <div className="py-12 px-[clamp(20px,5vw,48px)] pb-[clamp(64px,10vw,112px)] max-w-container mx-auto">
+        <p className="text-center text-muted text-sm max-w-[60ch] mx-auto mb-8 leading-[1.7]">
+          {t("real_subtitle")}
+        </p>
 
-      {/* Bento Grid */}
-      <div className="bento-grid" style={{ marginBottom: "4rem" }}>
-        {realisations.map((r, i) => {
-          const bentoStyle = getBentoStyle(i);
-          const isLarge = bentoStyle.gridColumn.includes("2") || bentoStyle.gridRow.includes("2");
-          return (
-            <ScrollReveal
-              key={r.id}
-              direction="up"
-              delay={i * 0.06}
-              style={{ ...bentoStyle }}
-              className={isLarge ? "bento-card-large" : "bento-card"}
-            >
-              <GlassCard tilt style={{ height: "100%", padding: 0, overflow: "hidden", border: "1px solid var(--border)" }}>
-                <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-                  <div className="zoom-container" style={{ height: isLarge ? 180 : 140, position: "relative", flexShrink: 0 }}>
-                    <MediaDisplay
-                      src={r.image}
-                      fallback={UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"]}
-                      alt={r.titre}
-                      style={{ borderRadius: "0px", height: "100%" }}
-                    />
-                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,20,16,0.65) 0%, transparent 60%)" }} />
-                    <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2, display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{
-                        background: "rgba(255,255,255,0.9)", backdropFilter: "blur(6px)",
-                        color: "var(--accent)", fontSize: "var(--text-xs)", fontWeight: 700,
-                        padding: "0.3rem 0.75rem", borderRadius: 20,
-                        textTransform: "uppercase", letterSpacing: "0.04em",
-                      }}>
-                        {r.cat}
-                      </span>
-                    </div>
-                    <div style={{ position: "absolute", bottom: 10, right: 12, zIndex: 2, display: "flex", gap: 2 }}>
-                      {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
-                        <Star key={stIdx} size={12} fill="#fbbf24" color="#fbbf24" />
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ padding: "1.4rem 1.6rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                    <div>
-                      <h3 style={{
-                        fontSize: isLarge ? "1.2rem" : "1rem",
-                        fontWeight: 700, color: "var(--text)", lineHeight: 1.3,
-                        marginBottom: "0.5rem", fontFamily: "var(--font-display)", textAlign: "left",
-                      }}>
-                        {r.titre}
-                      </h3>
-                      <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.6, marginBottom: "1rem", textAlign: "left" }}>
-                        {r.desc}
-                      </p>
-                    </div>
-
-                    {r.temoignage && (
-                      <div style={{
-                        background: "var(--accent-soft)", borderRadius: "var(--radius-sm)",
-                        padding: "1rem 1.1rem", position: "relative",
-                      }}>
-                        <div style={{ color: "var(--accent)", fontSize: "2rem", lineHeight: 0.8, fontFamily: "serif", opacity: 0.25, position: "absolute", top: 6, left: 10 }}>&ldquo;</div>
-                        <p style={{ fontStyle: "italic", fontSize: "var(--text-xs)", color: "var(--text)", lineHeight: 1.5, marginBottom: "0.5rem", textAlign: "left", paddingLeft: 12 }}>
-                          {r.temoignage}
-                        </p>
-                        <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, color: "var(--accent)", paddingLeft: 12 }}>&mdash; {r.client}</span>
+        {/* Bento Grid */}
+        <div className="bento-grid mb-16">
+          {realisations.map((r, i) => {
+            const bentoStyle = getBentoStyle(i);
+            const isLarge = bentoStyle.gridColumn.includes("2") || bentoStyle.gridRow.includes("2");
+            // Use user's fallback photos when the realisation has no image
+            const fallbackImage = r.image
+              ? (UNSPLASH_REAL[r.cat] || UNSPLASH_REAL["Tourisme"])
+              : FALLBACK_PHOTOS[i % FALLBACK_PHOTOS.length];
+            return (
+              <ScrollReveal
+                key={r.id}
+                direction="up"
+                delay={i * 0.06}
+                style={{ ...bentoStyle }}
+                className={isLarge ? "bento-card-large" : "bento-card"}
+              >
+                <GlassCard tilt className="h-full p-0 overflow-hidden border border-border">
+                  <div className="flex flex-col h-full">
+                    <div className={cn(
+                      "zoom-container relative shrink-0",
+                      isLarge ? "h-[180px]" : "h-[140px]"
+                    )}>
+                      <MediaDisplay
+                        src={r.image}
+                        fallback={fallbackImage}
+                        alt={r.titre}
+                        className="rounded-none h-full"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-text/65 to-transparent" />
+                      <div className="absolute top-3 left-3 z-[2] flex items-center gap-2">
+                        <span className={cn(
+                          "bg-white/90 backdrop-blur-sm",
+                          "text-accent text-xs font-bold",
+                          "py-1 px-3 rounded-full",
+                          "uppercase tracking-wide"
+                        )}>
+                          {r.cat}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </GlassCard>
-            </ScrollReveal>
-          );
-        })}
-      </div>
+                      <div className="absolute bottom-2.5 right-3 z-[2] flex gap-0.5">
+                        {Array.from({ length: Number(r.stars || 5) }).map((_, stIdx) => (
+                          <Star key={stIdx} size={12} fill="#fbbf24" color="#fbbf24" />
+                        ))}
+                      </div>
+                    </div>
 
-      <ScrollReveal direction="up" delay={0.1}>
-        <GlassCard style={{
-          background: `linear-gradient(135deg, var(--surface-alt), #fff)`,
-          border: `1.5px solid var(--border)`,
-          padding: "3.5rem",
-          textAlign: "center"
-        }}>
-          <h3 style={{ fontSize: "1.8rem", fontWeight: 700, color: 'var(--text)', marginBottom: "1rem", fontFamily: "var(--font-display)" }}>
-            Vous aussi, concrétisez vos projets avec la Chine !
-          </h3>
-          <p style={{ color: 'var(--muted)', fontSize: "var(--text-base)", maxWidth: 650, margin: "0 auto 2.5rem", lineHeight: 1.6 }}>
-            Bénéficiez de la sécurité et de la puissance de notre réseau transitaire et académique pour réaliser vos ambitions d'importation ou d'études.
-          </p>
-          <GoldenBtn variant="glow" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite démarrer un projet logistique/études avec vous."))}>
-            Lancer mon Projet
-          </GoldenBtn>
-        </GlassCard>
-      </ScrollReveal>
+                    <div className="px-6 py-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className={cn(
+                          isLarge ? "text-lg" : "text-base",
+                          "font-bold text-text leading-tight",
+                          "mb-2 font-display text-left"
+                        )}>
+                          {r.titre}
+                        </h3>
+                        <p className="text-sm text-muted leading-relaxed mb-4 text-left">
+                          {r.desc}
+                        </p>
+                      </div>
+
+                      {r.temoignage && (
+                        <div className="bg-accent-soft rounded-sm p-4 relative">
+                          <div className="text-accent text-[2rem] leading-none font-serif opacity-25 absolute top-1.5 left-2.5">&ldquo;</div>
+                          <p className="italic text-xs text-text leading-snug mb-2 text-left pl-3">
+                            {r.temoignage}
+                          </p>
+                          <span className="text-xs font-bold text-accent pl-3">&mdash; {r.client}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </GlassCard>
+              </ScrollReveal>
+            );
+          })}
+        </div>
+
+        <ScrollReveal direction="up" delay={0.1}>
+          <GlassCard className={cn(
+            "bg-gradient-to-br from-surface-alt to-white",
+            "border-[1.5px] border-border",
+            "p-10 md:p-14 text-center"
+          )}>
+            <h3 className="text-[1.8rem] font-bold text-text mb-4 font-display">
+              Vous aussi, concrétisez vos projets avec la Chine !
+            </h3>
+            <p className="text-muted text-base max-w-[650px] mx-auto mb-10 leading-relaxed">
+              Bénéficiez de la sécurité et de la puissance de notre réseau transitaire et académique pour réaliser vos ambitions d'importation ou d'études.
+            </p>
+            <GoldenBtn variant="glow" onClick={() => window.open(waLink(WA_COMMERCIAL, "Bonjour Easy China, je souhaite démarrer un projet logistique/études avec vous."))}>
+              Lancer mon Projet
+            </GoldenBtn>
+          </GlassCard>
+        </ScrollReveal>
       </div>
     </div>
   );

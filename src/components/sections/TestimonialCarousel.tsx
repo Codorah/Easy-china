@@ -3,30 +3,25 @@ import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import { useLang } from "@/i18n";
 import { GlassCard } from "@/components/primitives/GlassCard";
+import { cn } from "@/lib/utils";
 
 function Testimonial({ quote, author, role, stars }) {
   return (
-    <GlassCard tilt={true} style={{ padding: "2.2rem 2rem", display: "flex", flexDirection: "column", height: "100%", justifyContent: "space-between" }}>
+    <GlassCard tilt={true} className="px-8 py-9 flex flex-col h-full justify-between">
       <div>
-        <div style={{ fontSize: "2.8rem", color: 'var(--accent)', lineHeight: 0.4, opacity: 0.3, marginBottom: "0.8rem", fontFamily: "serif" }}>"</div>
-        <p style={{ fontStyle: "italic", fontSize: "var(--text-sm)", color: 'var(--text)', lineHeight: 1.65, marginBottom: "1.8rem" }}>
+        <div className="text-[2.8rem] text-accent leading-none opacity-30 mb-3 font-serif">"</div>
+        <p className="italic text-sm text-text leading-[1.65] mb-7">
           {quote}
         </p>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: `linear-gradient(135deg, var(--accent), var(--accent-strong))`,
-          border: `1.5px solid rgba(201, 48, 44, 0.2)`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 700, color: "#fff", fontSize: "var(--text-base)"
-        }}>
+      <div className="flex items-center gap-3">
+        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-accent to-accent-strong border-[1.5px] border-accent/20 flex items-center justify-center font-bold text-white text-base">
           {author.charAt(0)}
         </div>
         <div>
-          <h4 style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: 'var(--text)', margin: 0 }}>{author}</h4>
-          <span style={{ fontSize: "var(--text-xs)", color: 'var(--muted)', display: "block", marginTop: 2 }}>{role}</span>
-          <div style={{ color: 'var(--accent)', display: "flex", gap: 2, marginTop: 4 }}>
+          <h4 className="text-sm font-bold text-text m-0">{author}</h4>
+          <span className="text-xs text-muted block mt-0.5">{role}</span>
+          <div className="text-accent flex gap-0.5 mt-1">
             {Array.from({ length: 5 }).map((_, idx) => (
               <Star key={idx} size={14} fill={idx < stars ? "var(--accent)" : "transparent"} color={"var(--accent)"} />
             ))}
@@ -55,33 +50,29 @@ export function TestimonialCarousel() {
   }, [testimonials.length]);
 
   return (
-    <div style={{ maxWidth: 650, margin: "0 auto", position: "relative", overflow: "hidden", padding: "1rem" }}>
-      <div style={{
-        display: "flex",
-        transform: `translateX(-${active * 100}%)`,
-        transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-      }}>
+    <div className="max-w-[650px] mx-auto relative overflow-hidden p-4">
+      <div
+        className="flex transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        style={{ transform: `translateX(-${active * 100}%)` }}
+      >
         {testimonials.map((t, i) => (
-          <div key={i} style={{ minWidth: "100%", padding: "0 10px" }}>
+          <div key={i} className="min-w-full px-2.5">
             <Testimonial quote={t.quote} author={t.author} role={t.role} stars={t.stars} />
           </div>
         ))}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: "1.5rem" }}>
+      <div className="flex justify-center gap-2 mt-6">
         {testimonials.map((_, i) => (
           <button
             key={i}
             onClick={() => setActive(i)}
-            style={{
-              width: active === i ? 24 : 8,
-              height: 8,
-              borderRadius: 4,
-              border: "none",
-              background: active === i ? "var(--accent)" : "var(--border)",
-              cursor: "pointer",
-              transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-            }}
+            className={cn(
+              "h-2 rounded-sm border-none cursor-pointer transition-all duration-150",
+              active === i
+                ? "w-6 bg-accent"
+                : "w-2 bg-border"
+            )}
           />
         ))}
       </div>

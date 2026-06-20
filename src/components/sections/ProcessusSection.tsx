@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { MessageCircle, Search, Ship, Package } from "lucide-react";
 import { t, useLang } from "@/i18n";
+import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 import { SectionTitle } from "@/components/primitives/SectionTitle";
 
@@ -14,66 +15,44 @@ export function ProcessusSection() {
   ];
 
   return (
-    <div style={{ padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
-      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+    <div className="py-[var(--space-section)] px-[var(--gutter)] relative z-[2]">
+      <div className="max-w-container mx-auto">
         <SectionTitle eyebrow={t("proc_eyebrow")} title={t("proc_title")} subtitle={t("proc_subtitle")} />
 
         {/* Timeline track */}
-        <div style={{ position: "relative" }}>
+        <div className="relative">
           {/* Connecting line */}
-          <div className="processus-line" style={{
-            position: "absolute",
-            top: 36,
-            left: "calc(12.5% + 36px)",
-            right: "calc(12.5% + 36px)",
-            height: 1,
-            background: "var(--border)",
-            zIndex: 0,
-          }} />
+          <div
+            className="processus-line absolute h-px bg-border z-0"
+            style={{
+              top: 36,
+              left: "calc(12.5% + 36px)",
+              right: "calc(12.5% + 36px)",
+            }}
+          />
 
-          <div className="processus-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "var(--space-4)" }}>
+          <div className="processus-grid grid grid-cols-4 gap-[var(--space-4)]">
             {steps.map((s, i) => (
               <ScrollReveal key={i} direction="up" delay={i * 0.1}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 var(--space-3)" }}>
+                <div className="flex flex-col items-center text-center px-3">
                   {/* Circle */}
-                  <div style={{
-                    width: 72, height: 72, borderRadius: "50%",
-                    background: "var(--surface)",
-                    border: "2px solid var(--border)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: "var(--accent)",
-                    position: "relative", zIndex: 1,
-                    marginBottom: "var(--space-6)",
-                    boxShadow: "var(--shadow-sm)",
-                    transition: "border-color 0.15s, box-shadow 0.15s",
-                  }}>
+                  <div className={cn(
+                    "w-[72px] h-[72px] rounded-full",
+                    "bg-gradient-to-br from-white to-surface border-2 border-accent/20 shadow-md",
+                    "flex items-center justify-center",
+                    "text-accent relative z-[1] mb-6",
+                    "transition-all duration-150"
+                  )}>
                     {s.icon}
                     {/* Step badge */}
-                    <div style={{
-                      position: "absolute", top: -8, right: -8,
-                      background: "var(--accent)", color: "#fff",
-                      borderRadius: "var(--radius-full)",
-                      width: 22, height: 22,
-                      fontSize: "var(--text-xs)", fontWeight: 700,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      letterSpacing: "0.03em",
-                    }}>{s.num}</div>
+                    <div className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-[22px] h-[22px] text-xs font-bold flex items-center justify-center tracking-[0.03em]">
+                      {s.num}
+                    </div>
                   </div>
-                  <h3 style={{
-                    fontSize: "var(--text-sm)",
-                    fontWeight: 700,
-                    color: "var(--text)",
-                    marginBottom: "var(--space-2)",
-                    lineHeight: 1.3,
-                  }}>
+                  <h3 className="text-sm font-bold text-text mb-2 leading-[1.3]">
                     {s.title}
                   </h3>
-                  <p style={{
-                    fontSize: "var(--text-xs)",
-                    color: "var(--muted)",
-                    lineHeight: 1.65,
-                    maxWidth: "22ch",
-                  }}>
+                  <p className="text-xs text-muted leading-[1.65] max-w-[22ch]">
                     {s.desc}
                   </p>
                 </div>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Play, FileText } from "lucide-react";
 import { Img } from "@/components/primitives/Img";
+import { cn } from "@/lib/utils";
 
 // Media type detection helpers (inline for now — will move to @/lib/constants later)
 const VIDEO_EXTS = ["mp4", "webm", "ogg", "mov", "avi", "mkv"];
@@ -22,10 +23,10 @@ export function MediaDisplay({ src, alt = "", style = {}, fallback }) {
 
   if (type === "video") {
     return (
-      <div style={{ position: "relative", width: "100%", height: "100%", background: "#000", ...style }}>
+      <div className="relative w-full h-full bg-black" style={style}>
         <video
           src={effective}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          className="w-full h-full object-cover"
           preload="metadata"
           controls={false}
           muted
@@ -33,29 +34,33 @@ export function MediaDisplay({ src, alt = "", style = {}, fallback }) {
           onMouseEnter={e => e.target.play()}
           onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0; }}
         />
-        <div style={{
-          position: "absolute", inset: 0, display: "flex",
-          alignItems: "center", justifyContent: "center",
-          background: "rgba(0,0,0,0.25)", pointerEvents: "none",
-        }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: "50%",
-            background: "rgba(255,255,255,0.92)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <Play size={18} color={"var(--accent)"} style={{ marginLeft: 3 }} />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/25 pointer-events-none">
+          <div className="w-11 h-11 rounded-full bg-white/[0.92] flex items-center justify-center">
+            <Play size={18} color={"var(--accent)"} className="ml-0.5" />
           </div>
         </div>
       </div>
     );
   }
+
   if (type === "doc") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", background: 'var(--surface-alt)', gap: 8, ...style }}>
+      <div
+        className="flex flex-col items-center justify-center h-full bg-surface-alt gap-2"
+        style={style}
+      >
         <FileText size={36} color={"var(--accent)"} />
-        <a href={effective} target="_blank" rel="noopener noreferrer" style={{ fontSize: ".78rem", color: 'var(--accent)', fontWeight: 600 }}>Ouvrir le document</a>
+        <a
+          href={effective}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-accent font-semibold"
+        >
+          Ouvrir le document
+        </a>
       </div>
     );
   }
+
   return <Img src={effective} alt={alt} style={style} />;
 }

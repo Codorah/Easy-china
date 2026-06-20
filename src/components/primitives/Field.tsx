@@ -1,34 +1,14 @@
 // @ts-nocheck
-import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const inputClasses =
+  "w-full border border-border rounded-lg px-4 py-3 text-sm font-body text-text bg-surface-alt focus:ring-2 focus:ring-accent/30 focus:border-accent focus:bg-white outline-none transition-all duration-200";
 
 export function Field({ label, type = "text", value, onChange, placeholder, options, rows }) {
-  const [foc, setFoc] = useState(false);
-
-  const baseStyle = {
-    width: "100%",
-    padding: "0.85rem 1.1rem",
-    border: `1.5px solid ${foc ? "var(--accent)" : "var(--border)"}`,
-    borderRadius: 10,
-    fontSize: "var(--text-sm)",
-    background: foc ? "#fff" : "var(--surface-alt)",
-    color: 'var(--text)',
-    fontFamily: "var(--font-body)",
-    outline: "none",
-    boxShadow: foc ? `0 0 0 3px rgba(201, 48, 44, 0.1)` : "none",
-    transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.2s, box-shadow 0.2s",
-  };
-
   return (
-    <div style={{ marginBottom: "1.4rem", textAlign: "left" }}>
+    <div className="mb-5 text-left">
       {label && (
-        <label style={{
-          display: "block",
-          fontSize: "var(--text-sm)",
-          color: 'var(--accent)',
-          marginBottom: 6,
-          fontWeight: 600,
-          letterSpacing: "0.03em"
-        }}>
+        <label className="block text-sm text-accent mb-1.5 font-semibold tracking-wide">
           {label}
         </label>
       )}
@@ -36,12 +16,10 @@ export function Field({ label, type = "text", value, onChange, placeholder, opti
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setFoc(true)}
-          onBlur={() => setFoc(false)}
-          style={{ ...baseStyle, cursor: "pointer" }}
+          className={cn(inputClasses, "cursor-pointer")}
         >
           {options.map((o) => (
-            <option key={o} value={o} style={{ background: "#fff", color: 'var(--text)' }}>
+            <option key={o} value={o} className="bg-white text-text">
               {o}
             </option>
           ))}
@@ -52,9 +30,7 @@ export function Field({ label, type = "text", value, onChange, placeholder, opti
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          onFocus={() => setFoc(true)}
-          onBlur={() => setFoc(false)}
-          style={{ ...baseStyle, resize: "vertical" }}
+          className={cn(inputClasses, "resize-y")}
         />
       ) : (
         <input
@@ -62,9 +38,7 @@ export function Field({ label, type = "text", value, onChange, placeholder, opti
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          onFocus={() => setFoc(true)}
-          onBlur={() => setFoc(false)}
-          style={baseStyle}
+          className={inputClasses}
         />
       )}
     </div>

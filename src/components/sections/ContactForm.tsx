@@ -29,16 +29,16 @@ export function ContactForm() {
   };
 
   return (
-    <GlassCard style={{ padding: "2.5rem", width: "100%", border: `1.5px solid var(--border)` }}>
+    <GlassCard className="p-8 sm:p-10 w-full border-[1.5px] border-border">
       <input type="text" value={honey} onChange={e => setHoney(e.target.value)}
-        style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+        className="hidden" tabIndex={-1} autoComplete="off" />
       <Field label={t("form_name")} value={f.nom} onChange={v => setF(p => ({ ...p, nom: v }))} placeholder={t("form_ph_name")} />
       <Field label={t("form_email")} type="email" value={f.email} onChange={v => setF(p => ({ ...p, email: v }))} placeholder={t("form_ph_email")} />
       <Field label={t("form_service")} value={f.service} onChange={v => setF(p => ({ ...p, service: v }))}
         options={["Import & Logistique", "Université & Études", "Formation Professionnelle", "Assistance Visa", "Tourisme & Business"]} />
       <Field label={t("form_msg")} value={f.msg} onChange={v => setF(p => ({ ...p, msg: v }))} placeholder={t("form_ph_msg")} rows={4} />
-      <GoldenBtn variant="solid" onClick={send} disabled={isSending} style={{ width: "100%", justifyContent: "center", marginTop: "1rem" }}>
-        {isSending ? <Clock size={18} style={{marginRight: 8}}/> : <MessageCircle size={18} style={{marginRight: 8}}/>}
+      <GoldenBtn variant="solid" onClick={send} disabled={isSending} className="w-full justify-center mt-4">
+        {isSending ? <Clock size={18} className="mr-2" /> : <MessageCircle size={18} className="mr-2" />}
         {isSending ? t("form_sending") : t("form_btn")}
       </GoldenBtn>
     </GlassCard>

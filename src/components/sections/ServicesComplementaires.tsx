@@ -2,6 +2,7 @@
 import { MessageCircle, Ship, FileCheck, GraduationCap, CheckCircle } from "lucide-react";
 import { t, useLang } from "@/i18n";
 import { WA_COMMERCIAL, waLink } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 import { SectionTitle } from "@/components/primitives/SectionTitle";
 import { GlassCard } from "@/components/primitives/GlassCard";
@@ -45,30 +46,27 @@ export function ServicesComplementaires() {
   ];
 
   return (
-    <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
-      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+    <div className="bg-surface-alt border-t border-b border-border py-[var(--space-section)] px-[var(--gutter)] relative z-[2]">
+      <div className="max-w-container mx-auto">
         <SectionTitle eyebrow={t("svc_extra_eyebrow")} title={t("svc_extra_title")} subtitle={t("svc_extra_subtitle")} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--space-6)" }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-6">
           {extras.map((s, i) => (
             <ScrollReveal key={i} direction="up" delay={i * 0.08}>
-              <GlassCard tilt style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: "var(--radius-sm)",
-                  background: "var(--accent-soft)", color: "var(--accent)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  marginBottom: "var(--space-4)",
-                }}>{s.icon}</div>
-                <h3 style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--text)", marginBottom: "var(--space-2)", fontFamily: "var(--font-display)" }}>{s.name}</h3>
-                <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.65, marginBottom: "var(--space-4)", flex: 1 }}>{s.desc}</p>
-                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 var(--space-6)" }}>
+              <GlassCard tilt className="h-full flex flex-col">
+                <div className="w-12 h-12 rounded-sm bg-accent-soft text-accent flex items-center justify-center mb-4">
+                  {s.icon}
+                </div>
+                <h3 className="text-sm font-bold text-text mb-2 font-display">{s.name}</h3>
+                <p className="text-xs text-muted leading-[1.65] mb-4 flex-1">{s.desc}</p>
+                <ul className="list-none p-0 mb-6">
                   {s.features.map((f, j) => (
-                    <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-2)", fontSize: "var(--text-xs)", color: "var(--muted)", marginBottom: "var(--space-2)" }}>
-                      <CheckCircle size={13} color="var(--accent)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <li key={j} className="flex items-start gap-2 text-xs text-muted mb-2">
+                      <CheckCircle size={13} color="var(--accent)" className="shrink-0 mt-0.5" />
                       {f}
                     </li>
                   ))}
                 </ul>
-                <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, s.msg))} style={{ width: "100%" }}>
+                <GoldenBtn variant="outline" onClick={() => window.open(waLink(WA_COMMERCIAL, s.msg))} className="w-full">
                   {s.cta}
                 </GoldenBtn>
               </GlassCard>

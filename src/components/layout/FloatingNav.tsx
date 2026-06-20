@@ -6,6 +6,7 @@ import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { Logo } from "@/components/layout/Logo";
 import { LangSwitcher } from "@/components/layout/LangSwitcher";
 import { NavBtn } from "@/components/layout/NavBtn";
+import { cn } from "@/lib/utils";
 
 export function FloatingNav({ pages, activePage, setPage }) {
   useLang();
@@ -23,82 +24,56 @@ export function FloatingNav({ pages, activePage, setPage }) {
 
   return (
     <>
-      <div style={{
-        position: "fixed", top: 0, left: 0,
-        width: `${progress}%`, height: 3,
-        background: `linear-gradient(to right, var(--accent), var(--accent-strong))`,
-        zIndex: 1003, transition: "width 0.1s ease",
-      }} />
+      {/* Scroll progress bar */}
+      <div
+        className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-accent to-accent-strong z-[1003] transition-[width] duration-100 ease-linear"
+        style={{ width: `${progress}%` }}
+      />
 
-      <nav style={{
-        position: "fixed",
-        top: isScrolled ? 12 : 0,
-        left: isScrolled ? "4%" : 0,
-        right: isScrolled ? "4%" : 0,
-        width: isScrolled ? "92%" : "100%",
-        maxWidth: 1400,
-        margin: "0 auto",
-        background: isScrolled ? "rgba(253,252,248,0.97)" : "rgba(253,252,248,0.92)",
-        backdropFilter: "blur(20px)",
-        border: isScrolled ? `1px solid var(--border)` : `1px solid rgba(230,223,210,0.5)`,
-        borderRadius: isScrolled ? "var(--radius-lg)" : 0,
-        height: 68,
-        padding: "0 2rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        boxShadow: isScrolled
-          ? "0 6px 28px rgba(26,20,16,0.1), 0 1px 4px rgba(26,20,16,0.06)"
-          : "0 1px 0 rgba(26,20,16,0.06)",
-        transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s cubic-bezier(0.16,1,0.3,1)",
-        zIndex: 1000,
-      }}>
+      <nav
+        className={cn(
+          "fixed z-[1000] max-w-[1400px] mx-auto h-[68px] px-8 flex items-center justify-between backdrop-blur-[20px] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          isScrolled
+            ? "top-3 left-[4%] right-[4%] w-[92%] bg-[rgba(253,252,248,0.97)] border border-border rounded-lg shadow-[0_6px_28px_rgba(26,20,16,0.1),0_1px_4px_rgba(26,20,16,0.06)]"
+            : "top-0 left-0 right-0 w-full bg-[rgba(253,252,248,0.92)] border border-[rgba(230,223,210,0.5)] rounded-none shadow-[0_1px_0_rgba(26,20,16,0.06)]"
+        )}
+      >
         <Logo onClick={() => { setPage("accueil"); setIsOpen(false); }} />
 
-        <div className="nav-desktop-menu" style={{ display: "flex", gap: 4, alignItems: "center" }}>
+        {/* Desktop menu */}
+        <div className="nav-desktop-menu hidden md:flex gap-1 items-center">
           {pages.map(([k]) => (
             <NavBtn key={k} label={t(NAV_KEYS[k] || k)} active={activePage === k} onClick={() => setPage(k)} />
           ))}
-          <div style={{ marginLeft: 8 }}><LangSwitcher /></div>
+          <div className="ml-2"><LangSwitcher /></div>
         </div>
 
+        {/* Mobile hamburger */}
         <button
           aria-label={t("nav_open")}
-          className="nav-mobile-trigger"
+          className="nav-mobile-trigger flex md:hidden flex-col justify-center items-center relative z-[1002] w-[30px] h-[30px] bg-transparent border-none cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
-          style={{
-            background: "none", border: "none", cursor: "pointer",
-            width: 30, height: 30, display: "none",
-            flexDirection: "column", justifyContent: "center",
-            gap: 6, position: "relative", zIndex: 1002,
-          }}
         >
-          {isOpen ? <X size={24} color={"var(--text)"}/> : <Menu size={24} color={"var(--text)"}/>}
+          {isOpen ? <X size={24} className="text-text" /> : <Menu size={24} className="text-text" />}
         </button>
       </nav>
 
+      {/* Mobile fullscreen menu */}
       {isOpen && (
-        <div style={{
-          position: "fixed", inset: 0,
-          background: "rgba(255, 255, 255, 0.98)",
-          backdropFilter: "blur(20px)",
-          zIndex: 999, display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center",
-          gap: "2rem", animation: "pageEnter 0.3s ease",
-        }}>
+        <div className="fixed inset-0 bg-white/[0.98] backdrop-blur-[20px] z-[999] flex flex-col items-center justify-center gap-8 animate-[pageEnter_0.3s_ease]">
           {pages.map(([k]) => (
-            <button key={k} onClick={() => { setPage(k); setIsOpen(false); }}
-              style={{
-                background: "none", border: "none", fontSize: "var(--text-lg)",
-                fontWeight: 700, color: activePage === k ? "var(--accent)" : "var(--text)",
-                cursor: "pointer", transition: "color 0.15s, background 0.15s, transform 0.15s",
-                letterSpacing: "0.06em", fontFamily: "var(--font-display)"
-              }}
+            <button
+              key={k}
+              onClick={() => { setPage(k); setIsOpen(false); }}
+              className={cn(
+                "bg-transparent border-none text-lg font-bold cursor-pointer tracking-[0.06em] font-display transition-colors duration-150",
+                activePage === k ? "text-accent" : "text-text"
+              )}
             >
               {t(NAV_KEYS[k] || k)}
             </button>
           ))}
-          <div style={{ marginTop: "1rem" }}><LangSwitcher /></div>
+          <div className="mt-4"><LangSwitcher /></div>
         </div>
       )}
     </>

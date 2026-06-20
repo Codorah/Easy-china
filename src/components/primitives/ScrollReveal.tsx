@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 // Inline hook — will be moved to @/hooks later
 function useScrollReveal(options = {}) {
@@ -47,7 +48,7 @@ export function ScrollReveal({ children, delay = 0, direction = "up", duration =
   return (
     <div
       ref={ref}
-      className={className}
+      className={cn("will-change-[opacity,transform]", className)}
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? "translate(0,0)" : hidden,

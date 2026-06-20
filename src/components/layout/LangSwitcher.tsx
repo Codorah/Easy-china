@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLang, changeLang, LANGS } from "@/i18n";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function LangSwitcher() {
   const lang = useLang();
@@ -16,48 +17,41 @@ export function LangSwitcher() {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: "relative", userSelect: "none" }}>
+    <div ref={ref} className="relative select-none">
       <button
         onClick={() => setOpen(o => !o)}
-        style={{
-          display: "flex", alignItems: "center", gap: 6,
-          background: open ? "rgba(201,48,44,0.07)" : "transparent",
-          border: `1px solid ${open ? "var(--accent)" : "var(--border)"}`,
-          borderRadius: 8, padding: "0.4rem 0.85rem",
-          fontSize: "var(--text-xs)", fontWeight: 600, cursor: "pointer",
-          color: open ? "var(--accent)" : "var(--muted)", transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-          fontFamily: "var(--font-body)",
-        }}
+        className={cn(
+          "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold font-body cursor-pointer transition-all duration-150",
+          open
+            ? "bg-accent/[0.07] border border-accent text-accent"
+            : "bg-transparent border border-border text-muted hover:border-accent hover:text-accent"
+        )}
       >
-        <span style={{ fontSize: "var(--text-base)" }}>{current.flag}</span>
+        <span className="text-base">{current.flag}</span>
         <span>{current.label}</span>
-        <ChevronDown size={13} style={{ transition: "transform 0.25s", transform: open ? "rotate(180deg)" : "none" }} />
+        <ChevronDown
+          size={13}
+          className={cn(
+            "transition-transform duration-250",
+            open && "rotate-180"
+          )}
+        />
       </button>
+
       {open && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 8px)", right: 0,
-          background: "#fff", border: `1px solid var(--border)`,
-          borderRadius: "var(--radius-md)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-          zIndex: 2000, minWidth: 150, overflow: "hidden",
-          animation: "pageEnter 0.2s ease",
-        }}>
+        <div className="absolute top-[calc(100%+8px)] right-0 bg-white shadow-lg rounded-xl border border-border z-[2000] min-w-[150px] overflow-hidden animate-[pageEnter_0.2s_ease]">
           {LANGS.map(l => (
             <button
               key={l.code}
               onClick={() => { changeLang(l.code); setOpen(false); }}
-              style={{
-                width: "100%", textAlign: "left", display: "flex",
-                alignItems: "center", gap: 10, padding: "0.65rem 1rem",
-                background: lang === l.code ? "rgba(201,48,44,0.06)" : "transparent",
-                border: "none", cursor: "pointer",
-                fontSize: "var(--text-sm)", fontWeight: lang === l.code ? 700 : 500,
-                color: lang === l.code ? "var(--accent)" : "var(--text)",
-                fontFamily: "var(--font-body)", transition: "background 0.2s",
-              }}
-              onMouseEnter={e => { if (lang !== l.code) e.currentTarget.style.background = "#f8fafc"; }}
-              onMouseLeave={e => { if (lang !== l.code) e.currentTarget.style.background = "transparent"; }}
+              className={cn(
+                "w-full text-left flex items-center gap-2.5 px-4 py-2.5 border-none cursor-pointer text-sm font-body transition-colors duration-200",
+                lang === l.code
+                  ? "bg-accent/[0.06] font-bold text-accent"
+                  : "bg-transparent font-medium text-text hover:bg-accent/5 hover:text-accent"
+              )}
             >
-              <span style={{ fontSize: "var(--text-md)" }}>{l.flag}</span>
+              <span className="text-md">{l.flag}</span>
               {l.label}
             </button>
           ))}

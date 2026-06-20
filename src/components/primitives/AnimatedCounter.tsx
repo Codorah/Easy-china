@@ -45,7 +45,7 @@ export function AnimatedCounter({ value, suffix = "+", duration = 2.5 }) {
   const count = useCountUp(value, duration, isVisible);
 
   return (
-    <span ref={ref} style={{ display: "inline-block" }}>
+    <span ref={ref} className="inline-block">
       {count}{suffix}
     </span>
   );

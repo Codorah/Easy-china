@@ -1,44 +1,25 @@
 // @ts-nocheck
-import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export function NavBtn({ label, active, onClick }) {
-  const [hov, setHov] = useState(false);
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: active ? "var(--accent-soft)" : hov ? "rgba(26,20,16,0.04)" : "none",
-        border: "none",
-        color: active ? "var(--accent)" : hov ? "var(--text)" : "var(--muted)",
-        cursor: "pointer",
-        padding: "0.5rem 1rem",
-        borderRadius: "var(--radius-sm)",
-        fontSize: "var(--text-sm)",
-        fontWeight: 600,
-        letterSpacing: "0.02em",
-        fontFamily: "var(--font-body)",
-        transition: "color 0.15s, background 0.15s",
-        position: "relative",
-        minHeight: 44,
-        minWidth: 44,
-      }}
+      className={cn(
+        "relative border-none cursor-pointer px-4 py-2 rounded-sm text-sm font-semibold tracking-[0.02em] font-body transition-colors duration-150 min-h-[44px] min-w-[44px] group",
+        active
+          ? "bg-accent-soft text-accent"
+          : "bg-transparent text-muted hover:bg-[rgba(26,20,16,0.04)] hover:text-text"
+      )}
     >
       {label}
-      {/* Underline -- scaleX draw, GPU-composited */}
-      <span style={{
-        position: "absolute",
-        bottom: 6,
-        left: "10%",
-        width: "80%",
-        height: 2,
-        background: "var(--accent)",
-        borderRadius: 2,
-        transform: active || hov ? "scaleX(1)" : "scaleX(0)",
-        transformOrigin: "left center",
-        transition: "transform 0.18s ease",
-      }} />
+      {/* Underline -- GPU-composited */}
+      <span
+        className={cn(
+          "absolute bottom-1.5 left-[10%] w-[80%] h-0.5 bg-accent rounded-full origin-left transition-transform duration-[180ms] ease-out",
+          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+        )}
+      />
     </button>
   );
 }

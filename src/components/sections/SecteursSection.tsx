@@ -3,6 +3,7 @@ import {
   Leaf, Zap, Hammer, Heart, Shirt, Smartphone, UtensilsCrossed, Wind,
 } from "lucide-react";
 import { t, useLang } from "@/i18n";
+import { cn } from "@/lib/utils";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 import { SectionTitle } from "@/components/primitives/SectionTitle";
 
@@ -20,33 +21,27 @@ const SECTEURS = [
 export function SecteursSection() {
   useLang();
   return (
-    <div style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "var(--space-section) var(--gutter)", position: "relative", zIndex: 2 }}>
-      <div style={{ maxWidth: "var(--container)", margin: "0 auto" }}>
+    <div className="bg-surface-alt border-t border-b border-border py-[var(--space-section)] px-[var(--gutter)] relative z-[2]">
+      <div className="max-w-container mx-auto">
         <SectionTitle eyebrow={t("sec_eyebrow")} title={t("sec_title")} subtitle={t("sec_subtitle")} centered={false} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-3)" }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3">
           {SECTEURS.map((s, i) => (
             <ScrollReveal key={i} direction="up" delay={Math.floor(i / 2) * 0.08}>
-              <div style={{
-                display: "flex", gap: "var(--space-4)", alignItems: "flex-start",
-                padding: "var(--space-6)",
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-md)",
-                transition: "border-color 0.15s, box-shadow 0.15s, transform 0.15s",
-                cursor: "default",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "var(--shadow-md)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
-              >
-                <div style={{
-                  width: 40, height: 40, borderRadius: "var(--radius-sm)",
-                  background: "var(--accent-soft)", color: "var(--accent)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0,
-                }}>{s.icon}</div>
+              <div className={cn(
+                "group flex gap-4 items-start p-6 bg-surface border border-border rounded-md",
+                "cursor-default transition-all duration-150",
+                "hover:border-accent hover:-translate-y-0.5 hover:shadow-md"
+              )}>
+                <div className={cn(
+                  "w-10 h-10 rounded-sm bg-accent-soft text-accent",
+                  "flex items-center justify-center shrink-0",
+                  "group-hover:bg-accent group-hover:text-white transition-colors duration-150"
+                )}>
+                  {s.icon}
+                </div>
                 <div>
-                  <h4 style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--text)", marginBottom: "var(--space-1)", lineHeight: 1.3 }}>{s.name}</h4>
-                  <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.6 }}>{s.desc}</p>
+                  <h4 className="text-sm font-semibold text-text mb-1 leading-[1.3]">{s.name}</h4>
+                  <p className="text-xs text-muted leading-[1.6]">{s.desc}</p>
                 </div>
               </div>
             </ScrollReveal>

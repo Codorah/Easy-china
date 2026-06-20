@@ -110,11 +110,8 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .hero-split { grid-template-columns: 1fr !important; }
   .hero-image-panel { min-height: 50vw !important; order: -1; }
-  .nav-desktop-menu { display: none !important; }
-  .nav-mobile-trigger { display: flex !important; }
-  .hero-text-panel { padding: var(--space-16) var(--gutter) var(--space-12) !important; }
+  .hero-text-panel { padding: 4rem 1.5rem 3rem !important; }
   .footer-grid {
     grid-template-columns: 1fr !important;
     gap: var(--space-8) !important;

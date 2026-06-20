@@ -1,8 +1,7 @@
 // @ts-nocheck
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { t, useLang } from "@/i18n";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export function FAQAccordion() {
   useLang();
@@ -13,54 +12,21 @@ export function FAQAccordion() {
     { q: t("faq_q4"), a: t("faq_a4") },
     { q: t("faq_q5"), a: t("faq_a5") },
   ];
-  const [open, setOpen] = useState(null);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+    <Accordion type="single" collapsible className="flex flex-col gap-3">
       {faqs.map((faq, i) => (
         <ScrollReveal key={i} direction="up" delay={i * 0.05}>
-          <div style={{
-            border: `1px solid ${open === i ? "var(--accent)" : "var(--border)"}`,
-            borderRadius: "var(--radius-md)",
-            overflow: "hidden",
-            background: "#fff",
-            boxShadow: open === i ? "0 4px 20px rgba(201,48,44,0.08)" : "0 1px 4px rgba(0,0,0,0.04)",
-            transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-          }}>
-            <button
-              onClick={() => setOpen(open === i ? null : i)}
-              style={{
-                width: "100%", textAlign: "left", padding: "1.3rem 1.8rem",
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                background: "none", border: "none", cursor: "pointer",
-                fontFamily: "var(--font-body)",
-              }}
-            >
-              <span style={{ fontWeight: 700, fontSize: "var(--text-base)", color: 'var(--text)', paddingRight: "1rem", lineHeight: 1.4 }}>
-                {faq.q}
-              </span>
-              <span style={{
-                width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                background: open === i ? `linear-gradient(135deg, var(--accent), var(--accent-strong))` : "var(--surface-alt)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "color 0.15s, background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s",
-              }}>
-                <ChevronDown size={16}
-                  color={open === i ? "#fff" : "var(--muted)"}
-                  style={{ transform: open === i ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}
-                />
-              </span>
-            </button>
-            {open === i && (
-              <div style={{ padding: "0 1.8rem 1.4rem", animation: "pageEnter 0.25s ease" }}>
-                <p style={{ color: 'var(--muted)', fontSize: "var(--text-sm)", lineHeight: 1.75, borderTop: `1px solid var(--border)`, paddingTop: "1rem" }}>
-                  {faq.a}
-                </p>
-              </div>
-            )}
-          </div>
+          <AccordionItem value={`faq-${i}`} className="border border-border rounded-md bg-white overflow-hidden data-[state=open]:border-accent data-[state=open]:shadow-md">
+            <AccordionTrigger className="px-6 py-4 text-base font-bold text-text hover:no-underline [&>svg]:w-5 [&>svg]:h-5 [&>svg]:rounded-full [&>svg]:bg-surface-alt [&>svg]:p-1 data-[state=open]:[&>svg]:bg-gradient-to-br data-[state=open]:[&>svg]:from-accent data-[state=open]:[&>svg]:to-accent-strong data-[state=open]:[&>svg]:text-white">
+              {faq.q}
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-4 text-sm text-muted leading-relaxed border-t border-border pt-3">
+              {faq.a}
+            </AccordionContent>
+          </AccordionItem>
         </ScrollReveal>
       ))}
-    </div>
+    </Accordion>
   );
 }
