@@ -3,5 +3,6 @@ dist/
 .vite-react-ssg-temp/
 .env
 .env.local
+.env.production
 .DS_Store
 *.log
