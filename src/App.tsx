@@ -6,6 +6,8 @@ import { supabase } from "./supabase";
 import { WA_COMMERCIAL, waLink } from "@/lib/constants";
 import { DEFAULT_ARTICLES, DEFAULT_EQUIPE, DEFAULT_REALISATIONS } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { useSmoothScroll } from "@/hooks/useLenis";
+import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 import { SEOHead } from "@/components/seo/SEOHead";
 import { FloatingNav } from "@/components/layout/FloatingNav";
@@ -19,6 +21,8 @@ import { PageAdmin } from "@/components/pages/PageAdmin";
 
 export default function App() {
   useLang();
+  const lenisRef = useSmoothScroll();
+  const progress = useScrollProgress();
   const [page, setPage] = useState("accueil");
 
   const [articles, setArticlesState] = useState(DEFAULT_ARTICLES);
@@ -109,11 +113,20 @@ export default function App() {
 
   const goTo = useCallback((p) => {
     setPage(p);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [lenisRef]);
 
   return (
     <div className="font-body min-h-screen bg-bg text-text relative overflow-x-hidden">
+      {/* Scroll progress bar */}
+      <div
+        className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-accent to-accent-strong z-[9999] transition-none"
+        style={{ width: `${progress}%` }}
+      />
       <SEOHead page={page} />
       <FloatingNav pages={pagesList} activePage={page} setPage={goTo} />
 
@@ -289,6 +302,16 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Global grain/noise overlay */}
+      <div
+        className="fixed inset-0 z-[60] pointer-events-none opacity-[0.025] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "256px 256px",
+        }}
+      />
 
       <CookieBanner />
     </div>

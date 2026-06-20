@@ -12,6 +12,7 @@ import { Tag } from "@/components/primitives/Tag";
 import { CityPill } from "@/components/primitives/CityPill";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { PaysCouverts } from "@/components/sections/PaysCouverts";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { ProcessusSection } from "@/components/sections/ProcessusSection";
 import { ServicesComplementaires } from "@/components/sections/ServicesComplementaires";
 import { SecteursSection } from "@/components/sections/SecteursSection";
@@ -47,6 +48,25 @@ export function PageAccueil({ goTo }) {
       <HeroSection goTo={goTo} />
 
       <PaysCouverts />
+
+      {/* Container Scroll -- port showcase */}
+      <ContainerScroll
+        titleComponent={
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-text">
+            Votre import,{" "}
+            <span className="bg-gradient-to-r from-accent to-accent-strong bg-clip-text text-transparent">
+              de la Chine a l'Afrique
+            </span>
+          </h2>
+        }
+      >
+        <img
+          src="/assets/Gemini_Generated_Image_pi23pcpi23pcpi23.png"
+          alt="Port de Guangzhou"
+          className="mx-auto rounded-2xl object-cover h-full w-full object-center"
+          draggable={false}
+        />
+      </ContainerScroll>
 
       {/* Services Grid */}
       <div className="py-24 lg:py-32 px-6 lg:px-12">

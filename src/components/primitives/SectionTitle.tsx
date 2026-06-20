@@ -1,8 +1,14 @@
 // @ts-nocheck
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/primitives/ScrollReveal";
 
+const WORD_EASE = [0.32, 0.72, 0, 1];
+
 export function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
+  /* Split title into words for staggered reveal */
+  const words = typeof title === "string" ? title.split(" ") : null;
+
   return (
     <div className={cn("mb-12", centered ? "text-center" : "text-left")}>
       {/* Eyebrow: Double-Bezel pill */}
@@ -25,17 +31,38 @@ export function SectionTitle({ eyebrow, title, subtitle, centered = true }) {
         </ScrollReveal>
       )}
 
-      {/* Title */}
-      <ScrollReveal direction="up" delay={0.1} duration={0.8}>
-        <h2
-          className={cn(
-            "text-[clamp(1.8rem,3.5vw,2.8rem)] font-display font-bold tracking-tight leading-[1.12] text-text",
-            subtitle ? "mb-4" : "mb-0"
-          )}
-        >
-          {title}
-        </h2>
-      </ScrollReveal>
+      {/* Title -- word-by-word staggered reveal */}
+      <h2
+        className={cn(
+          "text-[clamp(1.8rem,3.5vw,2.8rem)] font-display font-bold tracking-tight leading-[1.12] text-text",
+          subtitle ? "mb-4" : "mb-0"
+        )}
+      >
+        {words ? (
+          words.map((word, i) => (
+            <motion.span
+              key={i}
+              className="inline-block mr-[0.25em]"
+              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true }}
+              transition={{
+                delay: i * 0.05,
+                duration: 0.5,
+                ease: WORD_EASE,
+              }}
+            >
+              {word}
+              {i < words.length - 1 && " "}
+            </motion.span>
+          ))
+        ) : (
+          /* Fallback for non-string titles (JSX) */
+          <ScrollReveal direction="up" delay={0.1} duration={0.8}>
+            {title}
+          </ScrollReveal>
+        )}
+      </h2>
 
       {/* Subtitle */}
       {subtitle && (

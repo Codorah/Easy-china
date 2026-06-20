@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Globe, Ship, GraduationCap, Package, MessageCircle, ArrowRight } from "lucide-react";
 import { t, useLang } from "@/i18n";
 import { WA_COMMERCIAL, waLink } from "@/lib/constants";
@@ -18,6 +19,17 @@ const blurUp = (delay = 0) => ({
 
 export function HeroSection({ goTo }) {
   useLang();
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  /* Scroll-driven transforms (parallax + fade) */
+  const imageParallaxY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const badge1ParallaxY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const badge2ParallaxY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const heroStats = [
     { n: 500, l: t("hero_stat1"), s: "+" },
@@ -26,9 +38,9 @@ export function HeroSection({ goTo }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] overflow-hidden">
+    <div ref={heroRef} className="grid grid-cols-1 lg:grid-cols-2 min-h-[100dvh] overflow-hidden">
       {/* ── Left Text Panel ── */}
-      <div className="bg-bg flex flex-col justify-center pt-32 lg:pt-0 px-6 lg:px-16 pb-16 lg:pb-0">
+      <motion.div style={{ opacity: textOpacity }} className="bg-bg flex flex-col justify-center pt-32 lg:pt-0 px-6 lg:px-16 pb-16 lg:pb-0">
         {/* Eyebrow badge -- double-bezel pill */}
         <motion.div {...blurUp(0.1)} className="self-start mb-8">
           <div className="p-1.5 rounded-full bg-black/[0.03] ring-1 ring-black/[0.06] inline-flex">
@@ -135,15 +147,16 @@ export function HeroSection({ goTo }) {
             </div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* ── Right Image Panel ── */}
       <div className="relative overflow-hidden min-h-[60vh] lg:min-h-screen">
-        {/* Main hero image with zoom-in */}
+        {/* Main hero image with zoom-in + scroll parallax */}
         <motion.div
           initial={{ scale: 1.15, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 2, ease: EASE }}
+          style={{ y: imageParallaxY }}
           className="h-full w-full"
         >
           <Img
@@ -176,11 +189,12 @@ export function HeroSection({ goTo }) {
           </div>
         </motion.div>
 
-        {/* Floating badge -- imports (double-bezel) */}
+        {/* Floating badge -- imports (double-bezel) + scroll parallax */}
         <motion.div
           initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ delay: 0.9, duration: 0.8, ease: EASE }}
+          style={{ y: badge1ParallaxY }}
           className="absolute bottom-[12%] left-[8%] z-[2]"
         >
           <div className="p-1.5 rounded-[1.5rem] bg-black/[0.03] ring-1 ring-black/[0.06]">
@@ -196,11 +210,12 @@ export function HeroSection({ goTo }) {
           </div>
         </motion.div>
 
-        {/* Floating badge -- universities (double-bezel) */}
+        {/* Floating badge -- universities (double-bezel) + scroll parallax */}
         <motion.div
           initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
+          style={{ y: badge2ParallaxY }}
           className="absolute top-[18%] right-[8%] z-[2]"
         >
           <div className="p-1.5 rounded-[1.5rem] bg-black/[0.03] ring-1 ring-black/[0.06]">

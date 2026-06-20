@@ -1,5 +1,11 @@
 // @ts-nocheck
+import { useRef, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
+
+/* Check prefers-reduced-motion (runs once at module level) */
+const prefersReduced =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 export function GoldenBtn({
   children,
@@ -11,6 +17,33 @@ export function GoldenBtn({
   ariaLabel,
   icon: Icon,
 }) {
+  const btnRef = useRef(null);
+  const [magOffset, setMagOffset] = useState({ x: 0, y: 0 });
+
+  /* Magnetic hover: only for solid & glow variants */
+  const isMagnetic = (variant === "solid" || variant === "glow") && !prefersReduced;
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (!isMagnetic || !btnRef.current) return;
+      const rect = btnRef.current.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      /* Clamp offset to max 4px */
+      const maxPx = 4;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const factor = Math.min(maxPx / dist, 0.25);
+      setMagOffset({ x: dx * factor, y: dy * factor });
+    },
+    [isMagnetic]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setMagOffset({ x: 0, y: 0 });
+  }, []);
+
   const base = cn(
     "relative inline-flex items-center justify-center gap-2 rounded-full font-semibold font-body tracking-[0.02em]",
     "transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] outline-none select-none",
@@ -47,12 +80,19 @@ export function GoldenBtn({
     ),
   };
 
+  const mergedStyle = isMagnetic
+    ? { ...style, transform: `translate(${magOffset.x}px, ${magOffset.y}px)` }
+    : style;
+
   return (
     <button
+      ref={btnRef}
       aria-label={ariaLabel}
       onClick={disabled ? undefined : onClick}
+      onMouseMove={isMagnetic ? handleMouseMove : undefined}
+      onMouseLeave={isMagnetic ? handleMouseLeave : undefined}
       className={cn(base, variants[variant] || variants.solid, className)}
-      style={style}
+      style={mergedStyle}
       disabled={disabled}
     >
       {children}
